@@ -1,0 +1,683 @@
+#VRML_SIM R2025a utf8
+# license: Apache License 2.0
+# license url: http://www.apache.org/licenses/LICENSE-2.0
+# This is a proto file for Webots for the ur5e_with_140gripper
+# Extracted from: /home/cho/webots_program/urdfs/ur5e_with_140gripper.urdf
+
+PROTO ur5e_with_140gripper [
+  field  SFVec3f     translation     0 0 0
+  field  SFRotation  rotation        0 0 1 0
+  field  SFString    name            "ur5e_with_140gripper"  # Is `Robot.name`.
+  field  SFString    controller      "void"                  # Is `Robot.controller`.
+  field  MFString    controllerArgs  []                      # Is `Robot.controllerArgs`.
+  field  SFString    customData      ""                      # Is `Robot.customData`.
+  field  SFBool      supervisor      FALSE                   # Is `Robot.supervisor`.
+  field  SFBool      synchronization TRUE                    # Is `Robot.synchronization`.
+  field  SFBool      selfCollision   FALSE                   # Is `Robot.selfCollision`.
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    controller IS controller
+    controllerArgs IS controllerArgs
+    customData IS customData
+    supervisor IS supervisor
+    synchronization IS synchronization
+    selfCollision IS selfCollision
+    children [
+      Solid {
+        children [
+          DEF base_visual CadShape {
+            url "../meshes/ur5e/visual/base.dae"
+          }
+          HingeJoint {
+            jointParameters HingeJointParameters {
+              axis 0.000000 0.000000 1.000000
+              anchor 0.000000 0.000000 0.163000
+            }
+            device [
+              RotationalMotor {
+                name "shoulder_pan_joint"
+                maxVelocity 3.14
+                minPosition -6.28318530718
+                maxPosition 6.28318530718
+                maxTorque 150.0
+              }
+              PositionSensor {
+                name "shoulder_pan_joint_sensor"
+              }
+            ]
+            endPoint Solid {
+              translation 0.000000 0.000000 0.163000
+              children [
+                DEF shoulder_visual CadShape {
+                  url "../meshes/ur5e/visual/shoulder.dae"
+                }
+                HingeJoint {
+                  jointParameters HingeJointParameters {
+                    axis 0.000000 1.000000 0.000000
+                    anchor 0.000000 0.138000 0.000000
+                  }
+                  device [
+                    RotationalMotor {
+                      name "shoulder_lift_joint"
+                      maxVelocity 3.14
+                      minPosition -6.28318530718
+                      maxPosition 6.28318530718
+                      maxTorque 150.0
+                    }
+                    PositionSensor {
+                      name "shoulder_lift_joint_sensor"
+                    }
+                  ]
+                  endPoint Solid {
+                    translation 0.000000 0.138000 0.000000
+                    rotation 0.000000 1.000000 0.000000 1.570796
+                    children [
+                      DEF upperarm_visual CadShape {
+                        url "../meshes/ur5e/visual/upperarm.dae"
+                      }
+                      HingeJoint {
+                        jointParameters HingeJointParameters {
+                          axis 0.000000 1.000000 0.000000
+                          anchor 0.000000 -0.131000 0.425000
+                        }
+                        device [
+                          RotationalMotor {
+                            name "elbow_joint"
+                            maxVelocity 3.14
+                            minPosition -3.14159265359
+                            maxPosition 3.14159265359
+                            maxTorque 150.0
+                          }
+                          PositionSensor {
+                            name "elbow_joint_sensor"
+                          }
+                        ]
+                        endPoint Solid {
+                          translation 0.000000 -0.131000 0.425000
+                          children [
+                            DEF forearm_visual CadShape {
+                              url "../meshes/ur5e/visual/forearm.dae"
+                            }
+                            HingeJoint {
+                              jointParameters HingeJointParameters {
+                                axis 0.000000 1.000000 0.000000
+                                anchor 0.000000 0.000000 0.392000
+                              }
+                              device [
+                                RotationalMotor {
+                                  name "wrist_1_joint"
+                                  maxVelocity 6.28
+                                  minPosition -6.28318530718
+                                  maxPosition 6.28318530718
+                                  maxTorque 28.0
+                                }
+                                PositionSensor {
+                                  name "wrist_1_joint_sensor"
+                                }
+                              ]
+                              endPoint Solid {
+                                translation 0.000000 0.000000 0.392000
+                                rotation 0.000000 1.000000 0.000000 1.570796
+                                children [
+                                  DEF wrist1_visual CadShape {
+                                    url "../meshes/ur5e/visual/wrist1.dae"
+                                  }
+                                  HingeJoint {
+                                    jointParameters HingeJointParameters {
+                                      axis 0.000000 0.000000 1.000000
+                                      anchor 0.000000 0.127000 0.000000
+                                    }
+                                    device [
+                                      RotationalMotor {
+                                        name "wrist_2_joint"
+                                        maxVelocity 6.28
+                                        minPosition -6.28318530718
+                                        maxPosition 6.28318530718
+                                        maxTorque 28.0
+                                      }
+                                      PositionSensor {
+                                        name "wrist_2_joint_sensor"
+                                      }
+                                    ]
+                                    endPoint Solid {
+                                      translation 0.000000 0.127000 0.000000
+                                      children [
+                                        DEF wrist2_visual CadShape {
+                                          url "../meshes/ur5e/visual/wrist2.dae"
+                                        }
+                                        HingeJoint {
+                                          jointParameters HingeJointParameters {
+                                            axis 0.000000 1.000000 0.000000
+                                            anchor 0.000000 0.000000 0.100000
+                                          }
+                                          device [
+                                            RotationalMotor {
+                                              name "wrist_3_joint"
+                                              maxVelocity 6.28
+                                              minPosition -6.28318530718
+                                              maxPosition 6.28318530718
+                                              maxTorque 28.0
+                                            }
+                                            PositionSensor {
+                                              name "wrist_3_joint_sensor"
+                                            }
+                                          ]
+                                          endPoint Solid {
+                                            translation 0.000000 0.000000 0.100000
+                                            children [
+                                              DEF wrist3_visual CadShape {
+                                                url "../meshes/ur5e/visual/wrist3.dae"
+                                              }
+                                              Solid {
+                                                translation 0.000000 0.100000 0.000000
+                                                rotation 0.000000 0.000000 1.000000 1.570796
+                                                name "ee_link"
+                                                boundingObject Pose {
+                                                  translation -0.010000 0.000000 0.000000
+                                                  children [
+                                                    Box {
+                                                       size 0.010000 0.010000 0.010000
+                                                    }
+                                                  ]
+                                                }
+                                                physics Physics {
+                                                }
+                                              }
+                                              Solid {
+                                                translation 0.000000 0.089000 0.000000
+                                                rotation -0.577352 0.577350 0.577350 2.094399
+                                                children [
+                                                  Shape {
+                                                    appearance DEF robotiq_arg2f_base_link_material PBRAppearance {
+                                                      baseColor 0.100000 0.100000 0.100000
+                                                      roughness 1.000000
+                                                      metalness 0
+                                                    }
+                                                    geometry DEF robotiq_arg2f_base_link Mesh {
+                                                      url "../meshes/robotiq_140_gripper/visual/robotiq_arg2f_base_link.stl"
+                                                    }
+                                                  }
+                                                  HingeJoint {
+                                                    jointParameters HingeJointParameters {
+                                                      axis -1.000000 -0.000000 0.000000
+                                                      anchor 0.000000 -0.030601 0.054905
+                                                    }
+                                                    device [
+                                                      RotationalMotor {
+                                                        name "finger_joint"
+                                                        maxVelocity 2.0
+                                                        maxPosition 0.7
+                                                        maxTorque 1000.0
+                                                      }
+                                                      PositionSensor {
+                                                        name "finger_joint_sensor"
+                                                      }
+                                                    ]
+                                                    endPoint Solid {
+                                                      translation 0.000000 -0.030601 0.054905
+                                                      rotation 1.000000 0.000000 0.000000 2.295796
+                                                      children [
+                                                        Shape {
+                                                          appearance DEF left_outer_knuckle_material PBRAppearance {
+                                                            baseColor 0.792157 0.819608 0.933333
+                                                            roughness 1.000000
+                                                            metalness 0
+                                                          }
+                                                          geometry DEF robotiq_arg2f_140_outer_knuckle Mesh {
+                                                            url "../meshes/robotiq_140_gripper/visual/robotiq_arg2f_140_outer_knuckle.stl"
+                                                          }
+                                                        }
+                                                        Solid {
+                                                          translation 0.000000 0.018220 0.026002
+                                                          children [
+                                                            Shape {
+                                                              appearance DEF left_outer_finger_material PBRAppearance {
+                                                                baseColor 0.100000 0.100000 0.100000
+                                                                roughness 1.000000
+                                                                metalness 0
+                                                              }
+                                                              geometry DEF robotiq_arg2f_140_outer_finger Mesh {
+                                                                url "../meshes/robotiq_140_gripper/visual/robotiq_arg2f_140_outer_finger.stl"
+                                                              }
+                                                            }
+                                                            HingeJoint {
+                                                              jointParameters HingeJointParameters {
+                                                                anchor 0.000000 0.081755 -0.028220
+                                                              }
+                                                              device [
+                                                                RotationalMotor {
+                                                                  name "left_inner_finger_joint"
+                                                                  maxVelocity 2.0
+                                                                  minPosition -0.8757
+                                                                  maxPosition 0.8757
+                                                                  maxTorque 1000.0
+                                                                }
+                                                                PositionSensor {
+                                                                  name "left_inner_finger_joint_sensor"
+                                                                }
+                                                              ]
+                                                              endPoint Solid {
+                                                                translation 0.000000 0.081755 -0.028220
+                                                                rotation -1.000000 0.000000 0.000000 0.725000
+                                                                children [
+                                                                  Shape {
+                                                                    appearance DEF left_inner_finger_material PBRAppearance {
+                                                                      baseColor 0.100000 0.100000 0.100000
+                                                                      roughness 1.000000
+                                                                      metalness 0
+                                                                    }
+                                                                    geometry DEF robotiq_arg2f_140_inner_finger Mesh {
+                                                                      url "../meshes/robotiq_140_gripper/visual/robotiq_arg2f_140_inner_finger.stl"
+                                                                    }
+                                                                  }
+                                                                  Solid {
+                                                                    translation 0.000000 0.045755 -0.027220
+                                                                    children [
+                                                                      Shape {
+                                                                        appearance DEF left_inner_finger_pad_material PBRAppearance {
+                                                                          baseColor 0.900000 0.900000 0.900000
+                                                                          roughness 1.000000
+                                                                          metalness 0
+                                                                        }
+                                                                        geometry Box {
+                                                                           size 0.027000 0.065000 0.007500
+                                                                        }
+                                                                      }
+                                                                    ]
+                                                                    name "left_inner_finger_pad"
+                                                                    boundingObject Box {
+                                                                       size 0.030000 0.070000 0.007500
+                                                                    }
+                                                                    physics Physics {
+                                                                    }
+                                                                  }
+                                                                ]
+                                                                name "left_inner_finger"
+                                                                boundingObject USE robotiq_arg2f_140_inner_finger
+                                                                physics Physics {
+                                                                  density -1
+                                                                  mass 0.010400
+                                                                  centerOfMass [ 0.000300 0.016008 -0.013695 ]
+                                                                  inertiaMatrix [
+                                                                    2.719095e-06 7.691003e-07 2.303152e-06
+                                                                    1.354025e-21 -7.181735e-22 6.747154e-07
+                                                                  ]
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                          name "left_outer_finger"
+                                                          boundingObject USE robotiq_arg2f_140_outer_finger
+                                                          physics Physics {
+                                                            density -1
+                                                            mass 0.022614
+                                                            centerOfMass [ 0.000301 0.037391 -0.020803 ]
+                                                            inertiaMatrix [
+                                                              1.525183e-05 6.176942e-06 1.164949e-05
+                                                              9.765834e-10 -5.438386e-10 6.786361e-06
+                                                            ]
+                                                          }
+                                                        }
+                                                      ]
+                                                      name "left_outer_knuckle"
+                                                      boundingObject USE robotiq_arg2f_140_outer_knuckle
+                                                      physics Physics {
+                                                        density -1
+                                                        mass 0.008532
+                                                        centerOfMass [ -0.000200 0.019944 0.029225 ]
+                                                        inertiaMatrix [
+                                                          2.893281e-06 1.867198e-06 1.219052e-06
+                                                          -1.579350e-19 -1.939804e-19 -1.218586e-06
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                  HingeJoint {
+                                                    jointParameters HingeJointParameters {
+                                                      axis 1.000000 0.000000 0.000000
+                                                      anchor 0.000000 -0.012700 0.061420
+                                                    }
+                                                    device [
+                                                      RotationalMotor {
+                                                        name "left_inner_knuckle_joint"
+                                                        maxVelocity 2.0
+                                                        minPosition -0.8757
+                                                        maxPosition 0.8757
+                                                        maxTorque 1000.0
+                                                      }
+                                                      PositionSensor {
+                                                        name "left_inner_knuckle_joint_sensor"
+                                                      }
+                                                    ]
+                                                    endPoint Solid {
+                                                      translation 0.000000 -0.012700 0.061420
+                                                      rotation 1.000000 0.000000 0.000000 2.295796
+                                                      children [
+                                                        Shape {
+                                                          appearance DEF left_inner_knuckle_material PBRAppearance {
+                                                            baseColor 0.100000 0.100000 0.100000
+                                                            roughness 1.000000
+                                                            metalness 0
+                                                          }
+                                                          geometry DEF robotiq_arg2f_140_inner_knuckle Mesh {
+                                                            url "../meshes/robotiq_140_gripper/visual/robotiq_arg2f_140_inner_knuckle.stl"
+                                                          }
+                                                        }
+                                                      ]
+                                                      name "left_inner_knuckle"
+                                                      boundingObject USE robotiq_arg2f_140_inner_knuckle
+                                                      physics Physics {
+                                                        density -1
+                                                        mass 0.027118
+                                                        centerOfMass [ 0.000123 0.050785 0.001040 ]
+                                                        inertiaMatrix [
+                                                          2.619104e-05 2.827024e-06 2.836959e-05
+                                                          -2.436169e-07 -6.377899e-09 -5.372007e-07
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                  HingeJoint {
+                                                    jointParameters HingeJointParameters {
+                                                      axis -1.000000 0.000000 -0.000000
+                                                      anchor 0.000000 0.030601 0.054905
+                                                    }
+                                                    device [
+                                                      RotationalMotor {
+                                                        name "right_outer_knuckle_joint"
+                                                        maxVelocity 2.0
+                                                        minPosition -0.725
+                                                        maxPosition 0.725
+                                                        maxTorque 1000.0
+                                                      }
+                                                      PositionSensor {
+                                                        name "right_outer_knuckle_joint_sensor"
+                                                      }
+                                                    ]
+                                                    endPoint Solid {
+                                                      translation 0.000000 0.030601 0.054905
+                                                      rotation 0.000000 0.911903 0.410405 3.141593
+                                                      children [
+                                                        Shape {
+                                                          appearance DEF right_outer_knuckle_material PBRAppearance {
+                                                            baseColor 0.792157 0.819608 0.933333
+                                                            roughness 1.000000
+                                                            metalness 0
+                                                          }
+                                                          geometry USE robotiq_arg2f_140_outer_knuckle
+                                                        }
+                                                        Solid {
+                                                          translation 0.000000 0.018220 0.026002
+                                                          children [
+                                                            Shape {
+                                                              appearance DEF right_outer_finger_material PBRAppearance {
+                                                                baseColor 0.100000 0.100000 0.100000
+                                                                roughness 1.000000
+                                                                metalness 0
+                                                              }
+                                                              geometry USE robotiq_arg2f_140_outer_finger
+                                                            }
+                                                            HingeJoint {
+                                                              jointParameters HingeJointParameters {
+                                                                anchor 0.000000 0.081755 -0.028220
+                                                              }
+                                                              device [
+                                                                RotationalMotor {
+                                                                  name "right_inner_finger_joint"
+                                                                  maxVelocity 2.0
+                                                                  minPosition -0.8757
+                                                                  maxPosition 0.8757
+                                                                  maxTorque 1000.0
+                                                                }
+                                                                PositionSensor {
+                                                                  name "right_inner_finger_joint_sensor"
+                                                                }
+                                                              ]
+                                                              endPoint Solid {
+                                                                translation 0.000000 0.081755 -0.028220
+                                                                rotation -1.000000 0.000000 0.000000 0.725000
+                                                                children [
+                                                                  Shape {
+                                                                    appearance DEF right_inner_finger_material PBRAppearance {
+                                                                      baseColor 0.100000 0.100000 0.100000
+                                                                      roughness 1.000000
+                                                                      metalness 0
+                                                                    }
+                                                                    geometry USE robotiq_arg2f_140_inner_finger
+                                                                  }
+                                                                  Solid {
+                                                                    translation 0.000000 0.045755 -0.027220
+                                                                    children [
+                                                                      Shape {
+                                                                        appearance DEF right_inner_finger_pad_material PBRAppearance {
+                                                                          baseColor 0.900000 0.900000 0.900000
+                                                                          roughness 1.000000
+                                                                          metalness 0
+                                                                        }
+                                                                        geometry Box {
+                                                                           size 0.027000 0.065000 0.007500
+                                                                        }
+                                                                      }
+                                                                    ]
+                                                                    name "right_inner_finger_pad"
+                                                                    boundingObject Box {
+                                                                       size 0.030000 0.070000 0.007500
+                                                                    }
+                                                                    physics Physics {
+                                                                    }
+                                                                  }
+                                                                ]
+                                                                name "right_inner_finger"
+                                                                boundingObject USE robotiq_arg2f_140_inner_finger
+                                                                physics Physics {
+                                                                  density -1
+                                                                  mass 0.010400
+                                                                  centerOfMass [ 0.000300 0.016008 -0.013695 ]
+                                                                  inertiaMatrix [
+                                                                    2.719095e-06 7.691003e-07 2.303152e-06
+                                                                    1.354025e-21 -7.181735e-22 6.747154e-07
+                                                                  ]
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                          name "right_outer_finger"
+                                                          boundingObject USE robotiq_arg2f_140_outer_finger
+                                                          physics Physics {
+                                                            density -1
+                                                            mass 0.022614
+                                                            centerOfMass [ 0.000301 0.037391 -0.020803 ]
+                                                            inertiaMatrix [
+                                                              1.525183e-05 6.176942e-06 1.164949e-05
+                                                              9.765834e-10 -5.438386e-10 6.786361e-06
+                                                            ]
+                                                          }
+                                                        }
+                                                      ]
+                                                      name "right_outer_knuckle"
+                                                      boundingObject USE robotiq_arg2f_140_outer_knuckle
+                                                      physics Physics {
+                                                        density -1
+                                                        mass 0.008532
+                                                        centerOfMass [ -0.000200 0.019944 0.029225 ]
+                                                        inertiaMatrix [
+                                                          2.893281e-06 1.867198e-06 1.219052e-06
+                                                          -1.579350e-19 -1.939804e-19 -1.218586e-06
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                  HingeJoint {
+                                                    jointParameters HingeJointParameters {
+                                                      axis -1.000000 -0.000000 0.000000
+                                                      anchor 0.000000 0.012700 0.061420
+                                                    }
+                                                    device [
+                                                      RotationalMotor {
+                                                        name "right_inner_knuckle_joint"
+                                                        maxVelocity 2.0
+                                                        minPosition -0.8757
+                                                        maxPosition 0.8757
+                                                        maxTorque 1000.0
+                                                      }
+                                                      PositionSensor {
+                                                        name "right_inner_knuckle_joint_sensor"
+                                                      }
+                                                    ]
+                                                    endPoint Solid {
+                                                      translation 0.000000 0.012700 0.061420
+                                                      rotation 0.000000 -0.911903 -0.410405 3.141593
+                                                      children [
+                                                        Shape {
+                                                          appearance DEF right_inner_knuckle_material PBRAppearance {
+                                                            baseColor 0.100000 0.100000 0.100000
+                                                            roughness 1.000000
+                                                            metalness 0
+                                                          }
+                                                          geometry USE robotiq_arg2f_140_inner_knuckle
+                                                        }
+                                                      ]
+                                                      name "right_inner_knuckle"
+                                                      boundingObject USE robotiq_arg2f_140_inner_knuckle
+                                                      physics Physics {
+                                                        density -1
+                                                        mass 0.027118
+                                                        centerOfMass [ 0.000123 0.050785 0.001040 ]
+                                                        inertiaMatrix [
+                                                          2.619104e-05 2.827024e-06 2.836959e-05
+                                                          -2.436169e-07 -6.377899e-09 -5.372007e-07
+                                                        ]
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                                name "robotiq_arg2f_base_link"
+                                                boundingObject USE robotiq_arg2f_base_link
+                                                physics Physics {
+                                                  density -1
+                                                  mass 0.226520
+                                                  centerOfMass [ 0.000000 -0.000005 0.031450 ]
+                                                  inertiaMatrix [
+                                                    2.000500e-04 1.783200e-04 1.347800e-04
+                                                    -4.244200e-10 -2.906900e-10 -3.440200e-08
+                                                  ]
+                                                }
+                                              }
+                                            ]
+                                            name "wrist_3_link"
+                                            boundingObject DEF wrist3 Mesh {
+                                              url "../meshes/ur5e/collision/wrist3.stl"
+                                            }
+                                            physics Physics {
+                                              density -1
+                                              mass 0.187900
+                                              centerOfMass [ 0.000000 0.077100 0.000000 ]
+                                              inertiaMatrix [
+                                                9.890410e-05 1.321172e-04 9.890410e-05
+                                                0.000000e+00 0.000000e+00 1.626308e-16
+                                              ]
+                                            }
+                                          }
+                                        }
+                                      ]
+                                      name "wrist_2_link"
+                                      boundingObject DEF wrist2 Mesh {
+                                        url "../meshes/ur5e/collision/wrist2.stl"
+                                      }
+                                      physics Physics {
+                                        density -1
+                                        mass 1.219000
+                                        centerOfMass [ 0.000000 0.000000 0.100000 ]
+                                        inertiaMatrix [
+                                          2.559899e-03 2.559899e-03 2.194200e-03
+                                          0.000000e+00 0.000000e+00 0.000000e+00
+                                        ]
+                                      }
+                                    }
+                                  }
+                                ]
+                                name "wrist_1_link"
+                                boundingObject DEF wrist1 Mesh {
+                                  url "../meshes/ur5e/collision/wrist1.stl"
+                                }
+                                physics Physics {
+                                  density -1
+                                  mass 1.219000
+                                  centerOfMass [ 0.000000 0.127000 0.000000 ]
+                                  inertiaMatrix [
+                                    2.559899e-03 2.559899e-03 2.194200e-03
+                                    0.000000e+00 0.000000e+00 0.000000e+00
+                                  ]
+                                }
+                              }
+                            }
+                          ]
+                          name "forearm_link"
+                          boundingObject DEF forearm Mesh {
+                            url "../meshes/ur5e/collision/forearm.stl"
+                          }
+                          physics Physics {
+                            density -1
+                            mass 2.275000
+                            centerOfMass [ 0.000000 0.000000 0.196000 ]
+                            inertiaMatrix [
+                              3.117962e-02 3.117962e-02 4.095000e-03
+                              0.000000e+00 0.000000e+00 0.000000e+00
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                    name "upper_arm_link"
+                    boundingObject DEF upperarm Mesh {
+                      url "../meshes/ur5e/collision/upperarm.stl"
+                    }
+                    physics Physics {
+                      density -1
+                      mass 8.393000
+                      centerOfMass [ 0.000000 0.000000 0.212500 ]
+                      inertiaMatrix [
+                        1.338858e-01 1.338858e-01 1.510740e-02
+                        0.000000e+00 0.000000e+00 0.000000e+00
+                      ]
+                    }
+                  }
+                }
+              ]
+              name "shoulder_link"
+              boundingObject DEF shoulder Mesh {
+                url "../meshes/ur5e/collision/shoulder.stl"
+              }
+              physics Physics {
+                density -1
+                mass 3.700000
+                centerOfMass [ 0.000000 0.000000 0.000000 ]
+                inertiaMatrix [
+                  1.026750e-02 1.026750e-02 6.660000e-03
+                  0.000000e+00 0.000000e+00 0.000000e+00
+                ]
+              }
+            }
+          }
+        ]
+        name "base_link"
+        boundingObject DEF base Mesh {
+          url "../meshes/ur5e/collision/base.stl"
+        }
+        physics Physics {
+          density -1
+          mass 4.000000
+          centerOfMass [ 0.000000 0.000000 0.000000 ]
+          inertiaMatrix [
+            4.433332e-03 4.433332e-03 7.200000e-03
+            0.000000e+00 0.000000e+00 0.000000e+00
+          ]
+        }
+      }
+    ]
+    name IS name
+  }
+}

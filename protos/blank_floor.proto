@@ -1,0 +1,29 @@
+#VRML_SIM R2025a utf8
+
+PROTO blank_floor [
+  field SFVec3f    translation 0.8 0 -0.01
+  field SFRotation rotation 0 0 1 0
+  field SFVec3f    size 2 2 0.02
+  field SFColor    color 0.8 0.8 0.8
+]
+{
+  Solid {
+    translation IS translation
+    rotation IS rotation
+    children [
+      Shape {
+        appearance PBRAppearance {
+          baseColor IS color
+          roughness 1
+          metalness 0
+        }
+        geometry Box {
+          size IS size
+        }
+      }
+    ]
+    boundingObject Box {
+      size IS size
+    }
+  }
+}
