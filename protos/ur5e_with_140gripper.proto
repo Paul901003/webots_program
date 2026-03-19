@@ -8,7 +8,7 @@ PROTO ur5e_with_140gripper [
   field  SFVec3f     translation     0 0 0
   field  SFRotation  rotation        0 0 1 0
   field  SFString    name            "ur5e_with_140gripper"  # Is `Robot.name`.
-  field  SFString    controller      "void"                  # Is `Robot.controller`.
+  field  SFString    controller      "ur5e_home_open_gripper"                  # Is `Robot.controller`.
   field  MFString    controllerArgs  []                      # Is `Robot.controllerArgs`.
   field  SFString    customData      ""                      # Is `Robot.customData`.
   field  SFBool      supervisor      FALSE                   # Is `Robot.supervisor`.
