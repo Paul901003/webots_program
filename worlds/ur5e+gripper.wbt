@@ -1,0 +1,65 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/devices/robotiq/protos/Robotiq2f140Gripper.proto"
+EXTERNPROTO "../protos/blank_floor.proto"
+EXTERNPROTO "../protos/IntelRealsenseD455.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.18758592364771315 -0.1846408916611136 -0.9647379241927951 1.6628595979822978
+  position 0.8704000226778557 2.115585137032186 0.027246621529652803
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+UR5e {
+  hidden position_0_0 0.00021315199569371852
+  hidden rotation_1 0 0 1 0.00021315199560668674
+  hidden position_1_0 0.00025419986622422905
+  hidden rotation_2 0 1 0 1.5710501998662243
+  hidden position_2_0 7.569035094020043e-05
+  hidden rotation_3 0 1 0 7.56903481799031e-05
+  hidden position_3_0 2.0124902451488117e-05
+  hidden rotation_4 0 1 0 1.570816124902451
+  hidden position_4_0 -4.642171774098677e-06
+  hidden rotation_5 0 0 -1 4.642184076185887e-06
+  hidden position_5_0 4.645014669825998e-06
+  hidden rotation_6 0 1 0 4.645053105163045e-06
+  hidden position_14_0 0.26993418079931975
+  hidden position_14_1 -0.26870200608932215
+  hidden position_14_2 0.2699298958328894
+  hidden position_14_3 -0.26868486484976284
+  hidden rotation_15 1 0 0 2.02586181920068
+  hidden position_16_0 0.2767698060157096
+  hidden rotation_17 -1 0 0 0.4482301939842898
+  hidden rotation_19 1 0 0 2.027093993910678
+  hidden position_19_0 0.2755376313055744
+  hidden rotation_20 -2.3305712760102923e-08 0.8483881939015246 0.5293746050279601 3.141592996849762
+  hidden position_21_0 0.2764773382073543
+  hidden translation_22 0 0.08176045936935251 -0.028219240459616986
+  hidden rotation_22 -1 0 0 0.4485226617926405
+  hidden rotation_24 -2.3198865923562385e-08 -0.8487175733866702 -0.5288463676954224 3.141592996878712
+  hidden position_24_0 0.2752323072240204
+  toolSlot [
+    IntelRealsenseD455 {
+      translation 0 0 0.05
+      rotation 0 0 1 1.5707996938995747
+    }
+    Pose {
+      rotation 0 1 0 1.5707996938995747
+      children [
+        Robotiq2f140Gripper {
+          rotation -1 0 0 1.5707996938995747
+        }
+      ]
+      rotationStep 0.2
+    }
+  ]
+}
+blank_floor {
+}

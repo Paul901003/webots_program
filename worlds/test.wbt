@@ -8,8 +8,8 @@ EXTERNPROTO "../protos/ur5e_with_140gripper.proto"
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.29127033852295287 0.03631080022254023 0.9559514191024161 2.604309063328911
-  position 5.567767423956211 -2.8944659147179737 3.6491342735464163
+  orientation -0.2938586803196306 0.021780020896753953 0.9556007046306224 2.6117829415996288
+  position 3.437064705693092 -1.4649408967858868 2.028026899105011
   followType "None"
 }
 TexturedBackground {
@@ -19,28 +19,31 @@ TexturedBackgroundLight {
 blank_floor {
 }
 ur5e_with_140gripper {
-  hidden translation_1 1.8025876403447413e-08 -6.355427660921968e-08 -0.0010072239440468214
-  hidden rotation_1 -0.3486883960376078 0.937238692168361 -0.00019071250777905543 0.00022017162574045816
-  hidden position_1_0 9.3673861995676e-05
-  hidden rotation_2 0 0 1 9.367386214847469e-05
-  hidden position_2_0 5.55772330541604e-05
-  hidden rotation_3 0 1 0 1.5708515772330691
-  hidden position_3_0 1.599542258268194e-05
-  hidden rotation_4 0 1 0 1.5995409231160056e-05
-  hidden position_4_0 -9.715102158711776e-10
-  hidden rotation_5 0 1 0 1.5707959990285432
-  hidden position_5_0 4.79197570513179e-10
-  hidden position_6_0 -1.2054953708561551e-06
-  hidden rotation_7 0 -1 0 1.2054293403719062e-06
-  hidden position_9_0 1.4189871500036588e-11
-  hidden position_9_1 -3.084993934100044e-08
-  hidden position_9_2 -9.332432816095297e-08
-  hidden position_9_3 1.4464039780797273e-08
-  hidden position_11_0 2.526741849167835e-08
-  hidden rotation_12 -1 0 0 0.7249999747325812
-  hidden rotation_14 1 0 0 2.2957959691500607
-  hidden rotation_15 -8.082124950213191e-15 0.9119032793001033 0.41040517687002653 3.141593
-  hidden position_16_0 2.244270959667602e-08
-  hidden rotation_17 -1 0 0 0.72499997755729
-  hidden rotation_19 1.2526227522543145e-15 -0.9119033014185542 -0.4104051277237429 3.141593
+  controller "ur5e_home_open_gripper"
+  extensionSlot [
+    Camera {
+      translation 0 0 0.05
+      rotation 0 0 1 0
+      children [
+        Shape {
+          appearance PBRAppearance {
+          }
+          geometry Box {
+            size 0.03 0.1 0.03
+          }
+        }
+      ]
+    }
+  ]
+}
+Robot {
+  children [
+    Camera {
+      translation 0 0 0.18
+      name "CamLeft"
+      width 512
+      height 512
+    }
+  ]
+  supervisor TRUE
 }

@@ -3,17 +3,19 @@
 # license url: http://www.apache.org/licenses/LICENSE-2.0
 # This is a proto file for Webots for the ur5e_with_140gripper
 # Extracted from: /home/cho/webots_program/urdfs/ur5e_with_140gripper.urdf
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/devices/robotis/protos/RobotisLds01.proto"
 
 PROTO ur5e_with_140gripper [
   field  SFVec3f     translation     0 0 0
   field  SFRotation  rotation        0 0 1 0
   field  SFString    name            "ur5e_with_140gripper"  # Is `Robot.name`.
-  field  SFString    controller      "ur5e_home_open_gripper"                  # Is `Robot.controller`.
+  field  SFString    controller      "void"                  # Is `Robot.controller`.
   field  MFString    controllerArgs  []                      # Is `Robot.controllerArgs`.
   field  SFString    customData      ""                      # Is `Robot.customData`.
   field  SFBool      supervisor      FALSE                   # Is `Robot.supervisor`.
   field  SFBool      synchronization TRUE                    # Is `Robot.synchronization`.
   field  SFBool      selfCollision   FALSE                   # Is `Robot.selfCollision`.
+  field MFNode     extensionSlot   [ RobotisLds01 { } ]  # Extends the robot with new nodes in the extension slot.
 ]
 {
   Robot {
@@ -175,6 +177,11 @@ PROTO ur5e_with_140gripper [
                                                 translation 0.000000 0.100000 0.000000
                                                 rotation 0.000000 0.000000 1.000000 1.570796
                                                 name "ee_link"
+                                                children [
+                                                  Pose {
+                                                    children IS extensionSlot
+                                                  }
+                                                ]
                                                 boundingObject Pose {
                                                   translation -0.010000 0.000000 0.000000
                                                   children [

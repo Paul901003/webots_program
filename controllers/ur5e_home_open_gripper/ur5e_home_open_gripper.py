@@ -22,12 +22,12 @@ HOME_Q = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 READY_Q = [0.0, -1.57, 1.57, -1.57, -1.57, 0.0]
 
 GRIPPER_OPEN_Q = {
-    'finger_joint': 0.6,
-    'left_inner_finger_joint': 0.0,
-    'left_inner_knuckle_joint': 0.0,
-    'right_outer_knuckle_joint': 0.0,
-    'right_inner_finger_joint': 0.0,
-    'right_inner_knuckle_joint': 0.0,
+    'finger_joint': 0.0,    # lower="0" upper="0.7"
+    'left_inner_finger_joint': 0.0,   # lower="-0.8757" upper="0.8757"
+    'left_inner_knuckle_joint': 0.0,    # lower="-0.8757" upper="0.8757"
+    'right_outer_knuckle_joint': 0.0,   # lower="-0.725" upper="0.725"
+    'right_inner_finger_joint': 0.0,    # lower="-0.8757" upper="0.8757"
+    'right_inner_knuckle_joint': 0.0,   #  lower="-0.8757" upper="0.8757"
 }
 
 class Controller:
