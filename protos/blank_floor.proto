@@ -1,9 +1,9 @@
 #VRML_SIM R2025a utf8
 
 PROTO blank_floor [
-  field SFVec3f    translation 0.8 0 -0.01
+  field SFVec3f    translation 0 0 -0.05  # 厚度 0.1，所以中心在 -0.05 確保表面在 Z=0
   field SFRotation rotation 0 0 1 0
-  field SFVec3f    size 2 2 0.02
+  field SFVec3f    size 2 2 0.1          # 增加厚度至 0.1m 以防止穿模
   field SFColor    color 0.8 0.8 0.8
 ]
 {
@@ -22,8 +22,11 @@ PROTO blank_floor [
         }
       }
     ]
+    # 碰撞體必須與幾何形狀完全一致
     boundingObject Box {
       size IS size
     }
+    # 地板不需要 Physics 節點（保持靜態），但可以設定材質名稱
+    contactMaterial "default"
   }
 }
