@@ -1,0 +1,2231 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/devices/robotiq/protos/Robotiq2f140Gripper.proto"
+EXTERNPROTO "../protos/IntelRealsenseD455.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
+  position 0 0 20
+  followType "None"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 1.2
+  castShadows FALSE
+}
+
+# Large floor to accommodate all objects
+Solid {
+  translation 0.0 0.0 -0.005
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.7 0.7 0.7
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 5 5 0.01
+      }
+    }
+  ]
+  name "floor"
+  boundingObject Box {
+    size 5 5 0.01
+  }
+}
+
+# ============================================================
+# YCB Objects arranged in a grid (10 columns x rows)
+# Grid spacing: 0.4m x 0.4m, starting at (-1.8, -3.6, 0.05)
+# ============================================================
+
+# Row 0, Col 0 — 002_master_chef_can
+Solid {
+  translation -1.8 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/002_master_chef_can/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/002_master_chef_can/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "002_master_chef_can"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/002_master_chef_can/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.414
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 1 — 003_cracker_box
+Solid {
+  translation -1.4 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/003_cracker_box/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/003_cracker_box/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "003_cracker_box"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/003_cracker_box/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.411
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 2 — 004_sugar_box
+Solid {
+  translation -1.0 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/004_sugar_box/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/004_sugar_box/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "004_sugar_box"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/004_sugar_box/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.514
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 3 — 005_tomato_soup_can
+Solid {
+  translation -0.6 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/005_tomato_soup_can/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/005_tomato_soup_can/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "005_tomato_soup_can"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/005_tomato_soup_can/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.349
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 4 — 006_mustard_bottle
+Solid {
+  translation -0.2 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/006_mustard_bottle/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/006_mustard_bottle/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "006_mustard_bottle"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/006_mustard_bottle/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.603
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 5 — 007_tuna_fish_can
+Solid {
+  translation 0.2 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/007_tuna_fish_can/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/007_tuna_fish_can/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "007_tuna_fish_can"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/007_tuna_fish_can/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.171
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 6 — 008_pudding_box
+Solid {
+  translation 0.6 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/008_pudding_box/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/008_pudding_box/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "008_pudding_box"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/008_pudding_box/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.187
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 7 — 009_gelatin_box
+Solid {
+  translation 1.0 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/009_gelatin_box/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/009_gelatin_box/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "009_gelatin_box"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/009_gelatin_box/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.097
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 8 — 010_potted_meat_can
+Solid {
+  translation 1.4 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/010_potted_meat_can/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/010_potted_meat_can/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "010_potted_meat_can"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/010_potted_meat_can/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.370
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 0, Col 9 — 011_banana
+Solid {
+  translation 1.8 -1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/011_banana/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/011_banana/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "011_banana"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/011_banana/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.066
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 0 — 012_strawberry
+Solid {
+  translation -1.8 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/012_strawberry/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/012_strawberry/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "012_strawberry"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/012_strawberry/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.018
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 1 — 013_apple
+Solid {
+  translation -1.4 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/013_apple/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/013_apple/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "013_apple"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/013_apple/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.068
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 2 — 014_lemon
+Solid {
+  translation -1.0 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/014_lemon/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/014_lemon/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "014_lemon"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/014_lemon/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.029
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 3 — 015_peach
+Solid {
+  translation -0.6 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/015_peach/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/015_peach/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "015_peach"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/015_peach/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.098
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 4 — 016_pear
+Solid {
+  translation -0.2 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/016_pear/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/016_pear/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "016_pear"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/016_pear/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.067
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 5 — 017_orange
+Solid {
+  translation 0.2 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/017_orange/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/017_orange/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "017_orange"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/017_orange/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.097
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 6 — 018_plum
+Solid {
+  translation 0.6 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/018_plum/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/018_plum/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "018_plum"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/018_plum/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 7 — 019_pitcher_base
+Solid {
+  translation 1.0 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/019_pitcher_base/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/019_pitcher_base/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "019_pitcher_base"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/019_pitcher_base/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.178
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 8 — 021_bleach_cleanser
+Solid {
+  translation 1.4 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/021_bleach_cleanser/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/021_bleach_cleanser/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "021_bleach_cleanser"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/021_bleach_cleanser/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 1.131
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 1, Col 9 — 022_windex_bottle
+Solid {
+  translation 1.8 -1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/022_windex_bottle/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/022_windex_bottle/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "022_windex_bottle"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/022_windex_bottle/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 1.022
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 0 — 024_bowl
+Solid {
+  translation -1.8 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/024_bowl/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/024_bowl/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "024_bowl"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/024_bowl/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.147
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 1 — 025_mug
+Solid {
+  translation -1.4 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/025_mug/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/025_mug/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "025_mug"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/025_mug/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.118
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 2 — 026_sponge
+Solid {
+  translation -1.0 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/026_sponge/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/026_sponge/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "026_sponge"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/026_sponge/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.006
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 3 — 028_skillet_lid
+Solid {
+  translation -0.6 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/028_skillet_lid/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/028_skillet_lid/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "028_skillet_lid"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/028_skillet_lid/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.652
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 4 — 029_plate
+Solid {
+  translation -0.2 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/029_plate/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/029_plate/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "029_plate"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/029_plate/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.279
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 5 — 030_fork
+Solid {
+  translation 0.2 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/030_fork/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/030_fork/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "030_fork"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/030_fork/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.034
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 6 — 031_spoon
+Solid {
+  translation 0.6 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/031_spoon/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/031_spoon/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "031_spoon"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/031_spoon/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.030
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 7 — 032_knife
+Solid {
+  translation 1.0 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/032_knife/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/032_knife/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "032_knife"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/032_knife/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.031
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 8 — 033_spatula
+Solid {
+  translation 1.4 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/033_spatula/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/033_spatula/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "033_spatula"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/033_spatula/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.051
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 2, Col 9 — 035_power_drill
+Solid {
+  translation 1.8 -0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/035_power_drill/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/035_power_drill/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "035_power_drill"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/035_power_drill/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.895
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 0 — 036_wood_block
+Solid {
+  translation -1.8 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/036_wood_block/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/036_wood_block/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "036_wood_block"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/036_wood_block/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.729
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 1 — 037_scissors
+Solid {
+  translation -1.4 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/037_scissors/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/037_scissors/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "037_scissors"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/037_scissors/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.082
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 2 — 038_padlock
+Solid {
+  translation -1.0 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/038_padlock/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/038_padlock/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "038_padlock"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/038_padlock/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.304
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 3 — 040_large_marker
+Solid {
+  translation -0.6 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/040_large_marker/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/040_large_marker/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "040_large_marker"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/040_large_marker/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.031
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 4 — 042_adjustable_wrench
+Solid {
+  translation -0.2 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/042_adjustable_wrench/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/042_adjustable_wrench/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "042_adjustable_wrench"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/042_adjustable_wrench/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.252
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 5 — 043_phillips_screwdriver
+Solid {
+  translation 0.2 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/043_phillips_screwdriver/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/043_phillips_screwdriver/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "043_phillips_screwdriver"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/043_phillips_screwdriver/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.096
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 6 — 044_flat_screwdriver
+Solid {
+  translation 0.6 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/044_flat_screwdriver/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/044_flat_screwdriver/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "044_flat_screwdriver"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/044_flat_screwdriver/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.096
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 7 — 048_hammer
+Solid {
+  translation 1.0 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/048_hammer/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/048_hammer/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "048_hammer"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/048_hammer/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.665
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 8 — 050_medium_clamp
+Solid {
+  translation 1.4 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/050_medium_clamp/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/050_medium_clamp/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "050_medium_clamp"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/050_medium_clamp/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.059
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 3, Col 9 — 051_large_clamp
+Solid {
+  translation 1.8 -0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/051_large_clamp/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/051_large_clamp/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "051_large_clamp"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/051_large_clamp/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.125
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 0 — 052_extra_large_clamp
+Solid {
+  translation -1.8 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/052_extra_large_clamp/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/052_extra_large_clamp/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "052_extra_large_clamp"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/052_extra_large_clamp/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.202
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 1 — 053_mini_soccer_ball
+Solid {
+  translation -1.4 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/053_mini_soccer_ball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/053_mini_soccer_ball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "053_mini_soccer_ball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/053_mini_soccer_ball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.123
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 2 — 054_softball
+Solid {
+  translation -1.0 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/054_softball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/054_softball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "054_softball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/054_softball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.191
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 3 — 055_baseball
+Solid {
+  translation -0.6 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/055_baseball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/055_baseball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "055_baseball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/055_baseball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.149
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 4 — 056_tennis_ball
+Solid {
+  translation -0.2 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/056_tennis_ball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/056_tennis_ball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "056_tennis_ball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/056_tennis_ball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.058
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 5 — 057_racquetball
+Solid {
+  translation 0.2 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/057_racquetball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/057_racquetball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "057_racquetball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/057_racquetball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.041
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 6 — 058_golf_ball
+Solid {
+  translation 0.6 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/058_golf_ball/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/058_golf_ball/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "058_golf_ball"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/058_golf_ball/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.046
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 7 — 059_chain
+Solid {
+  translation 1.0 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/059_chain/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/059_chain/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "059_chain"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/059_chain/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.098
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 8 — 061_foam_brick
+Solid {
+  translation 1.4 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/061_foam_brick/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/061_foam_brick/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "061_foam_brick"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/061_foam_brick/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.030
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 4, Col 9 — 062_dice
+Solid {
+  translation 1.8 0.2 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/062_dice/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/062_dice/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "062_dice"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/062_dice/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.009
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 0 — 063-a_marbles
+Solid {
+  translation -1.8 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/063-a_marbles/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/063-a_marbles/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "063-a_marbles"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/063-a_marbles/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.040
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 1 — 063-b_marbles
+Solid {
+  translation -1.4 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/063-b_marbles/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/063-b_marbles/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "063-b_marbles"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/063-b_marbles/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.040
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 2 — 065-a_cups
+Solid {
+  translation -1.0 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-a_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-a_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-a_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-a_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 3 — 065-b_cups
+Solid {
+  translation -0.6 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-b_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-b_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-b_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-b_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 4 — 065-c_cups
+Solid {
+  translation -0.2 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-c_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-c_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-c_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-c_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 5 — 065-d_cups
+Solid {
+  translation 0.2 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-d_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-d_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-d_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-d_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 6 — 065-e_cups
+Solid {
+  translation 0.6 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-e_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-e_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-e_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-e_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 7 — 065-f_cups
+Solid {
+  translation 1.0 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-f_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-f_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-f_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-f_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 8 — 065-g_cups
+Solid {
+  translation 1.4 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-g_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-g_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-g_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-g_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 5, Col 9 — 065-h_cups
+Solid {
+  translation 1.8 0.6 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-h_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-h_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-h_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-h_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 0 — 065-i_cups
+Solid {
+  translation -1.8 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-i_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-i_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-i_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-i_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 1 — 065-j_cups
+Solid {
+  translation -1.4 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/065-j_cups/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/065-j_cups/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "065-j_cups"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/065-j_cups/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.010
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 2 — 070-a_colored_wood_blocks
+Solid {
+  translation -1.0 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/070-a_colored_wood_blocks/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/070-a_colored_wood_blocks/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "070-a_colored_wood_blocks"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/070-a_colored_wood_blocks/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 3 — 070-b_colored_wood_blocks
+Solid {
+  translation -0.6 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/070-b_colored_wood_blocks/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/070-b_colored_wood_blocks/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "070-b_colored_wood_blocks"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/070-b_colored_wood_blocks/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 4 — 071_nine_hole_peg_test
+Solid {
+  translation -0.2 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/071_nine_hole_peg_test/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/071_nine_hole_peg_test/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "071_nine_hole_peg_test"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/071_nine_hole_peg_test/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.209
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 5 — 072-a_toy_airplane
+Solid {
+  translation 0.2 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/072-a_toy_airplane/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/072-a_toy_airplane/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "072-a_toy_airplane"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/072-a_toy_airplane/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 6 — 072-b_toy_airplane
+Solid {
+  translation 0.6 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/072-b_toy_airplane/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/072-b_toy_airplane/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "072-b_toy_airplane"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/072-b_toy_airplane/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 7 — 072-c_toy_airplane
+Solid {
+  translation 1.0 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/072-c_toy_airplane/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/072-c_toy_airplane/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "072-c_toy_airplane"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/072-c_toy_airplane/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 8 — 072-d_toy_airplane
+Solid {
+  translation 1.4 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/072-d_toy_airplane/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/072-d_toy_airplane/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "072-d_toy_airplane"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/072-d_toy_airplane/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 6, Col 9 — 072-e_toy_airplane
+Solid {
+  translation 1.8 1.0 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/072-e_toy_airplane/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/072-e_toy_airplane/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "072-e_toy_airplane"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/072-e_toy_airplane/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.100
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 0 — 073-a_lego_duplo
+Solid {
+  translation -1.8 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-a_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-a_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-a_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-a_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 1 — 073-b_lego_duplo
+Solid {
+  translation -1.4 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-b_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-b_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-b_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-b_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 2 — 073-c_lego_duplo
+Solid {
+  translation -1.0 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-c_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-c_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-c_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-c_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 3 — 073-d_lego_duplo
+Solid {
+  translation -0.6 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-d_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-d_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-d_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-d_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 4 — 073-e_lego_duplo
+Solid {
+  translation -0.2 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-e_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-e_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-e_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-e_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 5 — 073-f_lego_duplo
+Solid {
+  translation 0.2 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-f_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-f_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-f_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-f_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 6 — 073-g_lego_duplo
+Solid {
+  translation 0.6 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/073-g_lego_duplo/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/073-g_lego_duplo/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "073-g_lego_duplo"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/073-g_lego_duplo/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.025
+    centerOfMass [ 0 0 0 ]
+  }
+}
+
+# Row 7, Col 7 — 077_rubiks_cube
+Solid {
+  translation 1.0 1.4 0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColorMap ImageTexture {
+          url [ "../urdfs/ycb_assets/077_rubiks_cube/google_16k/texture_map.png" ]
+        }
+        roughness 1
+        metalness 0
+      }
+      geometry Mesh {
+        url [ "../urdfs/ycb_assets/077_rubiks_cube/google_16k/textured.obj" ]
+      }
+    }
+  ]
+  name "077_rubiks_cube"
+  boundingObject Mesh {
+    url [ "../urdfs/ycb_assets/077_rubiks_cube/google_16k/nontextured.stl" ]
+  }
+  physics Physics {
+    density -1
+    mass 0.094
+    centerOfMass [ 0 0 0 ]
+  }
+}

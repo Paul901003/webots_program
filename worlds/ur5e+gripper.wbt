@@ -10,8 +10,8 @@ EXTERNPROTO "../protos/IntelRealsenseD455.proto"
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 1.4646544368366699e-05 1.4646585783950113e-05 5.129794107965444
+  orientation 1 0 -1 3.14
+  position 0 0 5.5
   followType "None"
 }
 TexturedBackground {
@@ -23,41 +23,6 @@ TexturedBackgroundLight {
 blank_floor {
 }
 UR5e {
-  hidden position_0_0 6.033700038080361e-10
-  hidden position_1_0 -1.5707793248563038
-  hidden linearVelocity_1 2.0623390610454175e-07 -4.979989374511851e-09 5.189637320683559e-08
-  hidden angularVelocity_1 7.454742252171317e-09 5.4170080055372754e-08 -1.560943987349054e-08
-  hidden rotation_2 0 1 0 1.6675138425221232e-05
-  hidden position_2_0 1.5708279603839208
-  hidden linearVelocity_2 -1.272207821661913e-05 -1.1078983482991786e-08 1.0612622361573755e-07
-  hidden angularVelocity_2 5.339188283911335e-09 -6.182507764360952e-05 -9.474873231585888e-09
-  hidden rotation_3 0 1 0 1.5708279603839206
-  hidden position_3_0 -1.5707849566590277
-  hidden linearVelocity_3 -2.5725706198094396e-05 -2.0911888613754667e-08 -3.226048418004513e-06
-  hidden angularVelocity_3 1.3590469511726156e-08 2.256513947410059e-05 -2.438531196462898e-08
-  hidden rotation_4 0 0.9999999999999999 0 1.1043117754457561e-05
-  hidden position_4_0 -1.5707915799949301
-  hidden linearVelocity_4 -2.56367929437352e-05 -3.1894888752629285e-08 -8.638100078491844e-06
-  hidden angularVelocity_4 2.1961579652007227e-08 0.0001069739502693506 -3.793778228266623e-08
-  hidden rotation_5 0 0 -1 1.5707915799949301
-  hidden position_5_0 -8.063848181744806e-11
-  hidden linearVelocity_5 -2.5577117869399566e-05 -4.083109295253779e-08 -1.929641706160993e-05
-  hidden angularVelocity_5 4.7488387565408426e-05 0.00010696358608610769 -4.25336450241877e-08
-  hidden position_14_0 0.2880824617162659
-  hidden position_14_1 -0.28678597897150154
-  hidden position_14_2 0.2880813959389696
-  hidden position_14_3 -0.2867544503100011
-  hidden rotation_15 1 0 0 2.007713538283734
-  hidden position_16_0 0.2999270516634252
-  hidden rotation_17 -1 0 0 0.4250729483365708
-  hidden rotation_19 0.9999999999999999 0 0 2.0090100210284976
-  hidden position_19_0 0.298630568918681
-  hidden rotation_20 -2.4862402365846143e-08 0.8435488479532404 0.5370524565782756 3.1415929964125975
-  hidden position_21_0 0.2996075824468938
-  hidden translation_22 0 0.08176090290586219 -0.028219109047657644
-  hidden rotation_22 -0.9999999999999999 0 0 0.4253924175531015
-  hidden rotation_24 -2.4748670163728447e-08 -0.843904981968509 -0.5364926666868151 3.141592996445513
-  hidden position_24_0 0.2982806368181022
   translation -0.5 0 0
   controller "ur5e_controller"
   toolSlot [
@@ -77,8 +42,8 @@ UR5e {
   ]
 }
 Solid {
-  translation 0 0 0.03
-  rotation 0 0 1 0
+  translation 4.3168278168040487e-08 3.355658160465107e-08 4.193592336428968e-06
+  rotation -0.6133216791900049 0.7898331894082016 -0.0002252661114981136 0.0006141756001595377
   children [
     Shape {
       appearance PBRAppearance {
@@ -104,15 +69,16 @@ Solid {
     ]
   }
   physics Physics {
-    density -1      
-    mass 0.5         
-    centerOfMass [ 0 0 0 ] 
+    density -1
+    mass 0.414
+    centerOfMass [
+      0 0 0
+    ]
   }
 }
-
 Solid {
-  translation 0 0.3 0.03
-  rotation 0 0 1 0
+  translation 0.0006230618054420253 0.30007678619527567 0.002598888950211656
+  rotation -0.05163564631105826 0.9979080176516726 0.038901778064097246 0.13157228192254286
   children [
     Shape {
       appearance PBRAppearance {
@@ -138,15 +104,16 @@ Solid {
     ]
   }
   physics Physics {
-    density -1      
-    mass 0.5         
-    centerOfMass [ 0 0 0 ] 
+    density -1
+    mass 0.411
+    centerOfMass [
+      0 0 0
+    ]
   }
 }
-
 Solid {
-  translation 0 -0.3 0.03
-  rotation 0 0 1 0
+  translation -0.0001174111599964647 -0.30037255386577383 -0.00031396632358188833
+  rotation -0.7039554841005385 0.0657657314878301 0.7071927212342101 0.020328275943020346
   children [
     Shape {
       appearance PBRAppearance {
@@ -172,8 +139,10 @@ Solid {
     ]
   }
   physics Physics {
-    density -1      
-    mass 0.5         
-    centerOfMass [ 0 0 0 ] 
+    density -1
+    mass 0.514
+    centerOfMass [
+      0 0 0
+    ]
   }
 }
