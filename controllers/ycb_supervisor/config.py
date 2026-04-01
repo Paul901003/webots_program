@@ -1,4 +1,7 @@
 # ── 生成參數 ──────────────────────────────────────────────
+# TARGET_OBJECTS 留空時，supervisor 會進入隨機模式，從 ALL_OBJECTS 中抽取 NUM_OBJECTS 個。
+# 若只想放特定物件，直接在 TARGET_OBJECTS 中填入名稱即可。
+# 若想一次放全部物件，請使用：TARGET_OBJECTS = ALL_OBJECTS.copy()
 NUM_OBJECTS  = 5
 GRID_COLS    = 3
 SPACING      = 0.15
@@ -6,11 +9,6 @@ SPAWN_HEIGHT = 0.02
 X_OFFSET     = 0.3
 Z_OFFSET     = 0.1
 ASSET_BASE   = "../urdfs/ycb_assets"
-
-TARGET_OBJECTS = [
-    # "005_tomato_soup_can",
-    # "002_master_chef_can",
-]
 
 # ── 質量表 ────────────────────────────────────────────────
 MASS_TABLE = {
@@ -96,111 +94,110 @@ MASS_TABLE = {
 
 ALL_OBJECTS = list(MASS_TABLE.keys())
 
+TARGET_OBJECTS = [
+    # "005_tomato_soup_can",
+    # "002_master_chef_can",
+]
+
 # ── 碰撞形狀預設值與形狀表 ────────────────────────────────
-# 格式：
-#   "物件名稱": ("形狀", (尺寸...))
-#
-#   Box      → ("Box",      (x, y, z))          單位：公尺
-#   Sphere   → ("Sphere",   (radius,))
-#   Cylinder → ("Cylinder", (radius, height))
-#
+# SHAPE_TABLE 只保留碰撞形狀種類，實際尺寸由 ycb_geometries.json 提供。
 # 沒有填入的物件會使用預設值 DEFAULT_SHAPE。
 # ────────────────────────────────────────────────────────────
-DEFAULT_SHAPE = ("Box", (0.1, 0.1, 0.1))
+DEFAULT_SHAPE = "Box"
 
 SHAPE_TABLE = {
     # ── 罐頭 / 瓶子（圓柱形）──
-    "002_master_chef_can":   ("Cylinder", (0.102/2, 0.139)),
-    "005_tomato_soup_can":   ("Cylinder", (0.066/2, 0.101)),
-    "007_tuna_fish_can":     ("Cylinder", (0.042, 0.034)),
-    "010_potted_meat_can":   ("Box",      (0.058, 0.083, 0.054)),
-    "006_mustard_bottle":    ("Box",      (0.058, 0.095, 0.191)),
-    "021_bleach_cleanser":   ("Cylinder", (0.032, 0.250)),
-    "022_windex_bottle":     ("Box",      (0.050, 0.097, 0.280)),
-    "019_pitcher_base":      ("Box",      (0.097, 0.133, 0.177)),
+    "002_master_chef_can":   "Cylinder",
+    "005_tomato_soup_can":   "Cylinder",
+    "007_tuna_fish_can":     "Cylinder",
+    "010_potted_meat_can":   "Box",
+    "006_mustard_bottle":    "Box",
+    "021_bleach_cleanser":   "Cylinder",
+    "022_windex_bottle":     "Box",
+    "019_pitcher_base":      "Box",
 
     # ── 盒子（Box）──
-    "003_cracker_box":       ("Box",      (0.060, 0.158, 0.209)),
-    "004_sugar_box":         ("Box",      (0.045, 0.089, 0.175)),
-    "008_pudding_box":       ("Box",      (0.086, 0.112, 0.042)),
-    "009_gelatin_box":       ("Box",      (0.057, 0.085, 0.031)),
-    "036_wood_block":        ("Box",      (0.086, 0.054, 0.054)),
-    "061_foam_brick":        ("Box",      (0.076, 0.051, 0.051)),
-    "062_dice":              ("Box",      (0.018, 0.018, 0.018)),
+    "003_cracker_box":       "Box",
+    "004_sugar_box":         "Box",
+    "008_pudding_box":       "Box",
+    "009_gelatin_box":       "Box",
+    "036_wood_block":        "Box",
+    "061_foam_brick":        "Box",
+    "062_dice":              "Box",
 
     # ── 水果（Sphere 近似）──
-    "012_strawberry":        ("Sphere",   (0.022,)),
-    "013_apple":             ("Sphere",   (0.037,)),
-    "014_lemon":             ("Sphere",   (0.030,)),
-    "015_peach":             ("Sphere",   (0.037,)),
-    "016_pear":              ("Box",      (0.055, 0.055, 0.087)),
-    "017_orange":            ("Sphere",   (0.035,)),
-    "018_plum":              ("Sphere",   (0.025,)),
-    "011_banana":            ("Box",      (0.030, 0.190, 0.040)),
+    "012_strawberry":        "Sphere",
+    "013_apple":             "Sphere",
+    "014_lemon":             "Sphere",
+    "015_peach":             "Sphere",
+    "016_pear":              "Box",
+    "017_orange":            "Sphere",
+    "018_plum":              "Sphere",
+    "011_banana":            "Box",
 
     # ── 球類 ──
-    "053_mini_soccer_ball":  ("Sphere",   (0.065,)),
-    "054_softball":          ("Sphere",   (0.048,)),
-    "055_baseball":          ("Sphere",   (0.037,)),
-    "056_tennis_ball":       ("Sphere",   (0.033,)),
-    "057_racquetball":       ("Sphere",   (0.029,)),
-    "058_golf_ball":         ("Sphere",   (0.021,)),
+    "053_mini_soccer_ball":  "Sphere",
+    "054_softball":          "Sphere",
+    "055_baseball":          "Sphere",
+    "056_tennis_ball":       "Sphere",
+    "057_racquetball":       "Sphere",
+    "058_golf_ball":         "Sphere",
 
     # ── 餐具（細長 Box）──
-    "024_bowl":              ("Box",      (0.161, 0.161, 0.053)),
-    "025_mug":               ("Box",      (0.117, 0.093, 0.081)),
-    "029_plate":             ("Cylinder", (0.126, 0.020)),
-    "028_skillet_lid":       ("Cylinder", (0.133, 0.024)),
-    "030_fork":              ("Box",      (0.018, 0.186, 0.008)),
-    "031_spoon":             ("Box",      (0.017, 0.178, 0.035)),
-    "032_knife":             ("Box",      (0.015, 0.238, 0.009)),
-    "033_spatula":           ("Box",      (0.033, 0.304, 0.010)),
-    "026_sponge":            ("Box",      (0.111, 0.069, 0.042)),
+    "024_bowl":              "Box",
+    "025_mug":               "Box",
+    "029_plate":             "Cylinder",
+    "028_skillet_lid":       "Cylinder",
+    "030_fork":              "Box",
+    "031_spoon":             "Box",
+    "032_knife":             "Box",
+    "033_spatula":           "Box",
+    "026_sponge":            "Box",
 
     # ── 工具 ──
-    "035_power_drill":       ("Box",      (0.093, 0.184, 0.214)),
-    "037_scissors":          ("Box",      (0.025, 0.200, 0.065)),
-    "038_padlock":           ("Box",      (0.048, 0.073, 0.028)),
-    "040_large_marker":      ("Cylinder", (0.012, 0.148)),
-    "042_adjustable_wrench": ("Box",      (0.031, 0.230, 0.039)),
-    "043_phillips_screwdriver": ("Cylinder", (0.010, 0.220)),
-    "044_flat_screwdriver":  ("Cylinder", (0.010, 0.228)),
-    "048_hammer":            ("Box",      (0.040, 0.285, 0.090)),
-    "050_medium_clamp":      ("Box",      (0.025, 0.152, 0.073)),
-    "051_large_clamp":       ("Box",      (0.031, 0.198, 0.090)),
-    "052_extra_large_clamp": ("Box",      (0.038, 0.248, 0.112)),
-    "059_chain":             ("Box",      (0.020, 0.300, 0.020)),
+    "035_power_drill":       "Box",
+    "037_scissors":          "Box",
+    "038_padlock":           "Box",
+    "040_large_marker":      "Cylinder",
+    "042_adjustable_wrench": "Box",
+    "043_phillips_screwdriver": "Cylinder",
+    "044_flat_screwdriver":  "Cylinder",
+    "048_hammer":            "Box",
+    "050_medium_clamp":      "Box",
+    "051_large_clamp":       "Box",
+    "052_extra_large_clamp": "Box",
+    "059_chain":             "Box",
 
     # ── 玩具 / 積木 ──
-    "070-a_colored_wood_blocks": ("Box", (0.055, 0.055, 0.055)),
-    "070-b_colored_wood_blocks": ("Box", (0.055, 0.055, 0.055)),
-    "071_nine_hole_peg_test":    ("Box", (0.125, 0.125, 0.020)),
-    "072-a_toy_airplane":        ("Box", (0.180, 0.155, 0.055)),
-    "072-b_toy_airplane":        ("Box", (0.180, 0.155, 0.055)),
-    "072-c_toy_airplane":        ("Box", (0.180, 0.155, 0.055)),
-    "072-d_toy_airplane":        ("Box", (0.180, 0.155, 0.055)),
-    "072-e_toy_airplane":        ("Box", (0.180, 0.155, 0.055)),
-    "073-a_lego_duplo":          ("Box", (0.031, 0.031, 0.038)),
-    "073-b_lego_duplo":          ("Box", (0.031, 0.031, 0.038)),
-    "073-c_lego_duplo":          ("Box", (0.031, 0.063, 0.038)),
-    "073-d_lego_duplo":          ("Box", (0.031, 0.063, 0.038)),
-    "073-e_lego_duplo":          ("Box", (0.063, 0.063, 0.038)),
-    "073-f_lego_duplo":          ("Box", (0.063, 0.063, 0.038)),
-    "073-g_lego_duplo":          ("Box", (0.031, 0.095, 0.038)),
-    "077_rubiks_cube":           ("Box", (0.057, 0.057, 0.057)),
+    "070-a_colored_wood_blocks": "Box",
+    "070-b_colored_wood_blocks": "Box",
+    "071_nine_hole_peg_test":    "Box",
+    "072-a_toy_airplane":        "Box",
+    "072-b_toy_airplane":        "Box",
+    "072-c_toy_airplane":        "Box",
+    "072-d_toy_airplane":        "Box",
+    "072-e_toy_airplane":        "Box",
+    "073-a_lego_duplo":          "Box",
+    "073-b_lego_duplo":          "Box",
+    "073-c_lego_duplo":          "Box",
+    "073-d_lego_duplo":          "Box",
+    "073-e_lego_duplo":          "Box",
+    "073-f_lego_duplo":          "Box",
+    "073-g_lego_duplo":          "Box",
+    "077_rubiks_cube":           "Box",
 
     # ── 彈珠 ──
-    "063-a_marbles":         ("Sphere",   (0.013,)),
-    "063-b_marbles":         ("Sphere",   (0.013,)),
-    "065-a_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-b_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-c_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-d_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-e_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-f_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-g_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-h_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-i_cups":            ("Cylinder", (0.020, 0.050)),
-    "065-j_cups":            ("Cylinder", (0.020, 0.050)),
+    "063-a_marbles":         "Sphere",
+    "063-b_marbles":         "Sphere",
+    "065-a_cups":            "Cylinder",
+    "065-b_cups":            "Cylinder",
+    "065-c_cups":            "Cylinder",
+    "065-d_cups":            "Cylinder",
+    "065-e_cups":            "Cylinder",
+    "065-f_cups":            "Cylinder",
+    "065-g_cups":            "Cylinder",
+    "065-h_cups":            "Cylinder",
+    "065-i_cups":            "Cylinder",
+    "065-j_cups":            "Cylinder",
 }
 # ────────────────────────────────────────────────────────────

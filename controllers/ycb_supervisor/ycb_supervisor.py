@@ -72,6 +72,10 @@ from config import (
     DEFAULT_SHAPE, SHAPE_TABLE,
 )
 
+SPAWN_CLEARANCE = 0.01
+SPACING_MARGIN = 0.02
+ARM_SETTLE_TIME_SEC = 2.5
+
 # ── 1. 載入 JSON 資料 ──
 current_dir = os.path.dirname(os.path.abspath(__file__))
 json_path = os.path.join(current_dir, "ycb_geometries.json")
@@ -81,14 +85,31 @@ try:
 except:
     YCB_GEO_DATA = {}
 
+def get_geometry(name: str):
+    return YCB_GEO_DATA.get(name, {
+        "center": {"x": 0.0, "y": 0.0, "z": 0.0},
+        "size": {"x": 0.1, "y": 0.1, "z": 0.1}
+    })
+
+def get_collision_half_height(name: str) -> float:
+    shape = SHAPE_TABLE.get(name, DEFAULT_SHAPE)
+    size = get_geometry(name)["size"]
+    sx, sy, sz = size["x"], size["y"], size["z"]
+
+    if shape == "Sphere":
+        return (sx + sy + sz) / 6.0
+    return sz / 2.0
+
+def get_collision_footprint(name: str) -> float:
+    size = get_geometry(name)["size"]
+    return max(size["x"], size["y"])
+
 # ── 2. 修改後的 Bounding Object 產生器 ──
 def make_bounding_object(name: str, sx: float, sy: float, sz: float) -> str:
     """
     根據 SHAPE_TABLE 決定形狀，但尺寸由 JSON 提供的 sx, sy, sz 決定。
     """
-    # 從 SHAPE_TABLE 只拿「形狀名稱」，尺寸改用 JSON 算的
-    shape_info = SHAPE_TABLE.get(name, DEFAULT_SHAPE)
-    shape = shape_info[0] 
+    shape = SHAPE_TABLE.get(name, DEFAULT_SHAPE)
 
     if shape == "Sphere":
         r = (sx + sy + sz) / 6.0
@@ -110,10 +131,7 @@ def make_vrml(name: str, x: float, y: float, z: float) -> str:
     base = f"{ASSET_BASE}/{name}/google_16k"
     
     # 從 JSON 抓取幾何中心 (cx, cy, cz) 與 尺寸 (sx, sy, sz)
-    geo = YCB_GEO_DATA.get(name, {
-        "center": {"x": 0, "y": 0, "z": 0},
-        "size": {"x": 0.1, "y": 0.1, "z": 0.1}
-    })
+    geo = get_geometry(name)
     cx, cy, cz = geo["center"]["x"], geo["center"]["y"], geo["center"]["z"]
     sx, sy, sz = geo["size"]["x"], geo["size"]["y"], geo["size"]["z"]
 
@@ -141,7 +159,10 @@ def make_vrml(name: str, x: float, y: float, z: float) -> str:
   ]
   name "{name}"
   {bounding}
-  physics Physics {{ mass {mass} }}
+  physics Physics {{
+    density -1
+    mass {mass}
+  }}
 }}"""
 
 def compute_grid_positions(n: int, cols: int, spacing: float):
@@ -179,18 +200,32 @@ def spawn_objects(supervisor: Supervisor, object_list: list):
         print("[Supervisor] Warning: Object list is empty.")
         return
 
-    positions = compute_grid_positions(len(object_list), GRID_COLS, SPACING)
+    largest_footprint = max(get_collision_footprint(name) for name in object_list)
+    safe_spacing = max(SPACING, largest_footprint + SPACING_MARGIN)
+    positions = compute_grid_positions(len(object_list), GRID_COLS, safe_spacing)
     root_children = supervisor.getRoot().getField('children')
     
-    for name, (grid_x, grid_z) in zip(object_list, positions):
+    for name, (grid_x, grid_y) in zip(object_list, positions):
         if name not in MASS_TABLE:
             continue
             
         final_x = grid_x + X_OFFSET 
-        final_z = grid_z + Z_OFFSET
+        final_y = grid_y + Z_OFFSET
         
-        vrml = make_vrml(name, final_x, SPAWN_HEIGHT, final_z) 
+        safe_spawn_height = max(SPAWN_HEIGHT, get_collision_half_height(name) + SPAWN_CLEARANCE)
+        vrml = make_vrml(name, final_x, final_y, safe_spawn_height)
         root_children.importMFNodeFromString(-1, vrml)
+
+
+def wait_for_arm_settle(supervisor: Supervisor, timestep: int, seconds: float):
+    """
+    讓場景先跑一小段時間，給手臂控制器機會把機械臂移到目標姿態後再生成物件。
+    """
+    steps = max(0, int(seconds * 1000 / max(1, timestep)))
+    for _ in range(steps):
+        if supervisor.step(timestep) == -1:
+            return False
+    return True
 
 
 # ── 主程式 ──────────────────────────────────────────────────
@@ -210,6 +245,9 @@ def main():
     print(f"[Supervisor] Mode: {mode_text}")
     print("[Supervisor] Clearing existing YCB objects...")
     clear_ycb_objects(supervisor)
+    print(f"[Supervisor] Waiting {ARM_SETTLE_TIME_SEC:.1f}s for arm to reach target pose...")
+    if not wait_for_arm_settle(supervisor, timestep, ARM_SETTLE_TIME_SEC):
+        return
 
     spawn_objects(supervisor, current_list)
 
@@ -218,9 +256,12 @@ def main():
 
     while supervisor.step(timestep) != -1:
         key = keyboard.getKey()
-        if key == ord('R'):
+        if key == ord('N'):
             print("[Supervisor] Resetting scene...")
             clear_ycb_objects(supervisor)
+            print(f"[Supervisor] Waiting {ARM_SETTLE_TIME_SEC:.1f}s for arm to reach target pose...")
+            if not wait_for_arm_settle(supervisor, timestep, ARM_SETTLE_TIME_SEC):
+                break
             
             # 如果是隨機模式，重按 R 會換一批；指定模式則原樣重放
             if not TARGET_OBJECTS:
@@ -230,4 +271,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

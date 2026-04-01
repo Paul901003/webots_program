@@ -48,7 +48,7 @@ Solid {
 
 # Row 0, Col 0 — 002_master_chef_can
 Solid {
-  translation -1.8 -3.6 0.05
+  translation -1.8 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -76,7 +76,7 @@ Solid {
 
 # Row 0, Col 1 — 003_cracker_box
 Solid {
-  translation -1.4 -3.6 0.05
+  translation -1.4 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -104,7 +104,7 @@ Solid {
 
 # Row 0, Col 2 — 004_sugar_box
 Solid {
-  translation -1.0 -3.6 0.05
+  translation -1.0 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -132,7 +132,7 @@ Solid {
 
 # Row 0, Col 3 — 005_tomato_soup_can
 Solid {
-  translation -0.6 -3.6 0.05
+  translation -0.6 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -160,7 +160,7 @@ Solid {
 
 # Row 0, Col 4 — 006_mustard_bottle
 Solid {
-  translation -0.2 -3.6 0.05
+  translation -0.2 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -188,7 +188,7 @@ Solid {
 
 # Row 0, Col 5 — 007_tuna_fish_can
 Solid {
-  translation 0.2 -3.6 0.05
+  translation 0.2 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -216,7 +216,7 @@ Solid {
 
 # Row 0, Col 6 — 008_pudding_box
 Solid {
-  translation 0.6 -3.6 0.05
+  translation 0.6 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -244,7 +244,7 @@ Solid {
 
 # Row 0, Col 7 — 009_gelatin_box
 Solid {
-  translation 1.0 -3.6 0.05
+  translation 1.0 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -272,7 +272,7 @@ Solid {
 
 # Row 0, Col 8 — 010_potted_meat_can
 Solid {
-  translation 1.4 -3.6 0.05
+  translation 1.4 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -300,7 +300,7 @@ Solid {
 
 # Row 0, Col 9 — 011_banana
 Solid {
-  translation 1.8 -3.6 0.05
+  translation 1.8 -1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -328,7 +328,7 @@ Solid {
 
 # Row 1, Col 0 — 012_strawberry
 Solid {
-  translation -1.8 -3.2 0.05
+  translation -1.8 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -356,7 +356,7 @@ Solid {
 
 # Row 1, Col 1 — 013_apple
 Solid {
-  translation -1.4 -3.2 0.05
+  translation -1.4 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -384,7 +384,7 @@ Solid {
 
 # Row 1, Col 2 — 014_lemon
 Solid {
-  translation -1.0 -3.2 0.05
+  translation -1.0 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -412,7 +412,7 @@ Solid {
 
 # Row 1, Col 3 — 015_peach
 Solid {
-  translation -0.6 -3.2 0.05
+  translation -0.6 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -440,7 +440,7 @@ Solid {
 
 # Row 1, Col 4 — 016_pear
 Solid {
-  translation -0.2 -3.2 0.05
+  translation -0.2 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -468,7 +468,7 @@ Solid {
 
 # Row 1, Col 5 — 017_orange
 Solid {
-  translation 0.2 -3.2 0.05
+  translation 0.2 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -496,7 +496,7 @@ Solid {
 
 # Row 1, Col 6 — 018_plum
 Solid {
-  translation 0.6 -3.2 0.05
+  translation 0.6 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -524,7 +524,7 @@ Solid {
 
 # Row 1, Col 7 — 019_pitcher_base
 Solid {
-  translation 1.0 -3.2 0.05
+  translation 1.0 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -552,7 +552,7 @@ Solid {
 
 # Row 1, Col 8 — 021_bleach_cleanser
 Solid {
-  translation 1.4 -3.2 0.05
+  translation 1.4 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -580,7 +580,7 @@ Solid {
 
 # Row 1, Col 9 — 022_windex_bottle
 Solid {
-  translation 1.8 -3.2 0.05
+  translation 1.8 -1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -608,7 +608,7 @@ Solid {
 
 # Row 2, Col 0 — 024_bowl
 Solid {
-  translation -1.8 -2.8 0.05
+  translation -1.8 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -636,7 +636,7 @@ Solid {
 
 # Row 2, Col 1 — 025_mug
 Solid {
-  translation -1.4 -2.8 0.05
+  translation -1.4 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -664,7 +664,7 @@ Solid {
 
 # Row 2, Col 2 — 026_sponge
 Solid {
-  translation -1.0 -2.8 0.05
+  translation -1.0 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -692,7 +692,7 @@ Solid {
 
 # Row 2, Col 3 — 028_skillet_lid
 Solid {
-  translation -0.6 -2.8 0.05
+  translation -0.6 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -720,7 +720,7 @@ Solid {
 
 # Row 2, Col 4 — 029_plate
 Solid {
-  translation -0.2 -2.8 0.05
+  translation -0.2 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -748,7 +748,7 @@ Solid {
 
 # Row 2, Col 5 — 030_fork
 Solid {
-  translation 0.2 -2.8 0.05
+  translation 0.2 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -776,7 +776,7 @@ Solid {
 
 # Row 2, Col 6 — 031_spoon
 Solid {
-  translation 0.6 -2.8 0.05
+  translation 0.6 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -804,7 +804,7 @@ Solid {
 
 # Row 2, Col 7 — 032_knife
 Solid {
-  translation 1.0 -2.8 0.05
+  translation 1.0 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -832,7 +832,7 @@ Solid {
 
 # Row 2, Col 8 — 033_spatula
 Solid {
-  translation 1.4 -2.8 0.05
+  translation 1.4 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -860,7 +860,7 @@ Solid {
 
 # Row 2, Col 9 — 035_power_drill
 Solid {
-  translation 1.8 -2.8 0.05
+  translation 1.8 -0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -888,7 +888,7 @@ Solid {
 
 # Row 3, Col 0 — 036_wood_block
 Solid {
-  translation -1.8 -2.4 0.05
+  translation -1.8 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -916,7 +916,7 @@ Solid {
 
 # Row 3, Col 1 — 037_scissors
 Solid {
-  translation -1.4 -2.4 0.05
+  translation -1.4 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -944,7 +944,7 @@ Solid {
 
 # Row 3, Col 2 — 038_padlock
 Solid {
-  translation -1.0 -2.4 0.05
+  translation -1.0 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -972,7 +972,7 @@ Solid {
 
 # Row 3, Col 3 — 040_large_marker
 Solid {
-  translation -0.6 -2.4 0.05
+  translation -0.6 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1000,7 +1000,7 @@ Solid {
 
 # Row 3, Col 4 — 042_adjustable_wrench
 Solid {
-  translation -0.2 -2.4 0.05
+  translation -0.2 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1028,7 +1028,7 @@ Solid {
 
 # Row 3, Col 5 — 043_phillips_screwdriver
 Solid {
-  translation 0.2 -2.4 0.05
+  translation 0.2 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1056,7 +1056,7 @@ Solid {
 
 # Row 3, Col 6 — 044_flat_screwdriver
 Solid {
-  translation 0.6 -2.4 0.05
+  translation 0.6 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1084,7 +1084,7 @@ Solid {
 
 # Row 3, Col 7 — 048_hammer
 Solid {
-  translation 1.0 -2.4 0.05
+  translation 1.0 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1112,7 +1112,7 @@ Solid {
 
 # Row 3, Col 8 — 050_medium_clamp
 Solid {
-  translation 1.4 -2.4 0.05
+  translation 1.4 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1140,7 +1140,7 @@ Solid {
 
 # Row 3, Col 9 — 051_large_clamp
 Solid {
-  translation 1.8 -2.4 0.05
+  translation 1.8 -0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1168,7 +1168,7 @@ Solid {
 
 # Row 4, Col 0 — 052_extra_large_clamp
 Solid {
-  translation -1.8 -2.0 0.05
+  translation -1.8 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1196,7 +1196,7 @@ Solid {
 
 # Row 4, Col 1 — 053_mini_soccer_ball
 Solid {
-  translation -1.4 -2.0 0.05
+  translation -1.4 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1224,7 +1224,7 @@ Solid {
 
 # Row 4, Col 2 — 054_softball
 Solid {
-  translation -1.0 -2.0 0.05
+  translation -1.0 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1252,7 +1252,7 @@ Solid {
 
 # Row 4, Col 3 — 055_baseball
 Solid {
-  translation -0.6 -2.0 0.05
+  translation -0.6 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1280,7 +1280,7 @@ Solid {
 
 # Row 4, Col 4 — 056_tennis_ball
 Solid {
-  translation -0.2 -2.0 0.05
+  translation -0.2 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1308,7 +1308,7 @@ Solid {
 
 # Row 4, Col 5 — 057_racquetball
 Solid {
-  translation 0.2 -2.0 0.05
+  translation 0.2 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1336,7 +1336,7 @@ Solid {
 
 # Row 4, Col 6 — 058_golf_ball
 Solid {
-  translation 0.6 -2.0 0.05
+  translation 0.6 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1364,7 +1364,7 @@ Solid {
 
 # Row 4, Col 7 — 059_chain
 Solid {
-  translation 1.0 -2.0 0.05
+  translation 1.0 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1392,7 +1392,7 @@ Solid {
 
 # Row 4, Col 8 — 061_foam_brick
 Solid {
-  translation 1.4 -2.0 0.05
+  translation 1.4 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1420,7 +1420,7 @@ Solid {
 
 # Row 4, Col 9 — 062_dice
 Solid {
-  translation 1.8 -2.0 0.05
+  translation 1.8 0.2 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1448,7 +1448,7 @@ Solid {
 
 # Row 5, Col 0 — 063-a_marbles
 Solid {
-  translation -1.8 -1.6 0.05
+  translation -1.8 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1476,7 +1476,7 @@ Solid {
 
 # Row 5, Col 1 — 063-b_marbles
 Solid {
-  translation -1.4 -1.6 0.05
+  translation -1.4 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1504,7 +1504,7 @@ Solid {
 
 # Row 5, Col 2 — 065-a_cups
 Solid {
-  translation -1.0 -1.6 0.05
+  translation -1.0 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1532,7 +1532,7 @@ Solid {
 
 # Row 5, Col 3 — 065-b_cups
 Solid {
-  translation -0.6 -1.6 0.05
+  translation -0.6 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1560,7 +1560,7 @@ Solid {
 
 # Row 5, Col 4 — 065-c_cups
 Solid {
-  translation -0.2 -1.6 0.05
+  translation -0.2 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1588,7 +1588,7 @@ Solid {
 
 # Row 5, Col 5 — 065-d_cups
 Solid {
-  translation 0.2 -1.6 0.05
+  translation 0.2 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1616,7 +1616,7 @@ Solid {
 
 # Row 5, Col 6 — 065-e_cups
 Solid {
-  translation 0.6 -1.6 0.05
+  translation 0.6 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1644,7 +1644,7 @@ Solid {
 
 # Row 5, Col 7 — 065-f_cups
 Solid {
-  translation 1.0 -1.6 0.05
+  translation 1.0 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1672,7 +1672,7 @@ Solid {
 
 # Row 5, Col 8 — 065-g_cups
 Solid {
-  translation 1.4 -1.6 0.05
+  translation 1.4 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1700,7 +1700,7 @@ Solid {
 
 # Row 5, Col 9 — 065-h_cups
 Solid {
-  translation 1.8 -1.6 0.05
+  translation 1.8 0.6 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1728,7 +1728,7 @@ Solid {
 
 # Row 6, Col 0 — 065-i_cups
 Solid {
-  translation -1.8 -1.2 0.05
+  translation -1.8 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1756,7 +1756,7 @@ Solid {
 
 # Row 6, Col 1 — 065-j_cups
 Solid {
-  translation -1.4 -1.2 0.05
+  translation -1.4 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1784,7 +1784,7 @@ Solid {
 
 # Row 6, Col 2 — 070-a_colored_wood_blocks
 Solid {
-  translation -1.0 -1.2 0.05
+  translation -1.0 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1812,7 +1812,7 @@ Solid {
 
 # Row 6, Col 3 — 070-b_colored_wood_blocks
 Solid {
-  translation -0.6 -1.2 0.05
+  translation -0.6 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1840,7 +1840,7 @@ Solid {
 
 # Row 6, Col 4 — 071_nine_hole_peg_test
 Solid {
-  translation -0.2 -1.2 0.05
+  translation -0.2 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1868,7 +1868,7 @@ Solid {
 
 # Row 6, Col 5 — 072-a_toy_airplane
 Solid {
-  translation 0.2 -1.2 0.05
+  translation 0.2 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1896,7 +1896,7 @@ Solid {
 
 # Row 6, Col 6 — 072-b_toy_airplane
 Solid {
-  translation 0.6 -1.2 0.05
+  translation 0.6 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1924,7 +1924,7 @@ Solid {
 
 # Row 6, Col 7 — 072-c_toy_airplane
 Solid {
-  translation 1.0 -1.2 0.05
+  translation 1.0 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1952,7 +1952,7 @@ Solid {
 
 # Row 6, Col 8 — 072-d_toy_airplane
 Solid {
-  translation 1.4 -1.2 0.05
+  translation 1.4 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -1980,7 +1980,7 @@ Solid {
 
 # Row 6, Col 9 — 072-e_toy_airplane
 Solid {
-  translation 1.8 -1.2 0.05
+  translation 1.8 1.0 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2008,7 +2008,7 @@ Solid {
 
 # Row 7, Col 0 — 073-a_lego_duplo
 Solid {
-  translation -1.8 -0.8 0.05
+  translation -1.8 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2036,7 +2036,7 @@ Solid {
 
 # Row 7, Col 1 — 073-b_lego_duplo
 Solid {
-  translation -1.4 -0.8 0.05
+  translation -1.4 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2064,7 +2064,7 @@ Solid {
 
 # Row 7, Col 2 — 073-c_lego_duplo
 Solid {
-  translation -1.0 -0.8 0.05
+  translation -1.0 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2092,7 +2092,7 @@ Solid {
 
 # Row 7, Col 3 — 073-d_lego_duplo
 Solid {
-  translation -0.6 -0.8 0.05
+  translation -0.6 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2120,7 +2120,7 @@ Solid {
 
 # Row 7, Col 4 — 073-e_lego_duplo
 Solid {
-  translation -0.2 -0.8 0.05
+  translation -0.2 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2148,7 +2148,7 @@ Solid {
 
 # Row 7, Col 5 — 073-f_lego_duplo
 Solid {
-  translation 0.2 -0.8 0.05
+  translation 0.2 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2176,7 +2176,7 @@ Solid {
 
 # Row 7, Col 6 — 073-g_lego_duplo
 Solid {
-  translation 0.6 -0.8 0.05
+  translation 0.6 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
@@ -2204,7 +2204,7 @@ Solid {
 
 # Row 7, Col 7 — 077_rubiks_cube
 Solid {
-  translation 1.0 -0.8 0.05
+  translation 1.0 1.4 0.05
   children [
     Shape {
       appearance PBRAppearance {
