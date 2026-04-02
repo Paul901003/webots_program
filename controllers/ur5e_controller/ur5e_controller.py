@@ -1,8 +1,17 @@
 from controller import Robot, Keyboard
 import math
+import shutil
+
+PRINT_KEY_DEBOUNCE_MS = 250
+
 
 def clamp(value, min_value, max_value):
     return max(min_value, min(value, max_value))
+
+
+def get_separator_line(fill_char='='):
+    terminal_width = shutil.get_terminal_size(fallback=(80, 20)).columns
+    return fill_char * max(terminal_width - 1, 20)
 
 def main():
     robot = Robot()
@@ -44,6 +53,8 @@ def main():
     pose_1 = [0.0, -1.2, 1.8, -1.6, -1.57, 0.0]
     pose_2 = [0.5, -1.0, 1.3, -1.8, -1.57, 0.3]
     pose_3 = [-0.5, -1.3, 1.6, -1.4, -1.57, -0.3]
+    capture_apex_pose = [0.0, -1.05, 1.10, -1.62, -1.57, 0.0]
+    capture_45deg_pose = [0.45, -1.15, 1.45, -1.87, -1.57, 0.25]
 
     angle_step = 0.05
 
@@ -79,13 +90,14 @@ def main():
     gripper_step = 0.02
     gripper_min = 0.0
     gripper_max = 0.7
+    last_print_time_ms = -PRINT_KEY_DEBOUNCE_MS
 
     print("\n=========================================")
     print("控制器已啟動")
     print("先點擊 Webots 3D 視窗再按鍵")
     print("夾爪: C 關 / V 開")
     print("手臂: Q/A, W/S, E/D, R/F, T/G, Y/H")
-    print("新功能: Z=Home, X=Stop, P=Print, 1/2/3=Preset")
+    print("新功能: Z=Home, X=Stop, P=Print, 1/2/3=Preset, 4/5=Capture")
     print("=========================================\n")
 
     while robot.step(timestep) != -1:
@@ -142,14 +154,18 @@ def main():
                 print("保持目前姿態")
 
             elif key == ord('P'):
-                if all(s is not None for s in sensors):
-                    current = [round(s.getValue(), 4) for s in sensors]
-                    current_deg = [round(math.degrees(v), 2) for v in current]
-                    print(f"rad: {current}")
-                    print(f"deg: {current_deg}")
-                else:
-                    print(f"target rad: {[round(v, 4) for v in target_positions]}")
-                print(f"gripper: {round(gripper_position, 4)}")
+                current_time_ms = robot.getTime() * 1000.0
+                if current_time_ms - last_print_time_ms >= PRINT_KEY_DEBOUNCE_MS:
+                    last_print_time_ms = current_time_ms
+                    if all(s is not None for s in sensors):
+                        current = [round(s.getValue(), 4) for s in sensors]
+                        current_deg = [round(math.degrees(v), 2) for v in current]
+                        print(f"rad: {current}")
+                        print(f"deg: {current_deg}")
+                    else:
+                        print(f"target rad: {[round(v, 4) for v in target_positions]}")
+                    print(f"gripper: {round(gripper_position, 4)}")
+                    print(get_separator_line())
 
             elif key == ord('1'):
                 target_positions = pose_1[:]
@@ -162,6 +178,14 @@ def main():
             elif key == ord('3'):
                 target_positions = pose_3[:]
                 print("切到 preset 3")
+
+            elif key == ord('4'):
+                target_positions = capture_apex_pose[:]
+                print("切到 capture apex pose")
+
+            elif key == ord('5'):
+                target_positions = capture_45deg_pose[:]
+                print("切到 capture 45deg pose")
 
             key = keyboard.getKey()
 

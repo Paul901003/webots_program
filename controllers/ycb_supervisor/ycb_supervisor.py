@@ -69,12 +69,8 @@ import os
 from config import (
     NUM_OBJECTS, GRID_COLS, SPACING, SPAWN_HEIGHT, X_OFFSET, Z_OFFSET,
     ASSET_BASE, TARGET_OBJECTS, MASS_TABLE, ALL_OBJECTS,
-    DEFAULT_SHAPE, SHAPE_TABLE,
+    DEFAULT_SHAPE, SHAPE_TABLE, SPAWN_CLEARANCE, SPACING_MARGIN, ARM_SETTLE_TIME_SEC
 )
-
-SPAWN_CLEARANCE = 0.01
-SPACING_MARGIN = 0.02
-ARM_SETTLE_TIME_SEC = 2.5
 
 # ── 1. 載入 JSON 資料 ──
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -263,7 +259,7 @@ def main():
             if not wait_for_arm_settle(supervisor, timestep, ARM_SETTLE_TIME_SEC):
                 break
             
-            # 如果是隨機模式，重按 R 會換一批；指定模式則原樣重放
+            # 如果是隨機模式，重按 N 會換一批；指定模式則原樣重放
             if not TARGET_OBJECTS:
                 current_list = random.sample(ALL_OBJECTS, k=min(NUM_OBJECTS, len(ALL_OBJECTS)))
             

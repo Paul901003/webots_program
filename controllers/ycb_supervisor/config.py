@@ -6,8 +6,15 @@ NUM_OBJECTS  = 5
 GRID_COLS    = 3
 SPACING      = 0.15
 SPAWN_HEIGHT = 0.02
-X_OFFSET     = 0.3
+# 參考點（世界座標，平面 x/y）：網格中心會先對齊到這裡
+REFERENCE_X  = -0.5
+REFERENCE_Y  = 0.0
+# 偏移量：在參考點基礎上再平移
+X_OFFSET     = 0.5
 Z_OFFSET     = 0.1
+SPAWN_CLEARANCE = 0.01
+SPACING_MARGIN = 0.02
+ARM_SETTLE_TIME_SEC = 2.0
 ASSET_BASE   = "../urdfs/ycb_assets"
 
 # ── 質量表 ────────────────────────────────────────────────

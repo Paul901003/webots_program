@@ -8,6 +8,15 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "../protos/IntelRealsenseD455.proto"
 
 WorldInfo {
+  contactProperties [
+    ContactProperties {
+      material1 "default"
+      material2 "default"
+      coulombFriction [
+        1.2
+      ]
+    }
+  ]
 }
 Viewpoint {
   orientation 1 0 -1 3.14
@@ -22,18 +31,14 @@ TexturedBackgroundLight {
 }
 blank_floor {
 }
-UR5e {
+DEF UR5E UR5e {
   translation -0.5 0 0
   controller "ur5e_controller"
   toolSlot [
-    IntelRealsenseD455 {
+    DEF UR5E_CAMERA IntelRealsenseD455 {
       translation 0 -0.03 0.05
       rotation 0 0 1 1.5708
       controller "realsense_controller"
-      resolution "HD"
-      minRange 0.3
-      maxRange 3.0
-      fps 30
     }
     Pose {
       rotation 0 1 0 1.5707996938995747
@@ -46,6 +51,12 @@ UR5e {
   ]
 }
 Robot {
+  name "workspace_supervisor_robot"
+  supervisor TRUE
+  controller "workspace_supervisor"
+}
+Robot {
+  name "ycb_supervisor_robot"
   supervisor TRUE
   controller "ycb_supervisor"
 }
