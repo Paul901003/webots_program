@@ -1,21 +1,28 @@
 # ── 生成參數 ──────────────────────────────────────────────
-# TARGET_OBJECTS 留空時，supervisor 會進入隨機模式，從 ALL_OBJECTS 中抽取 NUM_OBJECTS 個。
-# 若只想放特定物件，直接在 TARGET_OBJECTS 中填入名稱即可。
-# 若想一次放全部物件，請使用：TARGET_OBJECTS = ALL_OBJECTS.copy()
-NUM_OBJECTS  = 5
+# TARGET_OBJECTS 留空時，資料集排程會使用 ALL_OBJECTS。
+# 若只想測特定物件集合，直接在 TARGET_OBJECTS 中填入名稱即可。
+NUM_OBJECTS  = 3
 GRID_COLS    = 3
 SPACING      = 0.15
 SPAWN_HEIGHT = 0.02
 # 參考點（世界座標，平面 x/y）：網格中心會先對齊到這裡
-REFERENCE_X  = -0.5
+REFERENCE_X  = -1.0
 REFERENCE_Y  = 0.0
 # 偏移量：在參考點基礎上再平移
-X_OFFSET     = 0.5
+X_OFFSET     = 0.0
 Z_OFFSET     = 0.1
 SPAWN_CLEARANCE = 0.01
 SPACING_MARGIN = 0.02
 ARM_SETTLE_TIME_SEC = 2.0
 ASSET_BASE   = "../urdfs/ycb_assets"
+
+# ── 資料集拍攝排程 ────────────────────────────────────────
+# single_and_multi:
+#   1. 單物體：每種物體各拍一次
+#   2. 多物體：每次隨機/自動挑 3 種物體，直到每種物體至少出現 MULTI_MIN_APPEARANCES 次
+DATASET_CAPTURE_MODE = "single_and_multi"
+MULTI_OBJECT_COUNT = 3
+MULTI_MIN_APPEARANCES = 5
 
 # ── 質量表 ────────────────────────────────────────────────
 MASS_TABLE = {

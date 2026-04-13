@@ -140,6 +140,7 @@ def main():
     camera_active = True
     max_range = 6.0  # 預設值，若成功啟用會更新
     last_key_time_ms = -KEY_DEBOUNCE_MS
+    x_toggle_armed = True
 
     if camera and range_finder and gps and imu:
         camera.enable(sampling_period)
@@ -156,65 +157,77 @@ def main():
 
     print("\n=========================================")
     print("【重要】請點擊 Webots 的 3D 模擬視窗來操作鍵盤！")
-    print("按鍵 [B] : 切換相機與視窗開關")
-    print("按鍵 [M] : 拍照、儲存深度圖，並輸出相機座標與三軸旋轉")
+    print("按鍵 [X] : 切換相機與視窗開關")
+    print("按鍵 [P] : 拍照、儲存深度圖，並輸出相機座標與三軸旋轉")
     print("=========================================\n")
 
     # 主控制迴圈
     while robot.step(timestep) != -1:
         current_time_ms = robot.getTime() * 1000.0
 
-        # 讀取 Webots 鍵盤輸入
+        # 讀取並清空這個 timestep 的鍵盤事件佇列
         key = keyboard.getKey()
+        x_pressed_this_step = False
+        capture_requested = False
+        while key != -1:
+            if key in (ord('X'), ord('x')):
+                x_pressed_this_step = True
+            elif key in (ord('P'), ord('p')):
+                capture_requested = True
+            key = keyboard.getKey()
 
-        # 處理相機開關邏輯
-        if key != -1 and (current_time_ms - last_key_time_ms) >= KEY_DEBOUNCE_MS:
+        if not x_pressed_this_step:
+            x_toggle_armed = True
+
+        # 處理相機開關邏輯：只在按下瞬間觸發一次
+        if x_pressed_this_step and x_toggle_armed:
+            x_toggle_armed = False
+            if camera_active:
+                print("關閉相機...")
+                camera.disable()
+                range_finder.disable()
+                gps.disable()
+                imu.disable()
+                cv2.destroyAllWindows() # 關閉所有 OpenCV 視窗
+                camera_active = False
+            else:
+                print("開啟相機...")
+                camera.enable(sampling_period)
+                range_finder.enable(sampling_period)
+                gps.enable(sampling_period)
+                imu.enable(sampling_period)
+                camera_active = True
+
+        if capture_requested and (current_time_ms - last_key_time_ms) >= KEY_DEBOUNCE_MS:
             last_key_time_ms = current_time_ms
-            if key in (ord('B'), ord('b')):
-                if camera_active:
-                    print("關閉相機...")
-                    camera.disable()
-                    range_finder.disable()
-                    gps.disable()
-                    imu.disable()
-                    cv2.destroyAllWindows() # 關閉所有 OpenCV 視窗
-                    camera_active = False
-                else:
-                    print("開啟相機...")
-                    camera.enable(sampling_period)
-                    range_finder.enable(sampling_period)
-                    gps.enable(sampling_period)
-                    imu.enable(sampling_period)
-                    camera_active = True
-            elif key in (ord('M'), ord('m')):
-                if camera_active and camera and range_finder and gps and imu:
-                    raw_img = camera.getImage()
-                    raw_depth = range_finder.getRangeImage()
-                    position = gps.getValues()
-                    roll_pitch_yaw = imu.getRollPitchYaw()
+            if camera_active and camera and range_finder and gps and imu:
+                raw_img = camera.getImage()
+                raw_depth = range_finder.getRangeImage()
+                position = gps.getValues()
+                roll_pitch_yaw = imu.getRollPitchYaw()
 
-                    if raw_img and raw_depth:
-                        img_array = np.frombuffer(raw_img, dtype=np.uint8).reshape((camera.getHeight(), camera.getWidth(), 4))
-                        rgb_image = img_array[:, :, :3]
-                        depth_array = np.array(raw_depth, dtype=np.float32).reshape((range_finder.getHeight(), range_finder.getWidth()))
-                        rgb_path, depth_vis_path, depth_raw_path, meta_path = save_capture(
-                            capture_dir,
-                            rgb_image,
-                            depth_array,
-                            position,
-                            roll_pitch_yaw,
-                        )
-                        print("\n[Capture]")
-                        print(f"位置: {format_vec3(position)} m")
-                        print(f"旋轉: {format_rpy_rad_deg(*roll_pitch_yaw)}")
-                        print(f"RGB: {rgb_path}")
-                        print(f"Depth(vis): {depth_vis_path}")
-                        print(f"Depth(raw): {depth_raw_path}")
-                        print(f"Pose: {meta_path}\n")
-                        print(get_separator_line())
-                    else:
-                        print("目前無法拍照，請確認相機影像已更新。")
-                        print(get_separator_line())
+                if raw_img and raw_depth:
+                    img_array = np.frombuffer(raw_img, dtype=np.uint8).reshape((camera.getHeight(), camera.getWidth(), 4))
+                    rgb_image = img_array[:, :, :3]
+                    depth_array = np.array(raw_depth, dtype=np.float32).reshape((range_finder.getHeight(), range_finder.getWidth()))
+                    rgb_path, depth_vis_path, depth_raw_path, meta_path = save_capture(
+                        capture_dir,
+                        rgb_image,
+                        depth_array,
+                        position,
+                        roll_pitch_yaw,
+                    )
+                    print("\n[Capture]")
+                    print(f"位置: {format_vec3(position)} m")
+                    print(f"旋轉: {format_rpy_rad_deg(*roll_pitch_yaw)}")
+                    print(f"RGB: {rgb_path}")
+                    print(f"Depth(vis): {depth_vis_path}")
+                    print(f"Depth(raw): {depth_raw_path}")
+                    print(f"Pose: {meta_path}\n")
+                    print(get_separator_line())
+                else:
+                    print("目前無法拍照，請確認相機影像已更新。")
+                    print(get_separator_line())
         # 如果相機處於開啟狀態，才擷取並顯示影像
         if camera_active and camera and range_finder:
             # --- 處理 RGB 彩色影像 ---

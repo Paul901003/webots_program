@@ -1,0 +1,23 @@
+{
+  "capture_name": "3",
+  "position_m": {
+    "x": -0.016105844682659277,
+    "y": -0.431187195559436,
+    "z": 0.5732185850783345
+  },
+  "rotation_rpy_rad": {
+    "roll": 2.5789879738115795,
+    "pitch": 0.7734841898654079,
+    "yaw": 1.4072955079268379
+  },
+  "rotation_rpy_deg": {
+    "roll": 147.7651263143992,
+    "pitch": 44.317379599383514,
+    "yaw": 80.6320931319273
+  },
+  "files": {
+    "rgb": "3.png",
+    "depth_visualization": "3_depth.png",
+    "depth_raw_npy": "3_depth.npy"
+  }
+}
