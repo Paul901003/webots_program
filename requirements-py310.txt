@@ -1,0 +1,13 @@
+catkin-pkg
+distro
+docutils
+numpy
+opencv-python
+packaging
+pillow
+pyparsing
+python-dateutil
+PyYAML
+rospkg
+six
+urdf2webots

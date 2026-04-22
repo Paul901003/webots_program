@@ -8,6 +8,8 @@ from pathlib import Path
 from controller import Robot, Keyboard
 
 KEY_DEBOUNCE_MS = 250
+REPO_ROOT = Path(__file__).resolve().parents[2]
+TEST_IMAGES_DIR = REPO_ROOT / "Grounded-Segment-Anything" / "test_images"
 
 
 def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
@@ -28,7 +30,7 @@ def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
 
 
 def build_capture_dir() -> Path:
-    capture_dir = Path(__file__).resolve().parent / "captures"
+    capture_dir = TEST_IMAGES_DIR / "captures"
     capture_dir.mkdir(parents=True, exist_ok=True)
     return capture_dir
 

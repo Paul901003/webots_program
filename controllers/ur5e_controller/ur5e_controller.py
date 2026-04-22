@@ -305,10 +305,13 @@ def main():
     home_pose = [0.0, -math.pi / 2, math.pi / 2, -math.pi / 2, -math.pi / 2, 0.0]
     target_positions = home_pose[:]
 
-    # 三組預設姿態
-    pose_1 = [0.0, -2.2708, 1.2208, -0.9208, -1.5708, 0.0]
-    pose_2 = [0.8, -1.4208, 0.9208, -0.7708, -2.0708, -0.0]
-    pose_3 = [-1.0, -1.0708, 0.5708, -0.4208, -1.0708, -0.0]
+    # 三組預設姿態，以 degree 定義後再轉成 rad 給控制器使用。
+    pose_1_deg = [0.0, -130.11, 69.95, -52.76, -90.0, 0.0]
+    pose_2_deg = [31.48, -63.87, 63.66, -64.5, -123.96, -51.03]
+    pose_3_deg = [-57.15, -71.88, 44.32, -28.13, -60.21, 31.99]
+    pose_1 = [math.radians(value) for value in pose_1_deg]
+    pose_2 = [math.radians(value) for value in pose_2_deg]
+    pose_3 = [math.radians(value) for value in pose_3_deg]
     flange_to_camera_transform = make_fixed_transform(
         FLANGE_TO_CAMERA_TRANSLATION_M,
         FLANGE_TO_CAMERA_AXIS_ANGLE,

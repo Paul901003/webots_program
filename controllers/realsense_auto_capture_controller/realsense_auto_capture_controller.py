@@ -7,6 +7,8 @@ from pathlib import Path
 from controller import Robot
 
 FRAME_WARMUP_STEPS = 2
+REPO_ROOT = Path(__file__).resolve().parents[2]
+TEST_IMAGES_DIR = REPO_ROOT / "Grounded-Segment-Anything" / "test_images"
 
 
 def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
@@ -35,8 +37,8 @@ def parse_custom_data(raw_text: str):
     return data
 
 
-def build_capture_dir() -> Path:
-    capture_dir = Path(__file__).resolve().parent / "captures"
+def build_capture_dir(root_name: str = "captures") -> Path:
+    capture_dir = TEST_IMAGES_DIR / root_name
     capture_dir.mkdir(parents=True, exist_ok=True)
     return capture_dir
 
@@ -189,6 +191,8 @@ def main():
         capture_token = data.get("capture_token")
         view = sanitize_filename_part(data.get("view", "0"))
         label = sanitize_filename_part(data.get("label", "scene"))
+        capture_root = sanitize_filename_part(data.get("capture_root", "captures"))
+        active_capture_dir = build_capture_dir(capture_root)
 
         pending_token = pending_capture["token"] if pending_capture is not None else None
         if capture_token and capture_token != last_capture_token and capture_token != pending_token:
@@ -196,6 +200,7 @@ def main():
                 "token": capture_token,
                 "view": view,
                 "label": label,
+                "capture_dir": active_capture_dir,
                 "warmup_steps": FRAME_WARMUP_STEPS,
             }
 
@@ -212,8 +217,9 @@ def main():
                 depth_array = np.array(latest_raw_depth, dtype=np.float32).reshape(
                     (range_finder.getHeight(), range_finder.getWidth())
                 )
-                scene_dir = capture_dir / pending_capture["label"]
+                scene_dir = pending_capture["capture_dir"] / pending_capture["label"]
                 view_name = pending_capture["view"]
+                capture_dir_name = pending_capture["capture_dir"].name
                 try:
                     rgb_path, depth_vis_path, depth_raw_path, meta_path = save_capture(
                         scene_dir,
@@ -226,6 +232,7 @@ def main():
                     last_capture_token = pending_capture["token"]
                     pending_capture = None
                     print("\n[Auto Capture]")
+                    print(f"根目錄: {capture_dir_name}")
                     print(f"資料夾: {scene_dir.name}")
                     print(f"視角: {view_name}")
                     print(f"位置: {format_vec3(latest_position)} m")
