@@ -33,6 +33,20 @@ def clamp(value, min_value, max_value):
     return max(min_value, min(value, max_value))
 
 
+def resolve_gripper_device_names():
+    # Official Webots Robotiq2f140Gripper device names.
+    gripper_name = "ROBOTIQ 2F-140 Gripper"
+    motor_candidates = [[
+        f"{gripper_name}::left finger joint",
+        f"{gripper_name}::right finger joint",
+    ]]
+    sensor_candidates = [[
+        f"{gripper_name} left finger joint sensor",
+        f"{gripper_name} right finger joint sensor",
+    ]]
+    return motor_candidates, sensor_candidates
+
+
 def get_separator_line(fill_char='='):
     terminal_width = shutil.get_terminal_size(fallback=(80, 20)).columns
     return fill_char * max(terminal_width - 1, 20)
@@ -340,20 +354,26 @@ def main():
     # =========================================================
     # 2. ROBOTIQ 2F-140 夾爪設定
     # =========================================================
-    gripper_base_name = "ROBOTIQ 2F-140 Gripper"
-    gripper_motor_names = [
-        f"{gripper_base_name}::left finger joint",
-        f"{gripper_base_name}::right finger joint"
-    ]
-
     gripper_motors = []
-    for name in gripper_motor_names:
-        motor = robot.getDevice(name)
-        if motor:
+    gripper_motor_candidates, _ = resolve_gripper_device_names()
+    for candidate_names in gripper_motor_candidates:
+        candidate_motors = []
+        for name in candidate_names:
+            motor = robot.getDevice(name)
+            if motor is None:
+                candidate_motors = []
+                break
+            candidate_motors.append(motor)
+        if candidate_motors:
+            gripper_motors = candidate_motors
+            break
+
+    if gripper_motors:
+        for motor in gripper_motors:
             motor.setVelocity(2.0)
-            gripper_motors.append(motor)
-        else:
-            print(f"警告：找不到夾爪馬達 '{name}'")
+        print("夾爪馬達裝置: ROBOTIQ 2F-140 Gripper::left/right finger joint")
+    else:
+        print("警告：找不到夾爪馬達，C/V 開合將停用。")
 
     gripper_position = 0.0
     gripper_step = 0.02

@@ -1,0 +1,614 @@
+{
+  "metadata": {
+    "generated_at": "2026-04-27T16:51:30",
+    "object_pool_size": 64,
+    "multi_object_count": 3,
+    "multi_min_appearances": 5,
+    "random_seed": null,
+    "scene_count": 107,
+    "appearance_counts": {
+      "002_master_chef_can": 5,
+      "003_cracker_box": 5,
+      "004_sugar_box": 5,
+      "005_tomato_soup_can": 5,
+      "006_mustard_bottle": 5,
+      "007_tuna_fish_can": 5,
+      "008_pudding_box": 5,
+      "009_gelatin_box": 5,
+      "010_potted_meat_can": 5,
+      "011_banana": 5,
+      "012_strawberry": 5,
+      "013_apple": 5,
+      "014_lemon": 5,
+      "015_peach": 5,
+      "016_pear": 5,
+      "017_orange": 5,
+      "018_plum": 5,
+      "019_pitcher_base": 5,
+      "021_bleach_cleanser": 5,
+      "022_windex_bottle": 5,
+      "024_bowl": 5,
+      "025_mug": 5,
+      "026_sponge": 5,
+      "028_skillet_lid": 5,
+      "029_plate": 5,
+      "030_fork": 5,
+      "031_spoon": 5,
+      "032_knife": 5,
+      "033_spatula": 5,
+      "035_power_drill": 5,
+      "036_wood_block": 5,
+      "037_scissors": 5,
+      "038_padlock": 5,
+      "040_large_marker": 5,
+      "042_adjustable_wrench": 5,
+      "043_phillips_screwdriver": 5,
+      "044_flat_screwdriver": 5,
+      "048_hammer": 5,
+      "050_medium_clamp": 5,
+      "051_large_clamp": 5,
+      "052_extra_large_clamp": 5,
+      "053_mini_soccer_ball": 5,
+      "054_softball": 5,
+      "055_baseball": 5,
+      "056_tennis_ball": 5,
+      "057_racquetball": 5,
+      "058_golf_ball": 5,
+      "059_chain": 5,
+      "061_foam_brick": 5,
+      "062_dice": 5,
+      "065-a_cups": 5,
+      "065-b_cups": 5,
+      "065-c_cups": 5,
+      "065-d_cups": 5,
+      "065-e_cups": 5,
+      "065-f_cups": 5,
+      "065-g_cups": 5,
+      "065-h_cups": 6,
+      "065-i_cups": 5,
+      "065-j_cups": 5,
+      "070-a_colored_wood_blocks": 5,
+      "070-b_colored_wood_blocks": 5,
+      "071_nine_hole_peg_test": 5,
+      "077_rubiks_cube": 5
+    },
+    "target_objects": []
+  },
+  "scenes": [
+    [
+      "014_lemon",
+      "029_plate",
+      "071_nine_hole_peg_test"
+    ],
+    [
+      "024_bowl",
+      "025_mug",
+      "033_spatula"
+    ],
+    [
+      "016_pear",
+      "032_knife",
+      "065-j_cups"
+    ],
+    [
+      "019_pitcher_base",
+      "054_softball",
+      "065-c_cups"
+    ],
+    [
+      "006_mustard_bottle",
+      "012_strawberry",
+      "040_large_marker"
+    ],
+    [
+      "011_banana",
+      "026_sponge",
+      "044_flat_screwdriver"
+    ],
+    [
+      "004_sugar_box",
+      "007_tuna_fish_can",
+      "065-d_cups"
+    ],
+    [
+      "036_wood_block",
+      "056_tennis_ball",
+      "065-b_cups"
+    ],
+    [
+      "010_potted_meat_can",
+      "061_foam_brick",
+      "065-g_cups"
+    ],
+    [
+      "062_dice",
+      "065-i_cups",
+      "077_rubiks_cube"
+    ],
+    [
+      "051_large_clamp",
+      "053_mini_soccer_ball",
+      "065-a_cups"
+    ],
+    [
+      "009_gelatin_box",
+      "021_bleach_cleanser",
+      "059_chain"
+    ],
+    [
+      "028_skillet_lid",
+      "052_extra_large_clamp",
+      "055_baseball"
+    ],
+    [
+      "005_tomato_soup_can",
+      "018_plum",
+      "065-f_cups"
+    ],
+    [
+      "002_master_chef_can",
+      "015_peach",
+      "037_scissors"
+    ],
+    [
+      "003_cracker_box",
+      "008_pudding_box",
+      "030_fork"
+    ],
+    [
+      "017_orange",
+      "031_spoon",
+      "070-b_colored_wood_blocks"
+    ],
+    [
+      "022_windex_bottle",
+      "035_power_drill",
+      "065-h_cups"
+    ],
+    [
+      "057_racquetball",
+      "058_golf_ball",
+      "070-a_colored_wood_blocks"
+    ],
+    [
+      "013_apple",
+      "038_padlock",
+      "043_phillips_screwdriver"
+    ],
+    [
+      "048_hammer",
+      "050_medium_clamp",
+      "065-e_cups"
+    ],
+    [
+      "016_pear",
+      "042_adjustable_wrench",
+      "071_nine_hole_peg_test"
+    ],
+    [
+      "029_plate",
+      "054_softball",
+      "057_racquetball"
+    ],
+    [
+      "013_apple",
+      "048_hammer",
+      "052_extra_large_clamp"
+    ],
+    [
+      "011_banana",
+      "025_mug",
+      "031_spoon"
+    ],
+    [
+      "030_fork",
+      "042_adjustable_wrench",
+      "070-b_colored_wood_blocks"
+    ],
+    [
+      "032_knife",
+      "038_padlock",
+      "065-a_cups"
+    ],
+    [
+      "028_skillet_lid",
+      "035_power_drill",
+      "051_large_clamp"
+    ],
+    [
+      "002_master_chef_can",
+      "010_potted_meat_can",
+      "036_wood_block"
+    ],
+    [
+      "061_foam_brick",
+      "062_dice",
+      "065-f_cups"
+    ],
+    [
+      "009_gelatin_box",
+      "026_sponge",
+      "040_large_marker"
+    ],
+    [
+      "037_scissors",
+      "050_medium_clamp",
+      "065-i_cups"
+    ],
+    [
+      "007_tuna_fish_can",
+      "024_bowl",
+      "065-c_cups"
+    ],
+    [
+      "005_tomato_soup_can",
+      "015_peach",
+      "059_chain"
+    ],
+    [
+      "019_pitcher_base",
+      "021_bleach_cleanser",
+      "065-b_cups"
+    ],
+    [
+      "018_plum",
+      "058_golf_ball",
+      "065-j_cups"
+    ],
+    [
+      "004_sugar_box",
+      "065-g_cups",
+      "065-h_cups"
+    ],
+    [
+      "017_orange",
+      "043_phillips_screwdriver",
+      "044_flat_screwdriver"
+    ],
+    [
+      "008_pudding_box",
+      "056_tennis_ball",
+      "065-d_cups"
+    ],
+    [
+      "003_cracker_box",
+      "014_lemon",
+      "070-a_colored_wood_blocks"
+    ],
+    [
+      "053_mini_soccer_ball",
+      "055_baseball",
+      "065-e_cups"
+    ],
+    [
+      "006_mustard_bottle",
+      "033_spatula",
+      "077_rubiks_cube"
+    ],
+    [
+      "012_strawberry",
+      "022_windex_bottle",
+      "065-a_cups"
+    ],
+    [
+      "026_sponge",
+      "037_scissors",
+      "065-c_cups"
+    ],
+    [
+      "016_pear",
+      "024_bowl",
+      "070-b_colored_wood_blocks"
+    ],
+    [
+      "022_windex_bottle",
+      "031_spoon",
+      "065-d_cups"
+    ],
+    [
+      "002_master_chef_can",
+      "018_plum",
+      "054_softball"
+    ],
+    [
+      "053_mini_soccer_ball",
+      "056_tennis_ball",
+      "065-i_cups"
+    ],
+    [
+      "003_cracker_box",
+      "010_potted_meat_can",
+      "048_hammer"
+    ],
+    [
+      "021_bleach_cleanser",
+      "030_fork",
+      "038_padlock"
+    ],
+    [
+      "058_golf_ball",
+      "070-a_colored_wood_blocks",
+      "071_nine_hole_peg_test"
+    ],
+    [
+      "029_plate",
+      "033_spatula",
+      "065-f_cups"
+    ],
+    [
+      "012_strawberry",
+      "051_large_clamp",
+      "061_foam_brick"
+    ],
+    [
+      "011_banana",
+      "025_mug",
+      "065-e_cups"
+    ],
+    [
+      "005_tomato_soup_can",
+      "043_phillips_screwdriver",
+      "057_racquetball"
+    ],
+    [
+      "006_mustard_bottle",
+      "032_knife",
+      "042_adjustable_wrench"
+    ],
+    [
+      "050_medium_clamp",
+      "065-b_cups",
+      "077_rubiks_cube"
+    ],
+    [
+      "035_power_drill",
+      "062_dice",
+      "065-j_cups"
+    ],
+    [
+      "015_peach",
+      "059_chain",
+      "065-h_cups"
+    ],
+    [
+      "013_apple",
+      "040_large_marker",
+      "065-g_cups"
+    ],
+    [
+      "028_skillet_lid",
+      "044_flat_screwdriver",
+      "055_baseball"
+    ],
+    [
+      "009_gelatin_box",
+      "017_orange",
+      "052_extra_large_clamp"
+    ],
+    [
+      "007_tuna_fish_can",
+      "019_pitcher_base",
+      "036_wood_block"
+    ],
+    [
+      "004_sugar_box",
+      "008_pudding_box",
+      "014_lemon"
+    ],
+    [
+      "011_banana",
+      "061_foam_brick",
+      "070-b_colored_wood_blocks"
+    ],
+    [
+      "051_large_clamp",
+      "059_chain",
+      "077_rubiks_cube"
+    ],
+    [
+      "005_tomato_soup_can",
+      "007_tuna_fish_can",
+      "065-c_cups"
+    ],
+    [
+      "040_large_marker",
+      "052_extra_large_clamp",
+      "055_baseball"
+    ],
+    [
+      "013_apple",
+      "037_scissors",
+      "043_phillips_screwdriver"
+    ],
+    [
+      "024_bowl",
+      "031_spoon",
+      "065-g_cups"
+    ],
+    [
+      "016_pear",
+      "036_wood_block",
+      "058_golf_ball"
+    ],
+    [
+      "002_master_chef_can",
+      "017_orange",
+      "065-f_cups"
+    ],
+    [
+      "010_potted_meat_can",
+      "015_peach",
+      "065-h_cups"
+    ],
+    [
+      "032_knife",
+      "042_adjustable_wrench",
+      "065-e_cups"
+    ],
+    [
+      "008_pudding_box",
+      "025_mug",
+      "050_medium_clamp"
+    ],
+    [
+      "029_plate",
+      "044_flat_screwdriver",
+      "065-a_cups"
+    ],
+    [
+      "012_strawberry",
+      "014_lemon",
+      "019_pitcher_base"
+    ],
+    [
+      "004_sugar_box",
+      "018_plum",
+      "062_dice"
+    ],
+    [
+      "003_cracker_box",
+      "030_fork",
+      "054_softball"
+    ],
+    [
+      "053_mini_soccer_ball",
+      "065-j_cups",
+      "070-a_colored_wood_blocks"
+    ],
+    [
+      "009_gelatin_box",
+      "035_power_drill",
+      "056_tennis_ball"
+    ],
+    [
+      "006_mustard_bottle",
+      "026_sponge",
+      "028_skillet_lid"
+    ],
+    [
+      "033_spatula",
+      "057_racquetball",
+      "065-d_cups"
+    ],
+    [
+      "048_hammer",
+      "065-b_cups",
+      "065-i_cups"
+    ],
+    [
+      "021_bleach_cleanser",
+      "038_padlock",
+      "071_nine_hole_peg_test"
+    ],
+    [
+      "022_windex_bottle",
+      "036_wood_block",
+      "061_foam_brick"
+    ],
+    [
+      "050_medium_clamp",
+      "065-d_cups",
+      "065-i_cups"
+    ],
+    [
+      "017_orange",
+      "028_skillet_lid",
+      "062_dice"
+    ],
+    [
+      "021_bleach_cleanser",
+      "024_bowl",
+      "054_softball"
+    ],
+    [
+      "004_sugar_box",
+      "013_apple",
+      "051_large_clamp"
+    ],
+    [
+      "057_racquetball",
+      "065-e_cups",
+      "071_nine_hole_peg_test"
+    ],
+    [
+      "009_gelatin_box",
+      "029_plate",
+      "044_flat_screwdriver"
+    ],
+    [
+      "016_pear",
+      "038_padlock",
+      "042_adjustable_wrench"
+    ],
+    [
+      "058_golf_ball",
+      "065-a_cups",
+      "065-g_cups"
+    ],
+    [
+      "014_lemon",
+      "032_knife",
+      "052_extra_large_clamp"
+    ],
+    [
+      "010_potted_meat_can",
+      "019_pitcher_base",
+      "048_hammer"
+    ],
+    [
+      "022_windex_bottle",
+      "065-j_cups",
+      "070-b_colored_wood_blocks"
+    ],
+    [
+      "031_spoon",
+      "037_scissors",
+      "070-a_colored_wood_blocks"
+    ],
+    [
+      "018_plum",
+      "035_power_drill",
+      "055_baseball"
+    ],
+    [
+      "008_pudding_box",
+      "033_spatula",
+      "040_large_marker"
+    ],
+    [
+      "006_mustard_bottle",
+      "012_strawberry",
+      "015_peach"
+    ],
+    [
+      "053_mini_soccer_ball",
+      "056_tennis_ball",
+      "065-h_cups"
+    ],
+    [
+      "043_phillips_screwdriver",
+      "065-b_cups",
+      "065-f_cups"
+    ],
+    [
+      "002_master_chef_can",
+      "011_banana",
+      "030_fork"
+    ],
+    [
+      "003_cracker_box",
+      "005_tomato_soup_can",
+      "077_rubiks_cube"
+    ],
+    [
+      "025_mug",
+      "026_sponge",
+      "065-c_cups"
+    ],
+    [
+      "007_tuna_fish_can",
+      "059_chain",
+      "065-h_cups"
+    ]
+  ]
+}

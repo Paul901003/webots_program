@@ -192,6 +192,9 @@ def main():
         view = sanitize_filename_part(data.get("view", "0"))
         label = sanitize_filename_part(data.get("label", "scene"))
         capture_root = sanitize_filename_part(data.get("capture_root", "captures"))
+        num_views_raw = data.get("num_views", "").strip()
+        if num_views_raw.isdigit():
+            label = f"{label}_{num_views_raw}views"
         active_capture_dir = build_capture_dir(capture_root)
 
         pending_token = pending_capture["token"] if pending_capture is not None else None

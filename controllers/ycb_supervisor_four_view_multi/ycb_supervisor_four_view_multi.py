@@ -1,21 +1,24 @@
 from controller import Supervisor
+import importlib.util
 import math
-import random
 import json
 import os
 import sys
-import itertools
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_CONTROLLER_DIR = os.path.join(os.path.dirname(CURRENT_DIR), "ycb_supervisor")
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
 if SOURCE_CONTROLLER_DIR not in sys.path:
-    sys.path.insert(0, SOURCE_CONTROLLER_DIR)
+    sys.path.append(SOURCE_CONTROLLER_DIR)
 
 from config import (  # noqa: E402
     NUM_OBJECTS,
     GRID_COLS,
     SPACING,
     SPAWN_HEIGHT,
+    REFERENCE_X,
+    REFERENCE_Y,
     X_OFFSET,
     Z_OFFSET,
     ASSET_BASE,
@@ -27,8 +30,10 @@ from config import (  # noqa: E402
     SPAWN_CLEARANCE,
     SPACING_MARGIN,
     ARM_SETTLE_TIME_SEC,
-    MULTI_OBJECT_COUNT,
-    MULTI_MIN_APPEARANCES,
+    POST_ARRIVAL_PAUSE_SEC,
+    ARM_MOTOR_VELOCITY_RAD_PER_SEC,
+    ARM_SETTLE_TIME_BUFFER_SEC,
+    MULTI_SCENE_FILE,
 )
 
 JSON_PATH = os.path.join(SOURCE_CONTROLLER_DIR, "ycb_geometries.json")
@@ -38,17 +43,21 @@ with open(JSON_PATH, "r", encoding="utf-8") as file:
 UR5E_DEF = "UR5E"
 CAMERA_DEF = "UR5E_CAMERA"
 ARM_COMMAND_EMITTER = "arm_command_emitter"
+ARM_STATUS_RECEIVER = "arm_status_receiver"
 CAPTURE_WAIT_SEC = 1.0
 VIEW_SEQUENCE = (1, 2, 3, 4)
 CAPTURE_ROOT = "captures_multi"
 SCENE_SETTLE_TIME_SEC = 1.0
 SCENE_POSE_FILENAME = "scene_objects_pose.json"
+HOME_POSE_RAD = [0.0, -math.pi / 2, math.pi / 2, -math.pi / 2, -math.pi / 2, 0.0]
 REPO_ROOT = os.path.dirname(os.path.dirname(CURRENT_DIR))
 TEST_IMAGES_DIR = os.path.join(
     REPO_ROOT,
     "Grounded-Segment-Anything",
     "test_images",
 )
+SCENE_PLAN_PATH = os.path.join(CURRENT_DIR, MULTI_SCENE_FILE)
+ACTIVE_CAPTURE_ROOT = CAPTURE_ROOT
 
 
 def get_geometry(name: str):
@@ -121,7 +130,15 @@ def make_vrml(name: str, x: float, y: float, z: float) -> str:
 }}"""
 
 
-def compute_grid_positions(n: int, cols: int, spacing: float):
+def choose_grid_cols(n: int, max_cols: int) -> int:
+    if n <= 0:
+        return 1
+    square_like_cols = math.ceil(math.sqrt(n))
+    return max(1, min(max_cols, square_like_cols))
+
+
+def compute_grid_positions(n: int, max_cols: int, spacing: float):
+    cols = choose_grid_cols(n, max_cols)
     rows = math.ceil(n / cols)
     positions = []
     for i in range(n):
@@ -161,8 +178,8 @@ def spawn_objects(supervisor: Supervisor, object_list: list):
         if name not in MASS_TABLE:
             continue
 
-        final_x = grid_x + X_OFFSET
-        final_y = grid_y + Z_OFFSET
+        final_x = REFERENCE_X + X_OFFSET + grid_x
+        final_y = REFERENCE_Y + Z_OFFSET + grid_y
         safe_spawn_height = max(
             SPAWN_HEIGHT,
             get_collision_half_height(name) + SPAWN_CLEARANCE,
@@ -179,6 +196,40 @@ def wait_seconds(supervisor: Supervisor, timestep: int, seconds: float):
         if supervisor.step(timestep) == -1:
             return False
     return True
+
+
+def clear_receiver(receiver):
+    if receiver is None:
+        return
+    while receiver.getQueueLength() > 0:
+        receiver.nextPacket()
+
+
+def wait_for_arm_arrival(supervisor: Supervisor, timestep: int, receiver, command_id: str, timeout_sec: float):
+    if receiver is None:
+        return wait_seconds(supervisor, timestep, timeout_sec)
+    start_time = supervisor.getTime()
+    while supervisor.getTime() - start_time <= timeout_sec:
+        if supervisor.step(timestep) == -1:
+            return False
+        while receiver.getQueueLength() > 0:
+            message = receiver.getString()
+            receiver.nextPacket()
+            try:
+                data = json.loads(message)
+            except json.JSONDecodeError:
+                continue
+            if (
+                data.get("status") == "arrived"
+                and str(data.get("command_id")) == str(command_id)
+            ):
+                print(
+                    "[Supervisor] Arm arrived "
+                    f"(max_error={float(data.get('max_error_rad', 0.0)):.4f} rad)"
+                )
+                return True
+    print(f"[Supervisor] Arm arrival timeout for command {command_id}; stopping sequence.")
+    return False
 
 
 def rotation_matrix_to_rpy(matrix):
@@ -239,7 +290,22 @@ def rotation_matrix_to_axis_angle(matrix):
 
 
 def get_scene_capture_dir(content_label: str):
-    return os.path.join(TEST_IMAGES_DIR, CAPTURE_ROOT, content_label)
+    return os.path.join(TEST_IMAGES_DIR, ACTIVE_CAPTURE_ROOT, content_label)
+
+
+def sanitize_path_part(value: str) -> str:
+    cleaned = []
+    for char in value.strip():
+        if char.isalnum() or char in ("_", "-", "+"):
+            cleaned.append(char)
+        else:
+            cleaned.append("_")
+    return "".join(cleaned).strip("_") or "scene"
+
+
+def build_capture_root_from_scene_plan(scene_plan_path: str) -> str:
+    scene_plan_name = os.path.splitext(os.path.basename(scene_plan_path))[0]
+    return f"{CAPTURE_ROOT}__{sanitize_path_part(scene_plan_name)}"
 
 
 def get_object_node_by_name(supervisor: Supervisor, object_name: str):
@@ -308,7 +374,7 @@ def save_scene_object_poses(supervisor: Supervisor, object_list, content_label: 
 
     payload = {
         "scene_label": content_label,
-        "capture_root": CAPTURE_ROOT,
+        "capture_root": ACTIVE_CAPTURE_ROOT,
         "scene_dir": scene_dir,
         "saved_at_sim_time_sec": float(supervisor.getTime()),
         "coordinate_frame": "webots_world",
@@ -340,6 +406,53 @@ def send_arm_pose_command(emitter, view_index: int):
     return True
 
 
+def get_arm_controller_name(supervisor: Supervisor):
+    ur5e_node = supervisor.getFromDef(UR5E_DEF)
+    if ur5e_node is None:
+        return None
+    controller_field = ur5e_node.getField("controller")
+    if controller_field is None:
+        return None
+    return controller_field.getSFString()
+
+
+def load_camera_poses_from_arm_controller(supervisor: Supervisor):
+    controller_name = get_arm_controller_name(supervisor)
+    if not controller_name:
+        return {}
+    controller_path = os.path.join(
+        os.path.dirname(CURRENT_DIR),
+        controller_name,
+        f"{controller_name}.py",
+    )
+    try:
+        spec = importlib.util.spec_from_file_location(controller_name, controller_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return getattr(module, "CAMERA_POSES", {})
+    except Exception as error:
+        print(f"[Supervisor] 無法讀取 {controller_path} 的 CAMERA_POSES: {error}")
+        return {}
+
+
+def pose_joints_rad(camera_poses: dict, view_index: int):
+    pose = camera_poses.get(view_index)
+    if not isinstance(pose, dict):
+        return None
+    joint_deg = pose.get("joint_deg")
+    if not isinstance(joint_deg, list) or len(joint_deg) != 6:
+        return None
+    return [math.radians(float(value)) for value in joint_deg]
+
+
+def estimate_settle_time(current_joints_rad, target_joints_rad):
+    if current_joints_rad is None or target_joints_rad is None:
+        return ARM_SETTLE_TIME_SEC
+    max_delta = max(abs(target - current) for target, current in zip(target_joints_rad, current_joints_rad))
+    motion_time = max_delta / max(ARM_MOTOR_VELOCITY_RAD_PER_SEC, 1e-6)
+    return max(ARM_SETTLE_TIME_SEC, motion_time + ARM_SETTLE_TIME_BUFFER_SEC)
+
+
 def build_content_label(object_list):
     if not object_list:
         return "empty_scene"
@@ -353,70 +466,93 @@ def build_content_label(object_list):
     return "+".join(cleaned_names)
 
 
-def get_capture_object_pool():
-    return TARGET_OBJECTS[:] if TARGET_OBJECTS else ALL_OBJECTS[:]
+def normalize_scene_entry(scene_entry, scene_index: int):
+    if not isinstance(scene_entry, list):
+        raise ValueError(f"場景 {scene_index} 必須是 list，收到 {type(scene_entry).__name__}")
+
+    normalized_objects = []
+    for object_name in scene_entry:
+        if not isinstance(object_name, str):
+            raise ValueError(f"場景 {scene_index} 內的物體名稱必須是字串")
+        if object_name not in MASS_TABLE:
+            raise ValueError(f"場景 {scene_index} 含有未知物體: {object_name}")
+        normalized_objects.append(object_name)
+
+    if not normalized_objects:
+        raise ValueError(f"場景 {scene_index} 不能是空的")
+
+    return normalized_objects
 
 
-def build_multi_object_scenes(object_pool, group_size, min_appearances):
-    if len(object_pool) < group_size:
-        return []
+def resolve_scene_plan_path(scene_plan_path: str):
+    directory = os.path.dirname(scene_plan_path)
+    filename = os.path.basename(scene_plan_path)
+    stem, ext = os.path.splitext(filename)
+    prefix = f"{stem}_"
 
-    combos = list(itertools.combinations(sorted(object_pool), group_size))
-    appearance_counts = {name: 0 for name in object_pool}
-    scenes = []
-    used_combos = set()
+    candidate_names = []
+    for entry in os.listdir(directory):
+        if entry.startswith(prefix) and entry.endswith(ext):
+            candidate_names.append(entry)
 
-    while min(appearance_counts.values()) < min_appearances:
-        best_combo = None
-        best_score = None
+    if not candidate_names:
+        return scene_plan_path
 
-        for combo in combos:
-            if combo in used_combos:
-                continue
+    latest_name = max(candidate_names)
+    return os.path.join(directory, latest_name)
 
-            deficits = [max(0, min_appearances - appearance_counts[name]) for name in combo]
-            score = (
-                sum(deficits),
-                min(deficits),
-                -sum(appearance_counts[name] for name in combo),
-                random.random(),
-            )
-            if best_score is None or score > best_score:
-                best_score = score
-                best_combo = combo
 
-        if best_combo is None or best_score[0] <= 0:
-            break
+def load_scene_plan_from_file(scene_plan_path: str):
+    resolved_path = resolve_scene_plan_path(scene_plan_path)
+    if not os.path.exists(resolved_path):
+        return None
 
-        scenes.append(list(best_combo))
-        used_combos.add(best_combo)
-        for name in best_combo:
-            appearance_counts[name] += 1
+    with open(resolved_path, "r", encoding="utf-8") as file:
+        payload = json.load(file)
 
-    return scenes
+    if isinstance(payload, dict):
+        scenes = payload.get("scenes")
+    else:
+        scenes = payload
+
+    if scenes is None:
+        raise ValueError(f"場景檔缺少 scenes 欄位: {resolved_path}")
+    if not isinstance(scenes, list):
+        raise ValueError(f"場景檔內容必須是 list: {resolved_path}")
+
+    normalized_scenes = []
+    for scene_index, scene_entry in enumerate(scenes, start=1):
+        normalized_scenes.append(normalize_scene_entry(scene_entry, scene_index))
+    return normalized_scenes, resolved_path
 
 
 def build_capture_plan():
-    object_pool = get_capture_object_pool()
-    multi_scenes = build_multi_object_scenes(
-        object_pool,
-        MULTI_OBJECT_COUNT,
-        MULTI_MIN_APPEARANCES,
-    )
-    if multi_scenes:
-        return multi_scenes
+    global ACTIVE_CAPTURE_ROOT
 
-    if TARGET_OBJECTS:
-        return [TARGET_OBJECTS[:]]
-
-    return [random.sample(object_pool, k=min(NUM_OBJECTS, len(object_pool)))]
+    scene_plan = load_scene_plan_from_file(SCENE_PLAN_PATH)
+    if not scene_plan:
+        raise RuntimeError(
+            "[Supervisor] 找不到可用場景。請先執行 generate_multi_object_scenes.py 產生場景檔。"
+        )
+    file_scenes, resolved_path = scene_plan
+    ACTIVE_CAPTURE_ROOT = build_capture_root_from_scene_plan(resolved_path)
+    print(f"[Supervisor] Loaded {len(file_scenes)} scenes from {resolved_path}")
+    print(f"[Supervisor] Capture root: {ACTIVE_CAPTURE_ROOT}")
+    return file_scenes
 
 
 def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
     ur5e_node = supervisor.getFromDef(UR5E_DEF)
     camera_node = supervisor.getFromDef(CAMERA_DEF)
     arm_emitter = supervisor.getDevice(ARM_COMMAND_EMITTER)
+    arm_status_receiver = supervisor.getDevice(ARM_STATUS_RECEIVER)
+    if arm_status_receiver is not None:
+        arm_status_receiver.enable(timestep)
+    else:
+        print(f"[Supervisor] 找不到 {ARM_STATUS_RECEIVER}，改用時間等待。")
     content_label = build_content_label(object_list)
+    camera_poses = load_camera_poses_from_arm_controller(supervisor)
+    current_joints_rad = getattr(run_capture_sequence, "current_joints_rad", HOME_POSE_RAD[:])
 
     if ur5e_node is None:
         print(f"[Supervisor] 找不到 DEF {UR5E_DEF}")
@@ -426,18 +562,35 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
         return False
 
     for view_index in VIEW_SEQUENCE:
+        target_joints_rad = pose_joints_rad(camera_poses, view_index)
+        settle_time = estimate_settle_time(current_joints_rad, target_joints_rad)
         print(f"[Supervisor] Moving arm to view {view_index}...")
+        clear_receiver(arm_status_receiver)
         if not send_arm_pose_command(arm_emitter, view_index):
             return False
-        if not wait_seconds(supervisor, timestep, ARM_SETTLE_TIME_SEC):
+        print(f"[Supervisor] Waiting for arm arrival (timeout {settle_time:.2f}s)...")
+        if not wait_for_arm_arrival(
+            supervisor,
+            timestep,
+            arm_status_receiver,
+            str(view_index),
+            settle_time,
+        ):
             return False
+        current_joints_rad = target_joints_rad or current_joints_rad
+        run_capture_sequence.current_joints_rad = current_joints_rad
+        if POST_ARRIVAL_PAUSE_SEC > 0.0:
+            print(f"[Supervisor] Pausing {POST_ARRIVAL_PAUSE_SEC:.2f}s after arrival...")
+            if not wait_seconds(supervisor, timestep, POST_ARRIVAL_PAUSE_SEC):
+                return False
 
         capture_token = f"{view_index}_{int(supervisor.getTime() * 1000)}"
         camera_data = (
             f"capture_token={capture_token};"
             f"view={view_index};"
             f"label={content_label};"
-            f"capture_root={CAPTURE_ROOT}"
+            f"capture_root={ACTIVE_CAPTURE_ROOT};"
+            f"num_views={len(VIEW_SEQUENCE)}"
         )
         print(f"[Supervisor] Triggering capture {view_index}_{content_label}")
         set_custom_data(camera_node, camera_data)

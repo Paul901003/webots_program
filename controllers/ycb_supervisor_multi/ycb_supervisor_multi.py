@@ -1,7 +1,6 @@
 from controller import Supervisor
 import importlib.util
 import math
-import random
 import json
 import os
 import sys
@@ -14,6 +13,7 @@ if SOURCE_CONTROLLER_DIR not in sys.path:
     sys.path.append(SOURCE_CONTROLLER_DIR)
 
 from config import (  # noqa: E402
+    NUM_OBJECTS,
     GRID_COLS,
     SPACING,
     SPAWN_HEIGHT,
@@ -33,6 +33,7 @@ from config import (  # noqa: E402
     POST_ARRIVAL_PAUSE_SEC,
     ARM_MOTOR_VELOCITY_RAD_PER_SEC,
     ARM_SETTLE_TIME_BUFFER_SEC,
+    MULTI_SCENE_FILE,
 )
 
 JSON_PATH = os.path.join(SOURCE_CONTROLLER_DIR, "ycb_geometries.json")
@@ -44,8 +45,8 @@ CAMERA_DEF = "UR5E_CAMERA"
 ARM_COMMAND_EMITTER = "arm_command_emitter"
 ARM_STATUS_RECEIVER = "arm_status_receiver"
 CAPTURE_WAIT_SEC = 1.0
-VIEW_SEQUENCE = (1, 2, 3, 4)
-CAPTURE_ROOT = "captures_single"
+VIEW_SEQUENCE = None  # None = 依 CAMERA_POSES 鍵值自動決定
+CAPTURE_ROOT = "captures_multi"
 SCENE_SETTLE_TIME_SEC = 1.0
 SCENE_POSE_FILENAME = "scene_objects_pose.json"
 HOME_POSE_RAD = [0.0, -math.pi / 2, math.pi / 2, -math.pi / 2, -math.pi / 2, 0.0]
@@ -55,6 +56,8 @@ TEST_IMAGES_DIR = os.path.join(
     "Grounded-Segment-Anything",
     "test_images",
 )
+SCENE_PLAN_PATH = os.path.join(CURRENT_DIR, MULTI_SCENE_FILE)
+ACTIVE_CAPTURE_ROOT = CAPTURE_ROOT
 
 
 def get_geometry(name: str):
@@ -127,7 +130,15 @@ def make_vrml(name: str, x: float, y: float, z: float) -> str:
 }}"""
 
 
-def compute_grid_positions(n: int, cols: int, spacing: float):
+def choose_grid_cols(n: int, max_cols: int) -> int:
+    if n <= 0:
+        return 1
+    square_like_cols = math.ceil(math.sqrt(n))
+    return max(1, min(max_cols, square_like_cols))
+
+
+def compute_grid_positions(n: int, max_cols: int, spacing: float):
+    cols = choose_grid_cols(n, max_cols)
     rows = math.ceil(n / cols)
     positions = []
     for i in range(n):
@@ -279,7 +290,22 @@ def rotation_matrix_to_axis_angle(matrix):
 
 
 def get_scene_capture_dir(content_label: str):
-    return os.path.join(TEST_IMAGES_DIR, CAPTURE_ROOT, content_label)
+    return os.path.join(TEST_IMAGES_DIR, ACTIVE_CAPTURE_ROOT, content_label)
+
+
+def sanitize_path_part(value: str) -> str:
+    cleaned = []
+    for char in value.strip():
+        if char.isalnum() or char in ("_", "-", "+"):
+            cleaned.append(char)
+        else:
+            cleaned.append("_")
+    return "".join(cleaned).strip("_") or "scene"
+
+
+def build_capture_root_from_scene_plan(scene_plan_path: str) -> str:
+    scene_plan_name = os.path.splitext(os.path.basename(scene_plan_path))[0]
+    return f"{CAPTURE_ROOT}__{sanitize_path_part(scene_plan_name)}"
 
 
 def get_object_node_by_name(supervisor: Supervisor, object_name: str):
@@ -348,7 +374,7 @@ def save_scene_object_poses(supervisor: Supervisor, object_list, content_label: 
 
     payload = {
         "scene_label": content_label,
-        "capture_root": CAPTURE_ROOT,
+        "capture_root": ACTIVE_CAPTURE_ROOT,
         "scene_dir": scene_dir,
         "saved_at_sim_time_sec": float(supervisor.getTime()),
         "coordinate_frame": "webots_world",
@@ -440,12 +466,79 @@ def build_content_label(object_list):
     return "+".join(cleaned_names)
 
 
-def get_capture_object_pool():
-    return TARGET_OBJECTS[:] if TARGET_OBJECTS else ALL_OBJECTS[:]
+def normalize_scene_entry(scene_entry, scene_index: int):
+    if not isinstance(scene_entry, list):
+        raise ValueError(f"場景 {scene_index} 必須是 list，收到 {type(scene_entry).__name__}")
+
+    normalized_objects = []
+    for object_name in scene_entry:
+        if not isinstance(object_name, str):
+            raise ValueError(f"場景 {scene_index} 內的物體名稱必須是字串")
+        if object_name not in MASS_TABLE:
+            raise ValueError(f"場景 {scene_index} 含有未知物體: {object_name}")
+        normalized_objects.append(object_name)
+
+    if not normalized_objects:
+        raise ValueError(f"場景 {scene_index} 不能是空的")
+
+    return normalized_objects
+
+
+def resolve_scene_plan_path(scene_plan_path: str):
+    directory = os.path.dirname(scene_plan_path)
+    filename = os.path.basename(scene_plan_path)
+    stem, ext = os.path.splitext(filename)
+    prefix = f"{stem}_"
+
+    candidate_names = []
+    for entry in os.listdir(directory):
+        if entry.startswith(prefix) and entry.endswith(ext):
+            candidate_names.append(entry)
+
+    if not candidate_names:
+        return scene_plan_path
+
+    latest_name = max(candidate_names)
+    return os.path.join(directory, latest_name)
+
+
+def load_scene_plan_from_file(scene_plan_path: str):
+    resolved_path = resolve_scene_plan_path(scene_plan_path)
+    if not os.path.exists(resolved_path):
+        return None
+
+    with open(resolved_path, "r", encoding="utf-8") as file:
+        payload = json.load(file)
+
+    if isinstance(payload, dict):
+        scenes = payload.get("scenes")
+    else:
+        scenes = payload
+
+    if scenes is None:
+        raise ValueError(f"場景檔缺少 scenes 欄位: {resolved_path}")
+    if not isinstance(scenes, list):
+        raise ValueError(f"場景檔內容必須是 list: {resolved_path}")
+
+    normalized_scenes = []
+    for scene_index, scene_entry in enumerate(scenes, start=1):
+        normalized_scenes.append(normalize_scene_entry(scene_entry, scene_index))
+    return normalized_scenes, resolved_path
 
 
 def build_capture_plan():
-    return [[name] for name in get_capture_object_pool()]
+    global ACTIVE_CAPTURE_ROOT
+
+    scene_plan = load_scene_plan_from_file(SCENE_PLAN_PATH)
+    if not scene_plan:
+        raise RuntimeError(
+            "[Supervisor] 找不到可用場景。請先執行 generate_multi_object_scenes.py 產生場景檔。"
+        )
+    file_scenes, resolved_path = scene_plan
+    ACTIVE_CAPTURE_ROOT = build_capture_root_from_scene_plan(resolved_path)
+    print(f"[Supervisor] Loaded {len(file_scenes)} scenes from {resolved_path}")
+    print(f"[Supervisor] Capture root: {ACTIVE_CAPTURE_ROOT}")
+    return file_scenes
 
 
 def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
@@ -459,6 +552,7 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
         print(f"[Supervisor] 找不到 {ARM_STATUS_RECEIVER}，改用時間等待。")
     content_label = build_content_label(object_list)
     camera_poses = load_camera_poses_from_arm_controller(supervisor)
+    view_sequence = sorted(camera_poses.keys()) if VIEW_SEQUENCE is None else VIEW_SEQUENCE
     current_joints_rad = getattr(run_capture_sequence, "current_joints_rad", HOME_POSE_RAD[:])
 
     if ur5e_node is None:
@@ -468,7 +562,7 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
         print(f"[Supervisor] 找不到 DEF {CAMERA_DEF}")
         return False
 
-    for view_index in VIEW_SEQUENCE:
+    for view_index in view_sequence:
         target_joints_rad = pose_joints_rad(camera_poses, view_index)
         settle_time = estimate_settle_time(current_joints_rad, target_joints_rad)
         print(f"[Supervisor] Moving arm to view {view_index}...")
@@ -496,8 +590,8 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
             f"capture_token={capture_token};"
             f"view={view_index};"
             f"label={content_label};"
-            f"capture_root={CAPTURE_ROOT};"
-            f"num_views={len(VIEW_SEQUENCE)}"
+            f"capture_root={ACTIVE_CAPTURE_ROOT};"
+            f"num_views={len(camera_poses)}"
         )
         print(f"[Supervisor] Triggering capture {view_index}_{content_label}")
         set_custom_data(camera_node, camera_data)
@@ -525,7 +619,7 @@ def main():
     timestep = int(supervisor.getBasicTimeStep())
     capture_plan = build_capture_plan()
 
-    print("[Supervisor] Dataset mode: single")
+    print("[Supervisor] Dataset mode: multi")
     print(f"[Supervisor] Total scenes to capture: {len(capture_plan)}")
 
     for scene_index, object_list in enumerate(capture_plan, start=1):

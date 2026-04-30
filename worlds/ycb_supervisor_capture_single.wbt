@@ -55,8 +55,8 @@ DEF UR5E UR5e {
 }
 Robot {
   supervisor TRUE
-  controller "ycb_supervisor_four_view_multi"
-  customData "capture_mode=multi"
+  controller "ycb_supervisor_single"
+  customData "capture_mode=single"
   children [
     Emitter {
       name "arm_command_emitter"

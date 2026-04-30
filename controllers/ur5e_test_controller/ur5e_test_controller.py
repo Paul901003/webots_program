@@ -32,12 +32,12 @@ CAMERA_POSES = {
     6: {"joint_deg": [55.56, -125.96, 131.44, -99.9, -134.83, 83.73]},  # source_id=10 el=45 az=150 ray_miss=0.5mm roll=0.0deg
 }
 
-
 def clamp(value, min_value, max_value):
     return max(min_value, min(value, max_value))
 
 
 def nearest_joint_angle(target, current, lo, hi):
+    """Return the angle equivalent to target (mod 2π) that is closest to current and within [lo, hi]."""
     best, best_dist = target, float('inf')
     for k in range(-3, 4):
         candidate = target + k * 2 * math.pi
@@ -202,6 +202,39 @@ def camera_pose_to_joint_positions(camera_pose):
     return [math.radians(value) for value in joint_deg]
 
 
+def parse_arm_command(message):
+    try:
+        pose_index = int(message)
+    except ValueError:
+        pose_index = None
+
+    if pose_index in CAMERA_POSES:
+        return (
+            camera_pose_to_joint_positions(CAMERA_POSES[pose_index]),
+            f"視角 {pose_index} (joint preset)",
+            str(pose_index),
+        )
+
+    try:
+        data = json.loads(message)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"無法解析手臂指令: {error}") from error
+
+    if isinstance(data, dict) and "joint_deg" in data:
+        joint_deg = data["joint_deg"]
+        command_id = str(data.get("command_id", "json"))
+    elif isinstance(data, list):
+        joint_deg = data
+        command_id = "json"
+    else:
+        raise ValueError("JSON 指令必須是 joint_deg dict 或 6 個角度的 list")
+
+    if not isinstance(joint_deg, list) or len(joint_deg) != 6:
+        raise ValueError("JSON joint_deg 必須提供 6 個角度")
+
+    return [math.radians(float(value)) for value in joint_deg], "validator joint_deg", command_id
+
+
 def send_arm_status(emitter, status, command_id, max_error_rad):
     if emitter is None or command_id is None:
         return
@@ -252,7 +285,7 @@ def main():
     joint_limits = [
         (-2 * math.pi, 2 * math.pi),  # shoulder_pan
         (-2 * math.pi, 2 * math.pi),  # shoulder_lift
-        (-math.pi,     math.pi),       # elbow_joint (PROTO: ±π)
+        (-math.pi,     math.pi),       # elbow_joint (PROTO: minPosition -π, maxPosition π)
         (-2 * math.pi, 2 * math.pi),  # wrist_1
         (-2 * math.pi, 2 * math.pi),  # wrist_2
         (-2 * math.pi, 2 * math.pi),  # wrist_3
@@ -347,44 +380,26 @@ def main():
                 message = receiver.getString().strip()
                 receiver.nextPacket()
                 try:
-                    pose_index = int(message)
-                except ValueError:
-                    pose_index = None
+                    pose_joint_positions, command_label, command_id = parse_arm_command(message)
+                except ValueError as error:
+                    print(f"自動拍攝視角切換失敗: {error}")
+                    continue
 
-                if message == "home":
-                    current_positions = [s.getValue() for s in sensors]
-                    new_target = [
-                        nearest_joint_angle(pos, cur, lo, hi)
-                        for pos, cur, (lo, hi) in zip(home_pose, current_positions, joint_limits)
-                    ]
-                    target_positions = new_target
-                    active_command_id = "home"
-                    arrived_reported = False
-                    arrival_stable_start = None
-                    send_arm_status(status_emitter, "moving", active_command_id, 999.0)
-                    print("回到 Home pose (supervisor 指令)")
-                elif pose_index in CAMERA_POSES:
-                    try:
-                        pose_joint_positions = camera_pose_to_joint_positions(CAMERA_POSES[pose_index])
-                    except ValueError as error:
-                        print(f"自動拍攝視角 {pose_index} 切換失敗: {error}")
-                        continue
+                if not is_within_joint_limits(pose_joint_positions, joint_limits):
+                    print("自動拍攝視角切換失敗: 關節角度超出 joint limit")
+                    continue
 
-                    if not is_within_joint_limits(pose_joint_positions, joint_limits):
-                        print(f"自動拍攝視角 {pose_index} 切換失敗: 關節角度超出 joint limit")
-                        continue
-
-                    current_positions = [s.getValue() for s in sensors]
-                    pose_joint_positions = [
-                        nearest_joint_angle(pos, cur, lo, hi)
-                        for pos, cur, (lo, hi) in zip(pose_joint_positions, current_positions, joint_limits)
-                    ]
-                    target_positions = pose_joint_positions
-                    active_command_id = str(pose_index)
-                    arrived_reported = False
-                    arrival_stable_start = None
-                    send_arm_status(status_emitter, "moving", active_command_id, 999.0)
-                    print(f"切到自動拍攝視角 {pose_index} (joint preset)")
+                current_positions = [s.getValue() for s in sensors]
+                pose_joint_positions = [
+                    nearest_joint_angle(pos, cur, lo, hi)
+                    for pos, cur, (lo, hi) in zip(pose_joint_positions, current_positions, joint_limits)
+                ]
+                target_positions = pose_joint_positions
+                active_command_id = command_id
+                arrived_reported = False
+                arrival_stable_start = None
+                send_arm_status(status_emitter, "moving", active_command_id, 999.0)
+                print(f"切到自動拍攝{command_label}")
 
         key = keyboard.getKey()
         while key != -1:

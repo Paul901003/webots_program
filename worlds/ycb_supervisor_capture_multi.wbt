@@ -55,7 +55,7 @@ DEF UR5E UR5e {
 }
 Robot {
   supervisor TRUE
-  controller "ycb_supervisor_four_view_multi"
+  controller "ycb_supervisor_multi"
   customData "capture_mode=multi"
   children [
     Emitter {

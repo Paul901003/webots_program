@@ -48,5 +48,5 @@ UR5e {
 Robot {
   supervisor TRUE
   controller "visual_hull_check_supervisor"
-  customData "scene=Grounded-Segment-Anything/test_images/captures_single/apple;weight=grounded_sam_0.25_0.25_0.8"
 }
+

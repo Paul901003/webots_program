@@ -24,7 +24,7 @@ blank_floor {
 }
 DEF UR5E UR5e {
   translation -0.5 0 0
-  controller "ur5e_auto_capture_controller"
+  controller "ur5e_test_controller"
   toolSlot [
     Receiver {
       name "arm_command_receiver"
@@ -53,10 +53,10 @@ DEF UR5E UR5e {
     }
   ]
 }
+
 Robot {
   supervisor TRUE
-  controller "ycb_supervisor_four_view_multi"
-  customData "capture_mode=multi"
+  controller "ycb_viewpoint_validator"
   children [
     Emitter {
       name "arm_command_emitter"

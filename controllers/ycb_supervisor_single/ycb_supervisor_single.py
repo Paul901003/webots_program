@@ -44,7 +44,7 @@ CAMERA_DEF = "UR5E_CAMERA"
 ARM_COMMAND_EMITTER = "arm_command_emitter"
 ARM_STATUS_RECEIVER = "arm_status_receiver"
 CAPTURE_WAIT_SEC = 1.0
-VIEW_SEQUENCE = (1, 2, 3, 4)
+VIEW_SEQUENCE = None  # None = 依 CAMERA_POSES 鍵值自動決定
 CAPTURE_ROOT = "captures_single"
 SCENE_SETTLE_TIME_SEC = 1.0
 SCENE_POSE_FILENAME = "scene_objects_pose.json"
@@ -380,6 +380,13 @@ def send_arm_pose_command(emitter, view_index: int):
     return True
 
 
+def send_arm_home(emitter):
+    if emitter is None:
+        return False
+    emitter.send(b"home")
+    return True
+
+
 def get_arm_controller_name(supervisor: Supervisor):
     ur5e_node = supervisor.getFromDef(UR5E_DEF)
     if ur5e_node is None:
@@ -459,6 +466,7 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
         print(f"[Supervisor] 找不到 {ARM_STATUS_RECEIVER}，改用時間等待。")
     content_label = build_content_label(object_list)
     camera_poses = load_camera_poses_from_arm_controller(supervisor)
+    view_sequence = sorted(camera_poses.keys()) if VIEW_SEQUENCE is None else VIEW_SEQUENCE
     current_joints_rad = getattr(run_capture_sequence, "current_joints_rad", HOME_POSE_RAD[:])
 
     if ur5e_node is None:
@@ -468,7 +476,7 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
         print(f"[Supervisor] 找不到 DEF {CAMERA_DEF}")
         return False
 
-    for view_index in VIEW_SEQUENCE:
+    for view_index in view_sequence:
         target_joints_rad = pose_joints_rad(camera_poses, view_index)
         settle_time = estimate_settle_time(current_joints_rad, target_joints_rad)
         print(f"[Supervisor] Moving arm to view {view_index}...")
@@ -483,6 +491,12 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
             str(view_index),
             settle_time,
         ):
+            print(f"[Supervisor] Arm arrival timeout for view {view_index} — returning home, skipping scene.")
+            clear_receiver(arm_status_receiver)
+            send_arm_home(arm_emitter)
+            wait_for_arm_arrival(supervisor, timestep, arm_status_receiver, "home", ARM_SETTLE_TIME_SEC)
+            wait_seconds(supervisor, timestep, POST_ARRIVAL_PAUSE_SEC)
+            run_capture_sequence.current_joints_rad = HOME_POSE_RAD[:]
             return False
         current_joints_rad = target_joints_rad or current_joints_rad
         run_capture_sequence.current_joints_rad = current_joints_rad
@@ -497,7 +511,7 @@ def run_capture_sequence(supervisor: Supervisor, timestep: int, object_list):
             f"view={view_index};"
             f"label={content_label};"
             f"capture_root={CAPTURE_ROOT};"
-            f"num_views={len(VIEW_SEQUENCE)}"
+            f"num_views={len(camera_poses)}"
         )
         print(f"[Supervisor] Triggering capture {view_index}_{content_label}")
         set_custom_data(camera_node, camera_data)
@@ -530,7 +544,8 @@ def main():
 
     for scene_index, object_list in enumerate(capture_plan, start=1):
         if not run_scene(supervisor, timestep, object_list, scene_index, len(capture_plan)):
-            return
+            print(f"[Supervisor] Scene {scene_index} failed, continuing to next scene.")
+            continue
 
     print("[Supervisor] All dataset scenes captured.")
 

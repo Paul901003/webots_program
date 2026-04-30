@@ -1,0 +1,5 @@
+{
+  "scene": "Grounded-Segment-Anything/test_images/captures_multi__multi_object_scenes_20260427_165130/apple+hammer+extra_large_clamp",
+  "weight": "grounded_sam_0.25_0.25_0.8",
+  "mesh": ""
+}

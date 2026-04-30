@@ -1,7 +1,7 @@
 from controller import Supervisor
 import json
-import math
 import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -10,24 +10,16 @@ CURRENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = CURRENT_DIR.parent.parent
 YCB_SUPERVISOR_DIR = REPO_ROOT / "controllers" / "ycb_supervisor"
 
-import sys
-
 if str(YCB_SUPERVISOR_DIR) not in sys.path:
     sys.path.insert(0, str(YCB_SUPERVISOR_DIR))
 
 from config import (  # noqa: E402
-    GRID_COLS,
-    SPACING,
-    SPAWN_HEIGHT,
-    X_OFFSET,
-    Z_OFFSET,
     ASSET_BASE,
     MASS_TABLE,
     ALL_OBJECTS,
     DEFAULT_SHAPE,
     SHAPE_TABLE,
-    SPAWN_CLEARANCE,
-    SPACING_MARGIN,
+    ARM_SETTLE_TIME_SEC,
 )
 
 
@@ -36,15 +28,23 @@ with JSON_PATH.open("r", encoding="utf-8") as file:
     YCB_GEO_DATA = json.load(file)
 
 SCENE_POSE_FILENAME = "scene_objects_pose.json"
+DEFAULT_CONFIG_PATH = CURRENT_DIR / "visual_hull_check.json"
+VISUAL_HULL_OVERLAY_NAME = "visual_hull_overlay"
 
 
-def parse_custom_data(raw_text: str):
-    data = {}
-    for item in raw_text.split(";"):
-        key, sep, value = item.partition("=")
-        if sep:
-            data[key.strip().lower()] = value.strip()
-    return data
+def load_runtime_config():
+    if DEFAULT_CONFIG_PATH.is_file():
+        with DEFAULT_CONFIG_PATH.open("r", encoding="utf-8") as file:
+            payload = json.load(file)
+        if not isinstance(payload, dict):
+            raise ValueError(f"Invalid config format: {DEFAULT_CONFIG_PATH}")
+        normalized = {}
+        for key in ("scene", "weight", "mesh"):
+            value = payload.get(key, "")
+            normalized[key] = str(value).strip() if value is not None else ""
+        return normalized, str(DEFAULT_CONFIG_PATH)
+
+    return {}, str(DEFAULT_CONFIG_PATH)
 
 
 def get_geometry(name: str):
@@ -55,20 +55,6 @@ def get_geometry(name: str):
             "size": {"x": 0.1, "y": 0.1, "z": 0.1},
         },
     )
-
-
-def get_collision_half_height(name: str) -> float:
-    shape = SHAPE_TABLE.get(name, DEFAULT_SHAPE)
-    size = get_geometry(name)["size"]
-    sx, sy, sz = size["x"], size["y"], size["z"]
-    if shape == "Sphere":
-        return (sx + sy + sz) / 6.0
-    return sz / 2.0
-
-
-def get_collision_footprint(name: str) -> float:
-    size = get_geometry(name)["size"]
-    return max(size["x"], size["y"])
 
 
 def make_bounding_object(name: str, sx: float, sy: float, sz: float) -> str:
@@ -129,6 +115,10 @@ def make_ycb_vrml(
 
 
 def make_visual_hull_vrml(mesh_path: Path) -> str:
+    return make_named_visual_hull_vrml(mesh_path, VISUAL_HULL_OVERLAY_NAME)
+
+
+def make_named_visual_hull_vrml(mesh_path: Path, node_name: str) -> str:
     mesh_url = os.path.relpath(mesh_path, REPO_ROOT).replace(os.sep, "/")
     return (
         "Solid {\n"
@@ -152,54 +142,9 @@ def make_visual_hull_vrml(mesh_path: Path) -> str:
         "      ]\n"
         "    }\n"
         "  ]\n"
-        '  name "visual_hull_overlay"\n'
+        f'  name "{node_name}"\n'
         "}\n"
     )
-
-
-def compute_grid_positions(n: int, cols: int, spacing: float):
-    rows = math.ceil(n / cols)
-    positions = []
-    for i in range(n):
-        col = i % cols
-        row = i // cols
-        x = (col - (cols - 1) / 2.0) * spacing
-        y = (row - (rows - 1) / 2.0) * spacing
-        positions.append((x, y))
-    return positions
-
-
-def build_readable_label_map():
-    label_map = {}
-    for name in ALL_OBJECTS:
-        parts = name.split("_", 1)
-        readable = parts[1] if len(parts) == 2 else parts[0]
-        readable = readable.replace("-", "_")
-        label_map.setdefault(readable, []).append(name)
-    return label_map
-
-
-READABLE_LABEL_MAP = build_readable_label_map()
-
-
-def resolve_object_names(scene_name: str):
-    requested_labels = [part for part in scene_name.split("+") if part]
-    resolved_names = []
-    unknown_labels = []
-
-    for label in requested_labels:
-        candidates = READABLE_LABEL_MAP.get(label, [])
-        if not candidates:
-            unknown_labels.append(label)
-            continue
-
-        # Reuse sequential variants if the same readable label appears multiple times,
-        # e.g. "cups+cups" can map to different cup assets when available.
-        same_label_count = sum(1 for name in resolved_names if label in READABLE_LABEL_MAP and name in READABLE_LABEL_MAP[label])
-        candidate_index = min(same_label_count, len(candidates) - 1)
-        resolved_names.append(candidates[candidate_index])
-
-    return resolved_names, unknown_labels
 
 
 def resolve_rotation_axis_angle(rotation_axis_angle_data):
@@ -212,6 +157,29 @@ def resolve_rotation_axis_angle(rotation_axis_angle_data):
         float(rotation_axis_angle_data.get("z", 0.0)),
         float(rotation_axis_angle_data.get("angle", 0.0)),
     ]
+
+
+def normalize_scene_pose_record(record, index: int):
+    if not isinstance(record, dict):
+        return None
+
+    name = str(record.get("name", "")).strip()
+    position = record.get("position_m", {})
+    if not name or name not in MASS_TABLE or not isinstance(position, dict):
+        return None
+
+    return {
+        "index": int(record.get("index", index)),
+        "name": name,
+        "position_m": {
+            "x": float(position.get("x", 0.0)),
+            "y": float(position.get("y", 0.0)),
+            "z": float(position.get("z", 0.0)),
+        },
+        "rotation_axis_angle": resolve_rotation_axis_angle(
+            record.get("rotation_axis_angle", {})
+        ),
+    }
 
 
 def load_scene_pose_records(scene_dir: Path):
@@ -228,36 +196,19 @@ def load_scene_pose_records(scene_dir: Path):
 
     normalized_records = []
     for index, record in enumerate(objects, start=1):
-        if not isinstance(record, dict):
-            continue
-
-        name = str(record.get("name", "")).strip()
-        position = record.get("position_m", {})
-        if not name or name not in MASS_TABLE:
-            continue
-        if not isinstance(position, dict):
-            continue
-
-        normalized_records.append(
-            {
-                "index": int(record.get("index", index)),
-                "name": name,
-                "position_m": {
-                    "x": float(position.get("x", 0.0)),
-                    "y": float(position.get("y", 0.0)),
-                    "z": float(position.get("z", 0.0)),
-                },
-                "rotation_axis_angle": resolve_rotation_axis_angle(
-                    record.get("rotation_axis_angle", {})
-                ),
-            }
-        )
+        normalized_record = normalize_scene_pose_record(record, index)
+        if normalized_record is not None:
+            normalized_records.append(normalized_record)
 
     return normalized_records, pose_path
 
 
+def get_root_children(supervisor: Supervisor):
+    return supervisor.getRoot().getField("children")
+
+
 def clear_generated_nodes(supervisor: Supervisor):
-    root_children = supervisor.getRoot().getField("children")
+    root_children = get_root_children(supervisor)
     index = root_children.getCount() - 1
     while index >= 0:
         node = root_children.getMFNode(index)
@@ -265,38 +216,20 @@ def clear_generated_nodes(supervisor: Supervisor):
             name_field = node.getField("name")
             if name_field is not None:
                 node_name = name_field.getSFString()
-                if node_name in ALL_OBJECTS or node_name == "visual_hull_overlay":
+                if (
+                    node_name in ALL_OBJECTS
+                    or node_name == VISUAL_HULL_OVERLAY_NAME
+                    or node_name.startswith(f"{VISUAL_HULL_OVERLAY_NAME}_")
+                ):
                     node.remove()
         index -= 1
-
-
-def spawn_objects(supervisor: Supervisor, object_list: List[str]):
-    if not object_list:
-        return
-
-    largest_footprint = max(get_collision_footprint(name) for name in object_list)
-    safe_spacing = max(SPACING, largest_footprint + SPACING_MARGIN)
-    positions = compute_grid_positions(len(object_list), GRID_COLS, safe_spacing)
-    root_children = supervisor.getRoot().getField("children")
-
-    for name, (grid_x, grid_y) in zip(object_list, positions):
-        final_x = grid_x + X_OFFSET
-        final_y = grid_y + Z_OFFSET
-        safe_spawn_height = max(
-            SPAWN_HEIGHT,
-            get_collision_half_height(name) + SPAWN_CLEARANCE,
-        )
-        root_children.importMFNodeFromString(
-            -1,
-            make_ycb_vrml(name, final_x, final_y, safe_spawn_height),
-        )
 
 
 def spawn_objects_from_scene_pose(supervisor: Supervisor, scene_pose_records):
     if not scene_pose_records:
         return
 
-    root_children = supervisor.getRoot().getField("children")
+    root_children = get_root_children(supervisor)
     for record in scene_pose_records:
         name = record["name"]
         position = record["position_m"]
@@ -313,8 +246,34 @@ def spawn_objects_from_scene_pose(supervisor: Supervisor, scene_pose_records):
 
 
 def spawn_visual_hull(supervisor: Supervisor, mesh_path: Path):
-    root_children = supervisor.getRoot().getField("children")
+    root_children = get_root_children(supervisor)
     root_children.importMFNodeFromString(-1, make_visual_hull_vrml(mesh_path))
+
+
+def spawn_visual_hulls(supervisor: Supervisor, mesh_paths: List[Path]):
+    root_children = get_root_children(supervisor)
+    for mesh_path in mesh_paths:
+        suffix = mesh_path.stem.removeprefix("visual_hull_") or mesh_path.stem
+        node_name = f"{VISUAL_HULL_OVERLAY_NAME}_{suffix}"
+        root_children.importMFNodeFromString(
+            -1,
+            make_named_visual_hull_vrml(mesh_path, node_name),
+        )
+
+
+def resolve_multi_mesh_paths(weight_dir: Path, scene_name: str):
+    scene_labels = [part.strip().replace("-", "_") for part in scene_name.split("+") if part.strip()]
+    mesh_paths = []
+    missing_labels = []
+
+    for label in scene_labels:
+        mesh_path = weight_dir / f"visual_hull_{label}.obj"
+        if mesh_path.is_file():
+            mesh_paths.append(mesh_path)
+        else:
+            missing_labels.append(label)
+
+    return mesh_paths, missing_labels
 
 
 def resolve_scene_dir(raw_scene: str) -> Path:
@@ -324,77 +283,99 @@ def resolve_scene_dir(raw_scene: str) -> Path:
     return scene_dir.resolve()
 
 
+def select_mesh_paths(weight_dir: Path, scene_name: str, mesh_name: str):
+    auto_mesh_paths, missing_mesh_labels = resolve_multi_mesh_paths(weight_dir, scene_name)
+    if mesh_name:
+        return [weight_dir / mesh_name], False, missing_mesh_labels
+    if len(auto_mesh_paths) > 1:
+        return auto_mesh_paths, True, missing_mesh_labels
+    return [weight_dir / "visual_hull.obj"], False, missing_mesh_labels
+
+
+def fail_and_idle(supervisor: Supervisor, timestep: int, *messages: str):
+    for message in messages:
+        print(message)
+    while supervisor.step(timestep) != -1:
+        pass
+
+
+def wait_seconds(supervisor: Supervisor, timestep: int, seconds: float):
+    steps = max(0, int(seconds * 1000 / max(1, timestep)))
+    for _ in range(steps):
+        if supervisor.step(timestep) == -1:
+            return False
+    return True
+
+
 def main():
     supervisor = Supervisor()
     timestep = int(supervisor.getBasicTimeStep())
-    raw_custom_data = supervisor.getCustomData().strip()
-    data = parse_custom_data(raw_custom_data)
+    data, config_source = load_runtime_config()
 
     raw_scene = data.get("scene", "")
     weight_name = data.get("weight", "")
-    mesh_name = data.get("mesh", "visual_hull.obj")
+    mesh_name = data.get("mesh", "").strip()
 
     if not raw_scene or not weight_name:
-        print("[visual_hull_check] Missing scene or weight in customData.")
-        print(
-            "[visual_hull_check] Example: "
-            "scene=Grounded-Segment-Anything/test_images/captures_single/apple;"
-            "weight=grounded_sam_0.3_0.3_0.7"
+        fail_and_idle(
+            supervisor,
+            timestep,
+            "[visual_hull_check] Missing scene or weight in runtime config.",
+            f"[visual_hull_check] Create config file: {DEFAULT_CONFIG_PATH}",
+            '[visual_hull_check] Example JSON: {"scene": "Grounded-Segment-Anything/test_images/captures_single/apple", '
+            '"weight": "grounded_sam_0.25_0.25_0.8", "mesh": ""}',
         )
-        while supervisor.step(timestep) != -1:
-            pass
         return
 
     scene_dir = resolve_scene_dir(raw_scene)
     if not scene_dir.is_dir():
-        print(f"[visual_hull_check] Scene directory not found: {scene_dir}")
-        while supervisor.step(timestep) != -1:
-            pass
+        fail_and_idle(supervisor, timestep, f"[visual_hull_check] Scene directory not found: {scene_dir}")
         return
 
     weight_dir = scene_dir / weight_name
     if not weight_dir.is_dir():
-        print(f"[visual_hull_check] Weight directory not found: {weight_dir}")
-        while supervisor.step(timestep) != -1:
-            pass
-        return
-
-    mesh_path = weight_dir / mesh_name
-    if not mesh_path.is_file():
-        print(f"[visual_hull_check] Mesh not found: {mesh_path}")
-        while supervisor.step(timestep) != -1:
-            pass
+        fail_and_idle(supervisor, timestep, f"[visual_hull_check] Weight directory not found: {weight_dir}")
         return
 
     scene_pose_records, scene_pose_path = load_scene_pose_records(scene_dir)
+    if scene_pose_records is None:
+        fail_and_idle(supervisor, timestep, f"[visual_hull_check] Scene pose file not found: {scene_pose_path}")
+        return
+
     scene_name = scene_dir.name
-    object_names, unknown_labels = resolve_object_names(scene_name)
+    mesh_paths, auto_multi_mesh, missing_mesh_labels = select_mesh_paths(
+        weight_dir, scene_name, mesh_name
+    )
+
+    missing_mesh_paths = [mesh_path for mesh_path in mesh_paths if not mesh_path.is_file()]
+    if missing_mesh_paths:
+        fail_and_idle(supervisor, timestep, f"[visual_hull_check] Mesh not found: {missing_mesh_paths[0]}")
+        return
 
     clear_generated_nodes(supervisor)
-    if scene_pose_records:
-        spawn_objects_from_scene_pose(supervisor, scene_pose_records)
+    print(f"[visual_hull_check] Waiting {ARM_SETTLE_TIME_SEC:.1f}s for arm to reach target pose...")
+    if not wait_seconds(supervisor, timestep, ARM_SETTLE_TIME_SEC):
+        return
+    spawn_objects_from_scene_pose(supervisor, scene_pose_records)
+    if auto_multi_mesh:
+        spawn_visual_hulls(supervisor, mesh_paths)
     else:
-        spawn_objects(supervisor, object_names)
-    spawn_visual_hull(supervisor, mesh_path)
+        spawn_visual_hull(supervisor, mesh_paths[0])
 
+    print(f"[visual_hull_check] Config source: {config_source}")
     print(f"[visual_hull_check] Scene: {scene_dir}")
     print(f"[visual_hull_check] Weight: {weight_dir}")
-    if scene_pose_records:
-        print(f"[visual_hull_check] Reconstructed from saved pose: {scene_pose_path}")
-        print(
-            f"[visual_hull_check] Reconstructed objects: "
-            f"{[record['name'] for record in scene_pose_records]}"
-        )
+    print(f"[visual_hull_check] Reconstructed from saved pose: {scene_pose_path}")
+    print(
+        f"[visual_hull_check] Reconstructed objects: "
+        f"{[record['name'] for record in scene_pose_records]}"
+    )
+    if auto_multi_mesh:
+        print(f"[visual_hull_check] Visual hulls: {mesh_paths}")
+        if missing_mesh_labels:
+            print(f"[visual_hull_check] Missing class meshes: {missing_mesh_labels}")
     else:
-        print(f"[visual_hull_check] Reconstructed objects: {object_names}")
-        print(
-            f"[visual_hull_check] Warning: saved pose file not found, fallback to label inference: "
-            f"{scene_pose_path}"
-        )
-    print(f"[visual_hull_check] Visual hull: {mesh_path}")
-    if unknown_labels and not scene_pose_records:
-        print(f"[visual_hull_check] Warning: unresolved labels: {unknown_labels}")
-
+        print(f"[visual_hull_check] Visual hull: {mesh_paths[0]}")
     while supervisor.step(timestep) != -1:
         pass
 

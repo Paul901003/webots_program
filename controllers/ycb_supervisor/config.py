@@ -14,6 +14,9 @@ Z_OFFSET     = 0.1
 SPAWN_CLEARANCE = 0.01
 SPACING_MARGIN = 0.02
 ARM_SETTLE_TIME_SEC = 2.0
+POST_ARRIVAL_PAUSE_SEC = 0.75
+ARM_MOTOR_VELOCITY_RAD_PER_SEC = 1.5
+ARM_SETTLE_TIME_BUFFER_SEC = 8.0
 ASSET_BASE   = "../urdfs/ycb_assets"
 
 # ── 資料集拍攝排程 ────────────────────────────────────────
