@@ -3,12 +3,11 @@ import json
 import numpy as np
 import math
 import shutil
+import threading
 from pathlib import Path
 from controller import Robot
 
 FRAME_WARMUP_STEPS = 2
-REPO_ROOT = Path(__file__).resolve().parents[2]
-TEST_IMAGES_DIR = REPO_ROOT / "Grounded-Segment-Anything" / "test_images"
 
 
 def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
@@ -35,12 +34,6 @@ def parse_custom_data(raw_text: str):
         if sep:
             data[key.strip().lower()] = value.strip()
     return data
-
-
-def build_capture_dir(root_name: str = "captures") -> Path:
-    capture_dir = TEST_IMAGES_DIR / root_name
-    capture_dir.mkdir(parents=True, exist_ok=True)
-    return capture_dir
 
 
 def sanitize_filename_part(value: str) -> str:
@@ -91,7 +84,10 @@ def make_depth_colormap(depth_array: np.ndarray) -> np.ndarray:
     return cv2.applyColorMap(depth_gray, cv2.COLORMAP_JET)
 
 
-def save_capture(scene_dir: Path, view_name: str, rgb_image, depth_array, position, roll_pitch_yaw):
+
+def save_capture(scene_dir: Path, view_name: str, rgb_image, depth_array,
+                 position, roll_pitch_yaw,
+                 joint_deg: list | None = None):
     scene_dir.mkdir(parents=True, exist_ok=True)
     rgb_path = scene_dir / f"{view_name}.png"
     depth_vis_path = scene_dir / f"{view_name}_depth.png"
@@ -111,21 +107,24 @@ def save_capture(scene_dir: Path, view_name: str, rgb_image, depth_array, positi
     roll, pitch, yaw = roll_pitch_yaw
     metadata = {
         "capture_name": view_name,
-        "position_m": {
-            "x": float(position[0]),
-            "y": float(position[1]),
-            "z": float(position[2]),
+        "camera": {
+            "position_m": {
+                "x": float(position[0]),
+                "y": float(position[1]),
+                "z": float(position[2]),
+            },
+            "rotation_rpy_rad": {
+                "roll": float(roll),
+                "pitch": float(pitch),
+                "yaw": float(yaw),
+            },
+            "rotation_rpy_deg": {
+                "roll": float(math.degrees(roll)),
+                "pitch": float(math.degrees(pitch)),
+                "yaw": float(math.degrees(yaw)),
+            },
         },
-        "rotation_rpy_rad": {
-            "roll": float(roll),
-            "pitch": float(pitch),
-            "yaw": float(yaw),
-        },
-        "rotation_rpy_deg": {
-            "roll": float(math.degrees(roll)),
-            "pitch": float(math.degrees(pitch)),
-            "yaw": float(math.degrees(yaw)),
-        },
+        "joint_deg": joint_deg,
         "files": {
             "rgb": rgb_path.name,
             "depth_visualization": depth_vis_path.name,
@@ -151,7 +150,16 @@ def main():
     range_finder = robot.getDevice(depth_name)
     gps = robot.getDevice(gps_name)
     imu = robot.getDevice(imu_name)
-    capture_dir = build_capture_dir()
+
+    if not (camera and range_finder and gps and imu):
+        print("找不到相機或姿態設備，請確認名稱是否正確。")
+        return
+
+    # GPS/IMU 常開（輕量），相機按需開關
+    gps.enable(sampling_period)
+    imu.enable(sampling_period)
+    camera_enabled = False
+    print(f"相機控制器就緒: {camera_name}（等待拍攝指令）")
 
     last_capture_token = None
     latest_raw_img = None
@@ -159,51 +167,52 @@ def main():
     latest_position = None
     latest_roll_pitch_yaw = None
     pending_capture = None
-
-    if camera and range_finder and gps and imu:
-        camera.enable(sampling_period)
-        range_finder.enable(sampling_period)
-        gps.enable(sampling_period)
-        imu.enable(sampling_period)
-        print(f"已啟用自動拍攝相機: {camera_name}")
-        print(f"拍照輸出資料夾: {capture_dir}")
-    else:
-        print("找不到相機或姿態設備，請確認名稱是否正確。")
-        return
+    last_custom_data_raw = None
+    data = {}
 
     while robot.step(timestep) != -1:
-        raw_img = camera.getImage()
-        raw_depth = range_finder.getRangeImage()
         position = gps.getValues()
         roll_pitch_yaw = imu.getRollPitchYaw()
-
-        if raw_img:
-            latest_raw_img = raw_img
-        if raw_depth:
-            latest_raw_depth = raw_depth
         if position:
             latest_position = position
         if roll_pitch_yaw:
             latest_roll_pitch_yaw = roll_pitch_yaw
 
+        if camera_enabled:
+            raw_img = camera.getImage()
+            raw_depth = range_finder.getRangeImage()
+            if raw_img:
+                latest_raw_img = raw_img
+            if raw_depth:
+                latest_raw_depth = raw_depth
+
         raw_data = robot.getCustomData().strip()
-        data = parse_custom_data(raw_data)
+        if raw_data != last_custom_data_raw:
+            last_custom_data_raw = raw_data
+            data = parse_custom_data(raw_data)
+
         capture_token = data.get("capture_token")
         view = sanitize_filename_part(data.get("view", "0"))
-        label = sanitize_filename_part(data.get("label", "scene"))
-        capture_root = sanitize_filename_part(data.get("capture_root", "captures"))
-        num_views_raw = data.get("num_views", "").strip()
-        if num_views_raw.isdigit():
-            label = f"{label}_{num_views_raw}views"
-        active_capture_dir = build_capture_dir(capture_root)
+        scene_dir_raw = data.get("scene_dir", "").strip()
+        scene_dir_path = Path(scene_dir_raw) if scene_dir_raw else None
+
+        joint_deg_raw = data.get("joint_deg", "").strip()
+        joint_deg = [float(v) for v in joint_deg_raw.split(",") if v] if joint_deg_raw else None
 
         pending_token = pending_capture["token"] if pending_capture is not None else None
         if capture_token and capture_token != last_capture_token and capture_token != pending_token:
+            # 收到新拍攝指令，啟用相機開始暖機
+            if not camera_enabled:
+                camera.enable(sampling_period)
+                range_finder.enable(sampling_period)
+                camera_enabled = True
+                latest_raw_img = None
+                latest_raw_depth = None
             pending_capture = {
                 "token": capture_token,
                 "view": view,
-                "label": label,
-                "capture_dir": active_capture_dir,
+                "scene_dir": scene_dir_path,
+                "joint_deg": joint_deg,
                 "warmup_steps": FRAME_WARMUP_STEPS,
             }
 
@@ -220,36 +229,47 @@ def main():
                 depth_array = np.array(latest_raw_depth, dtype=np.float32).reshape(
                     (range_finder.getHeight(), range_finder.getWidth())
                 )
-                scene_dir = pending_capture["capture_dir"] / pending_capture["label"]
+                scene_dir = pending_capture["scene_dir"]
                 view_name = pending_capture["view"]
-                capture_dir_name = pending_capture["capture_dir"].name
-                try:
-                    rgb_path, depth_vis_path, depth_raw_path, meta_path = save_capture(
-                        scene_dir,
-                        view_name,
-                        rgb_image,
-                        depth_array,
-                        latest_position,
-                        latest_roll_pitch_yaw,
-                    )
-                    last_capture_token = pending_capture["token"]
-                    pending_capture = None
-                    print("\n[Auto Capture]")
-                    print(f"根目錄: {capture_dir_name}")
-                    print(f"資料夾: {scene_dir.name}")
-                    print(f"視角: {view_name}")
-                    print(f"位置: {format_vec3(latest_position)} m")
-                    print(f"旋轉: {format_rpy_rad_deg(*latest_roll_pitch_yaw)}")
-                    print(f"RGB: {rgb_path}")
-                    print(f"Depth(vis): {depth_vis_path}")
-                    print(f"Depth(raw): {depth_raw_path}")
-                    print(f"Pose: {meta_path}")
-                    print(get_separator_line())
-                except Exception as error:
-                    pending_capture = None
-                    last_capture_token = capture_token
-                    print(f"[Auto Capture] 存檔失敗: {error}")
-                    print(get_separator_line())
+                snap_position = list(latest_position)
+                snap_rpy = tuple(latest_roll_pitch_yaw)
+                snap_joint_deg = pending_capture.get("joint_deg")
+                snap_token = pending_capture["token"]
+
+                # 立即關閉相機，讓 step loop 不再被阻塞
+                last_capture_token = snap_token
+                pending_capture = None
+                camera.disable()
+                range_finder.disable()
+                camera_enabled = False
+                latest_raw_img = None
+                latest_raw_depth = None
+
+                def _save_worker(sd, vn, img, dep, pos, rpy, jd):
+                    try:
+                        rgb_path, depth_vis_path, depth_raw_path, meta_path = save_capture(
+                            sd, vn, img, dep, pos, rpy, joint_deg=jd
+                        )
+                        print("\n[Auto Capture]")
+                        print(f"場景目錄: {sd}")
+                        print(f"視角: {vn}")
+                        print(f"位置: {format_vec3(pos)} m")
+                        print(f"旋轉: {format_rpy_rad_deg(*rpy)}")
+                        print(f"RGB: {rgb_path}")
+                        print(f"Depth(vis): {depth_vis_path}")
+                        print(f"Depth(raw): {depth_raw_path}")
+                        print(f"Pose: {meta_path}")
+                        print(get_separator_line())
+                    except Exception as error:
+                        print(f"[Auto Capture] 存檔失敗: {error}")
+                        print(get_separator_line())
+
+                threading.Thread(
+                    target=_save_worker,
+                    args=(scene_dir, view_name, rgb_image, depth_array,
+                          snap_position, snap_rpy, snap_joint_deg),
+                    daemon=True,
+                ).start()
 
 
 if __name__ == "__main__":

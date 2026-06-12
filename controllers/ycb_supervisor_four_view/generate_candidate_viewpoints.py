@@ -828,9 +828,9 @@ def main() -> None:
                         help=f"Hemisphere radius in metres "
                              f"(default: {HEMISPHERE_RADIUS_M})")
     parser.add_argument("--output",
-                        default=os.path.join(SCRIPT_DIR, "candidate_viewpoints.json"),
+                        default=os.path.join(CONTROLLERS_DIR, "..", "data", "viewpoints", "candidate_viewpoints.json"),
                         help="Candidate JSON output path "
-                             "(default: candidate_viewpoints.json next to this script)")
+                             "(default: data/viewpoints/candidate_viewpoints.json)")
     args = parser.parse_args()
 
     if args.center is not None:

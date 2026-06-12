@@ -32,6 +32,8 @@ from scipy.optimize import least_squares
 
 # ── path setup ──────────────────────────────────────────────────────────────
 SCRIPT_DIR      = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT       = os.path.dirname(os.path.dirname(SCRIPT_DIR))
+DATA_VIEWPOINTS = os.path.join(REPO_ROOT, "data", "viewpoints")
 CONTROLLERS_DIR = os.path.dirname(SCRIPT_DIR)
 KINEMATICS_DIR  = os.path.join(CONTROLLERS_DIR, "ur5e_controller", "my_ur_kinematics")
 sys.path.insert(0, KINEMATICS_DIR)
@@ -197,6 +199,7 @@ MAX_CAMERA_RAY_MISS_M = 0.005
 HEMISPHERE_RADIUS_M  = config.HEMISPHERE_RADIUS_M
 ELEVATION_ANGLES_DEG = config.ELEVATION_ANGLES_DEG
 AZIMUTH_STEPS        = config.AZIMUTH_STEPS
+EXTRA_VIEWPOINTS_DEG = getattr(config, "EXTRA_VIEWPOINTS_DEG", [])
 
 JOINT_LIMITS_DEG = config.JOINT_LIMITS_DEG
 REFERENCE_DEG    = config.REFERENCE_DEG
@@ -641,6 +644,17 @@ def sample_hemisphere() -> list:
             positions.append(OBJECT_CENTER_M + np.array([dx, dy, dz]))
     if not any(abs(el_deg - 90.0) < 1e-9 for el_deg in ELEVATION_ANGLES_DEG):
         positions.append(OBJECT_CENTER_M + np.array([0., 0., HEMISPHERE_RADIUS_M]))
+    for entry in EXTRA_VIEWPOINTS_DEG:
+        el_deg, az_deg = entry[0], entry[1]
+        target_r = entry[2] if len(entry) > 2 else None
+        if target_r is not None and abs(target_r - HEMISPHERE_RADIUS_M) > 1e-6:
+            continue
+        el_rad = math.radians(el_deg)
+        az_rad = math.radians(az_deg)
+        dx = HEMISPHERE_RADIUS_M * cos(el_rad) * cos(az_rad)
+        dy = HEMISPHERE_RADIUS_M * cos(el_rad) * sin(az_rad)
+        dz = HEMISPHERE_RADIUS_M * sin(el_rad)
+        positions.append(OBJECT_CENTER_M + np.array([dx, dy, dz]))
     return positions
 
 
@@ -755,12 +769,12 @@ def print_camera_poses(selected: list) -> None:
     print(f"VIEW_SEQUENCE = {tuple(range(1, len(selected) + 1))}")
 
 
-def export_candidates(valid: list, output_path: str) -> None:
+def export_candidates(valid: list, output_path: str, radius_m: float | None = None) -> None:
     records = []
     for idx, (p_cam, j_deg) in enumerate(valid, start=1):
         el, az = _elevation_azimuth(p_cam)
         joints_rad = [math.radians(v) for v in j_deg]
-        records.append({
+        rec = {
             "id": idx,
             "joint_deg": [round(v, 4) for v in j_deg],
             "camera_position_m": [float(v) for v in p_cam],
@@ -769,7 +783,10 @@ def export_candidates(valid: list, output_path: str) -> None:
             "target_err_deg": camera_target_angle_deg(joints_rad, OBJECT_CENTER_M),
             "ray_miss_m": camera_ray_miss_distance_m(joints_rad, OBJECT_CENTER_M),
             "roll_err_deg": camera_roll_error_deg(joints_rad, OBJECT_CENTER_M),
-        })
+        }
+        if radius_m is not None:
+            rec["radius_m"] = float(radius_m)
+        records.append(rec)
 
     with open(output_path, "w", encoding="utf-8") as file:
         json.dump(records, file, indent=2)
@@ -828,9 +845,9 @@ def main() -> None:
                         help=f"Hemisphere radius in metres "
                              f"(default: {HEMISPHERE_RADIUS_M})")
     parser.add_argument("--output",
-                        default=os.path.join(SCRIPT_DIR, "candidate_viewpoints.json"),
+                        default=os.path.join(DATA_VIEWPOINTS, "candidate_viewpoints.json"),
                         help="Candidate JSON output path "
-                             "(default: candidate_viewpoints.json next to this script)")
+                             "(default: data/viewpoints/candidate_viewpoints.json)")
     args = parser.parse_args()
 
     if args.center is not None:

@@ -28,7 +28,7 @@ DATASET_CAPTURE_MODE = "multi"
 MULTI_OBJECT_COUNT = 3
 MULTI_MIN_APPEARANCES = 5
 MULTI_SCENE_FILE = "multi_object_scenes.json"
-MULTI_SCENE_RANDOM_SEED = None
+MULTI_SCENE_RANDOM_SEED = 42
 
 # ── 質量表 ────────────────────────────────────────────────
 MASS_TABLE = {

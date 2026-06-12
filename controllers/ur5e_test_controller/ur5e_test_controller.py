@@ -17,8 +17,8 @@ from Foward_Kinematics import FK
 PRINT_KEY_DEBOUNCE_MS = 250
 ARM_COMMAND_RECEIVER = "arm_command_receiver"
 ARM_STATUS_EMITTER = "arm_status_emitter"
-ARRIVAL_TOLERANCE_RAD = 0.025
-ARRIVAL_HOLD_SEC = 0.2
+ARRIVAL_TOLERANCE_RAD = 0.005
+ARRIVAL_HOLD_SEC = 0.3
 FLANGE_TO_CAMERA_TRANSLATION_M = [0.005, -0.03, 0.05]
 FLANGE_TO_CAMERA_AXIS_ANGLE = [0.0, 0.0, 1.0, 1.5708]
 
@@ -220,14 +220,21 @@ def parse_arm_command(message):
     except json.JSONDecodeError as error:
         raise ValueError(f"無法解析手臂指令: {error}") from error
 
-    if isinstance(data, dict) and "joint_deg" in data:
+    if isinstance(data, dict) and data.get("type") == "waypoint" and "joints" in data:
+        # {"type": "waypoint", "joints": [6 radians], "id": "..."}
+        joints_rad = [float(v) for v in data["joints"]]
+        command_id = str(data.get("id", "waypoint"))
+        if len(joints_rad) != 6:
+            raise ValueError("waypoint joints 必須提供 6 個角度")
+        return joints_rad, "waypoint", command_id
+    elif isinstance(data, dict) and "joint_deg" in data:
         joint_deg = data["joint_deg"]
         command_id = str(data.get("command_id", "json"))
     elif isinstance(data, list):
         joint_deg = data
         command_id = "json"
     else:
-        raise ValueError("JSON 指令必須是 joint_deg dict 或 6 個角度的 list")
+        raise ValueError("JSON 指令必須是 joint_deg dict、waypoint dict 或 6 個角度的 list")
 
     if not isinstance(joint_deg, list) or len(joint_deg) != 6:
         raise ValueError("JSON joint_deg 必須提供 6 個角度")
@@ -399,7 +406,6 @@ def main():
                 arrived_reported = False
                 arrival_stable_start = None
                 send_arm_status(status_emitter, "moving", active_command_id, 999.0)
-                print(f"切到自動拍攝{command_label}")
 
         key = keyboard.getKey()
         while key != -1:

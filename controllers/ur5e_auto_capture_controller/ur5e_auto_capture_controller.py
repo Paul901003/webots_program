@@ -17,8 +17,9 @@ from Foward_Kinematics import FK
 PRINT_KEY_DEBOUNCE_MS = 250
 ARM_COMMAND_RECEIVER = "arm_command_receiver"
 ARM_STATUS_EMITTER = "arm_status_emitter"
-ARRIVAL_TOLERANCE_RAD = 0.025
-ARRIVAL_HOLD_SEC = 0.2
+ARRIVAL_TOLERANCE_RAD = 0.005
+ARRIVAL_HOLD_SEC = 0.3
+VIA_TOLERANCE_RAD = 0.08
 FLANGE_TO_CAMERA_TRANSLATION_M = [0.005, -0.03, 0.05]
 FLANGE_TO_CAMERA_AXIS_ANGLE = [0.0, 0.0, 1.0, 1.5708]
 
@@ -248,6 +249,14 @@ def main():
     home_pose = [0.0, -math.pi / 2, math.pi / 2, -math.pi / 2, -math.pi / 2, 0.0]
     target_positions = home_pose[:]
 
+    # 啟動時以各關節最高速直衝 HOME，避免初始姿態碰桌面
+    for motor, pos in zip(motors, home_pose):
+        motor.setVelocity(motor.getMaxVelocity())
+        motor.setPosition(pos)
+    robot.step(timestep)
+    for motor in motors:
+        motor.setVelocity(1.5)
+
     angle_step = 0.05
     joint_limits = [
         (-2 * math.pi, 2 * math.pi),  # shoulder_pan
@@ -295,7 +304,7 @@ def main():
     for sensor in gripper_sensors:
         sensor.enable(timestep)
 
-    gripper_position = None
+    gripper_target = 0.0  # 由指令控制，預設全開
     gripper_step = 0.02
     gripper_min = 0.0
     gripper_max = 0.7
@@ -312,6 +321,8 @@ def main():
     active_command_id = None
     arrived_reported = False
     arrival_stable_start = None
+    path_waypoints = []   # path 指令的剩餘 waypoints 佇列
+    is_path_command = False
 
     print("\n=========================================")
     print("自動四視角 UR5e controller 已啟動")
@@ -329,23 +340,64 @@ def main():
         print("警告：找不到夾爪感測器，將改用預設開口值。")
 
     while robot.step(timestep) != -1:
-        if gripper_position is None:
-            sensor_values = [
-                sensor.getValue()
-                for sensor in gripper_sensors
-                if sensor is not None
-            ]
-            if sensor_values:
-                gripper_position = clamp(sum(sensor_values) / len(sensor_values), gripper_min, gripper_max)
-                print(f"夾爪初始姿態已鎖定: {gripper_position:.4f}")
-            else:
-                gripper_position = gripper_min
-                print("警告：找不到夾爪感測器，改用預設開口值。")
 
         if receiver:
             while receiver.getQueueLength() > 0:
                 message = receiver.getString().strip()
                 receiver.nextPacket()
+                # 嘗試解析為 JSON waypoint 指令
+                try:
+                    json_cmd = json.loads(message)
+                except (ValueError, json.JSONDecodeError):
+                    json_cmd = None
+
+                if json_cmd is not None and json_cmd.get("type") == "path":
+                    waypoints = json_cmd.get("waypoints", [])
+                    command_id = str(json_cmd.get("id", "path"))
+                    if not waypoints or any(len(w) != 6 for w in waypoints):
+                        print(f"path 指令格式錯誤 (id={command_id})")
+                    else:
+                        gripper_target = clamp(float(json_cmd.get("gripper", 0.0)), gripper_min, gripper_max)
+                        current_positions = [s.getValue() for s in sensors]
+                        first_wp = [float(v) for v in waypoints[0]]
+                        target_positions = [
+                            nearest_joint_angle(pos, cur, lo, hi)
+                            for pos, cur, (lo, hi) in zip(first_wp, current_positions, joint_limits)
+                        ]
+                        path_waypoints = [[float(v) for v in w] for w in waypoints[1:]]
+                        active_command_id = command_id
+                        is_path_command = True
+                        arrived_reported = False
+                        arrival_stable_start = None
+                        send_arm_status(status_emitter, "moving", active_command_id, 999.0)
+                        print(f"執行路徑 (id={command_id}, {len(waypoints)} 個 waypoint, gripper={gripper_target:.3f})")
+                    continue
+
+                if json_cmd is not None and json_cmd.get("type") == "waypoint":
+                    raw_joints = json_cmd.get("joints", [])
+                    command_id = str(json_cmd.get("id", "wp"))
+                    if len(raw_joints) != 6:
+                        print(f"waypoint 指令關節數錯誤: {len(raw_joints)}")
+                    else:
+                        wp_joints = [float(v) for v in raw_joints]
+                        if not is_within_joint_limits(wp_joints, joint_limits):
+                            print(f"waypoint {command_id} 超出 joint limit，跳過")
+                        else:
+                            gripper_target = clamp(float(json_cmd.get("gripper", 0.0)), gripper_min, gripper_max)
+                            current_positions = [s.getValue() for s in sensors]
+                            target_positions = [
+                                nearest_joint_angle(pos, cur, lo, hi)
+                                for pos, cur, (lo, hi) in zip(wp_joints, current_positions, joint_limits)
+                            ]
+                            active_command_id = command_id
+                            is_path_command = False
+                            path_waypoints = []
+                            arrived_reported = False
+                            arrival_stable_start = None
+                            send_arm_status(status_emitter, "moving", active_command_id, 999.0)
+                            print(f"執行 waypoint (id={command_id}, gripper={gripper_target:.3f})")
+                    continue
+
                 try:
                     pose_index = int(message)
                 except ValueError:
@@ -389,9 +441,9 @@ def main():
         key = keyboard.getKey()
         while key != -1:
             if key == ord("C"):
-                gripper_position += gripper_step
+                gripper_target += gripper_step
             elif key == ord("V"):
-                gripper_position -= gripper_step
+                gripper_target -= gripper_step
             elif key == ord("Q"):
                 target_positions[0] += angle_step
             elif key == ord("A"):
@@ -440,7 +492,7 @@ def main():
                     camera_rpy_deg = [round(math.degrees(value), 2) for value in camera_pose["rpy"]]
                     print(f"camera xyz(mm): {camera_xyz_mm}")
                     print(f"camera rpy(deg): {camera_rpy_deg}")
-                    print(f"gripper: {round(gripper_position, 4)}")
+                    print(f"gripper: {round(gripper_target, 4)}")
                     print(get_separator_line())
 
             key = keyboard.getKey()
@@ -452,13 +504,13 @@ def main():
                 joint_limits[i][1],
             )
 
-        gripper_position = clamp(gripper_position, gripper_min, gripper_max)
+        gripper_target = clamp(gripper_target, gripper_min, gripper_max)
 
         for i in range(6):
             motors[i].setPosition(target_positions[i])
 
         for motor in gripper_motors:
-            motor.setPosition(gripper_position)
+            motor.setPosition(gripper_target)
 
         if active_command_id is not None and all(sensor is not None for sensor in sensors):
             current_positions = [sensor.getValue() for sensor in sensors]
@@ -466,17 +518,26 @@ def main():
                 abs(current_positions[i] - target_positions[i])
                 for i in range(6)
             )
-            if max_error <= ARRIVAL_TOLERANCE_RAD:
-                if arrival_stable_start is None:
-                    arrival_stable_start = robot.getTime()
-                elif (
-                    not arrived_reported
-                    and robot.getTime() - arrival_stable_start >= ARRIVAL_HOLD_SEC
-                ):
-                    send_arm_status(status_emitter, "arrived", active_command_id, max_error)
-                    arrived_reported = True
+            if is_path_command and path_waypoints:
+                # 中繼點：用寬鬆 tolerance 推進到下一個 waypoint
+                if max_error <= VIA_TOLERANCE_RAD:
+                    next_wp = path_waypoints.pop(0)
+                    target_positions = [float(v) for v in next_wp]
+                    arrival_stable_start = None
             else:
-                arrival_stable_start = None
+                # 最終目標：嚴格 tolerance + 穩定確認後回報 arrived
+                if max_error <= ARRIVAL_TOLERANCE_RAD:
+                    if arrival_stable_start is None:
+                        arrival_stable_start = robot.getTime()
+                    elif (
+                        not arrived_reported
+                        and robot.getTime() - arrival_stable_start >= ARRIVAL_HOLD_SEC
+                    ):
+                        send_arm_status(status_emitter, "arrived", active_command_id, max_error)
+                        arrived_reported = True
+                        is_path_command = False
+                else:
+                    arrival_stable_start = None
 
 
 if __name__ == "__main__":

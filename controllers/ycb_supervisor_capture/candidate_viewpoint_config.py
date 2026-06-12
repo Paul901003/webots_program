@@ -7,11 +7,15 @@ UR5E_DEF = "UR5E"
 CAMERA_DEF = "UR5E_CAMERA"
 
 # World layout (Z-up, metres).
-ROBOT_BASE_M = [-0.5, 0.0, 0.0]
+ROBOT_BASE_M = [-0.4, 0.0, 0.0]
 # Target point the camera should look at, in world coordinates.
 # In this scene, +X is the arm's forward direction and the table target center
 # is at the world origin.
 OBJECT_CENTER_M = [0.0, 0.0, 0.0]
+# YCB 物體資訊（供 generate_labels.py 使用）
+YCB_OBJECT_NAME     = "024_bowl"         # YCB 物體資料夾名稱
+YCB_OBJECT_ROTATION = [0, 1, 0, 0]      # Webots axis-angle (ax,ay,az,angle_rad)，0=不旋轉
+CAPTURE_ROOT        = "captures_single"  # scene_plan.json 中的 capture_root
 TABLE_Z_M = 0.0
 LINK_CLEARANCE_M = 0.06
 
@@ -50,8 +54,18 @@ MAX_CAMERA_ROLL_ERROR_DEG = 10.0
 
 # Hemisphere sampling.
 HEMISPHERE_RADIUS_M = 0.65
-ELEVATION_ANGLES_DEG = [30, 45, 60, 75, 90]
-AZIMUTH_STEPS = 12
+HEMISPHERE_RADII_M = [0.55, 0.6, 0.65, 0.7]  # 多半徑模式用
+ELEVATION_ANGLES_DEG = [45, 60, 75, 90]
+AZIMUTH_STEPS = 8
+EXTRA_VIEWPOINTS_DEG = [
+    (20, 150, None),
+    (20, 160, None),
+    (20, 170, None),
+    (20, 180, None),
+    (20, 190, None),
+    (20, 200, None),
+    (20, 210, None),
+]  # 額外指定的 (仰角, 方位角, 半徑m) 視角；半徑 None 表示套用所有半徑
 
 # Joint limits and IK solution preference (degrees).
 JOINT_LIMITS_DEG = [
@@ -63,7 +77,7 @@ JOINT_LIMITS_DEG = [
     (-180, 180),   # J6 wrist 3
 ]
 REFERENCE_DEG = [0.0, -90.0, 90.0, -90.0, -90.0, 0.0]
-NUM_OUTPUT_POSES = 6
+NUM_OUTPUT_POSES = 12
 
 # Self-collision capsule radii (mm), one radius per UR5e link capsule.
 LINK_RADII_MM = [65.0, 60.0, 55.0, 40.0, 40.0, 35.0]

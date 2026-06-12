@@ -1,0 +1,191 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "../protos/blank_floor.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/universal_robots/protos/UR5e.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/devices/robotiq/protos/Robotiq2f140Gripper.proto"
+EXTERNPROTO "../protos/IntelRealsenseD455.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 1 0 -1 3.14
+  position 0 0 5.5
+  followType "None"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 1.2
+  castShadows FALSE
+}
+blank_floor {
+}
+DEF HEMISPHERE_R05 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.1 0.3 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.5
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r05"
+}
+DEF HEMISPHERE_R055 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.16 0.38 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.55
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r055"
+}
+DEF HEMISPHERE_R060 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.19 0.42 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.6
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r060"
+}
+DEF HEMISPHERE_R065 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.22 0.46 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.65
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r065"
+}
+DEF HEMISPHERE_R07 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.28 0.54 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.7
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r07"
+}
+DEF HEMISPHERE_R075 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.34 0.62 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.75
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r075"
+}
+DEF HEMISPHERE_R08 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.4 0.7 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.8
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r08"
+}
+
+DEF UR5E UR5e {
+  translation -0.4 0 0
+  controller "ur5e_test_controller"
+  toolSlot [
+    Receiver {
+      name "arm_command_receiver"
+      channel 11
+    }
+    Emitter {
+      name "arm_status_emitter"
+      channel 12
+    }
+    DEF UR5E_CAMERA IntelRealsenseD455 {
+      translation 0 -0.03 0.05
+      rotation 0 0 1 1.5708
+      controller "realsense_auto_capture_controller"
+      resolution "HD"
+      minRange 0.3
+      maxRange 3.0
+      fps 30
+    }
+    Pose {
+      rotation 0 1 0 1.5707996938995747
+      children [
+        Robotiq2f140Gripper {
+          rotation 1 0 0 -1.5707996938995747
+        }
+      ]
+    }
+  ]
+}
+
+Robot {
+  supervisor TRUE
+  controller "ycb_viewpoint_validator"
+  controllerArgs "--multi"
+  children [
+    Emitter {
+      name "arm_command_emitter"
+      channel 11
+    }
+    Receiver {
+      name "arm_status_receiver"
+      channel 12
+    }
+  ]
+}

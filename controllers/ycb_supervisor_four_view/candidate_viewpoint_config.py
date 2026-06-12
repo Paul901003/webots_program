@@ -12,6 +12,9 @@ ROBOT_BASE_M = [-0.5, 0.0, 0.0]
 # In this scene, +X is the arm's forward direction and the table target center
 # is at the world origin.
 OBJECT_CENTER_M = [0.0, 0.0, 0.0]
+# YCB 物體資訊（供 generate_labels.py 使用）
+YCB_OBJECT_NAME     = "024_bowl"         # YCB 物體資料夾名稱
+YCB_OBJECT_ROTATION = [0, 1, 0, 0]      # Webots axis-angle (ax,ay,az,angle_rad)，0=不旋轉
 TABLE_Z_M = 0.0
 LINK_CLEARANCE_M = 0.06
 

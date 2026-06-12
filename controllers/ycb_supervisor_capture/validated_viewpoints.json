@@ -7,7 +7,8 @@
   "max_ray_miss_m": 0.005,
   "max_camera_roll_error_deg": 10.0,
   "min_camera_z_m": 0.08,
-  "validated_count": 29,
+  "moveit_enabled": true,
+  "validated_count": 6,
   "validated": [
     {
       "id": 1,
@@ -21,26 +22,32 @@
         -129.1652,
         151.939
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 11,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          1.4758883808829485e-05,
-          0.5672629093927974,
-          0.3265956422084904
+          0.004922553983718746,
+          0.5617958733584492,
+          0.33502503152089225
         ],
         "ray_origin_m": [
-          1.4496087949109236e-05,
-          0.5629324401343226,
-          0.32409623509232405
+          0.0049087178456902435,
+          0.5574969399293161,
+          0.33247180220624634
         ],
         "ray_axis_world": [
-          -5.255917194404991e-05,
-          -0.866093851694958,
-          -0.499881423233276
+          -0.0027672276057005146,
+          -0.8597866858265986,
+          -0.5106458629291852
         ],
-        "ray_projection_m": 0.6495620133443766,
-        "ray_miss_m": 0.0007019877051941096,
-        "target_angle_deg": 0.06192005734832243,
-        "roll_err_deg": 0.014872299773871715
+        "ray_projection_m": 0.6491173802170582,
+        "ray_miss_m": 0.0033255832349470735,
+        "target_angle_deg": 0.29353738249415534,
+        "roll_err_deg": 0.462312407252562
       },
       "contacts": {
         "ur5e": 4,
@@ -48,7 +55,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 1,
         "joint_deg": [
@@ -83,26 +90,32 @@
         -138.6949,
         138.9175
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 6,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.2836178854258836,
-          0.4912596186278927,
-          0.3266636919696434
+          -0.2822899028062417,
+          0.4897417348072037,
+          0.3318298109790465
         ],
         "ray_origin_m": [
-          -0.28145291031382236,
-          0.48750934742477875,
-          0.3241640222580116
+          -0.280140878194757,
+          0.4860126726485494,
+          0.32928505389120377
         ],
         "ray_axis_world": [
-          0.43299502241225746,
-          -0.7500542406227919,
-          -0.4999339423263595
+          0.4298049222969354,
+          -0.7458124317308525,
+          -0.5089514175685513
         ],
-        "ray_projection_m": 0.6495867601963514,
-        "ray_miss_m": 0.0006773881861805546,
-        "target_angle_deg": 0.05974793894779968,
-        "roll_err_deg": 0.011584941613535321
+        "ray_projection_m": 0.6504703165867832,
+        "ray_miss_m": 0.0020599918297910975,
+        "target_angle_deg": 0.18145092878865038,
+        "roll_err_deg": 1.038521101931606
       },
       "contacts": {
         "ur5e": 4,
@@ -110,7 +123,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 2,
         "joint_deg": [
@@ -134,130 +147,6 @@
       }
     },
     {
-      "id": 5,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -125.0642,
-        -103.758,
-        129.8251,
-        -58.5522,
-        -68.585,
-        -166.907
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.49150713499490556,
-          -0.2839987795676837,
-          0.32706705222839344
-        ],
-        "ray_origin_m": [
-          -0.48775703075650306,
-          -0.2818339286823341,
-          0.3245670244594843
-        ],
-        "ray_axis_world": [
-          0.7500208476804985,
-          0.43297017706992286,
-          -0.5000055537818217
-        ],
-        "ray_projection_m": 0.6501389424802001,
-        "ray_miss_m": 0.0006270933979885735,
-        "target_angle_deg": 0.05526479275935305,
-        "roll_err_deg": 0.0054966464561778524
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 5,
-        "joint_deg": [
-          -125.0642,
-          -103.758,
-          129.8251,
-          -58.5522,
-          -68.585,
-          -166.907
-        ],
-        "camera_position_m": [
-          -0.48750000000000016,
-          -0.2814582562299424,
-          0.32499999999999996
-        ],
-        "elevation_deg": 29.999999999999993,
-        "azimuth_deg": -150.00000000000003,
-        "target_err_deg": 2.4148365394514667e-06,
-        "ray_miss_m": 2.7613045778534916e-08,
-        "roll_err_deg": 0.005787347534732332
-      }
-    },
-    {
-      "id": 6,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -86.03,
-        -68.0002,
-        91.4165,
-        -58.2606,
-        -61.0595,
-        -161.376
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.2836232859998937,
-          -0.4912619342811407,
-          0.3266623387835679
-        ],
-        "ray_origin_m": [
-          -0.28145835415148585,
-          -0.4875116630490714,
-          0.3241626316451889
-        ],
-        "ray_axis_world": [
-          0.43298636968158144,
-          0.7500542464138525,
-          -0.4999414276757953
-        ],
-        "ray_projection_m": 0.6495901528906787,
-        "ray_miss_m": 0.0006868428740473946,
-        "target_angle_deg": 0.060581557514834,
-        "roll_err_deg": 0.013248172523519482
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 6,
-        "joint_deg": [
-          -86.03,
-          -68.0002,
-          91.4165,
-          -58.2606,
-          -61.0595,
-          -161.376
-        ],
-        "camera_position_m": [
-          -0.28145825622994286,
-          -0.4874999999999999,
-          0.32499999999999996
-        ],
-        "elevation_deg": 29.999999999999993,
-        "azimuth_deg": -120.00000000000004,
-        "target_err_deg": 3.078324659199975e-06,
-        "ray_miss_m": 3.5401626348990235e-08,
-        "roll_err_deg": 0.006717454266833127
-      }
-    },
-    {
       "id": 7,
       "ok": true,
       "reasons": [],
@@ -269,26 +158,32 @@
         -65.9529,
         -165.0626
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 6,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          1.2152511066734981e-05,
-          -0.5672665518295545,
-          0.32659370901115947
+          0.004104772189771502,
+          -0.5653967947939289,
+          0.3228959299251668
         ],
         "ray_origin_m": [
-          1.1874184375823144e-05,
-          -0.5629360962810119,
-          0.3240942781430155
+          0.004060946436586407,
+          -0.5610455997214023,
+          0.32043317115821907
         ],
         "ray_axis_world": [
-          -5.566533818236742e-05,
-          0.8660911097085188,
-          -0.49988617362879395
+          -0.008765150637019008,
+          0.8702390145053193,
+          -0.49255175338955115
         ],
-        "ray_projection_m": 0.6495641975798818,
-        "ray_miss_m": 0.0007092140351489003,
-        "target_angle_deg": 0.06255725759682104,
-        "roll_err_deg": 0.016335850528525448
+        "ray_projection_m": 0.6461092848994995,
+        "ray_miss_m": 0.002977481801590409,
+        "target_angle_deg": 0.2640357245627258,
+        "roll_err_deg": 0.3338937269087452
       },
       "contacts": {
         "ur5e": 4,
@@ -296,7 +191,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 7,
         "joint_deg": [
@@ -320,192 +215,6 @@
       }
     },
     {
-      "id": 8,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        37.2163,
-        -53.497,
-        49.9247,
-        -55.2611,
-        -124.271,
-        137.0393
-      ],
-      "ray": {
-        "body_position_m": [
-          2.8059557651630423e-05,
-          0.463180514876367,
-          0.46228009508878715
-        ],
-        "ray_origin_m": [
-          2.7697928079717098e-05,
-          0.459644590353749,
-          0.45874495186119757
-        ],
-        "ray_axis_world": [
-          -7.232591438266489e-05,
-          -0.7071849045236066,
-          -0.7070286455179166
-        ],
-        "ray_projection_m": 0.6493995396999905,
-        "ray_miss_m": 0.0005647160471056133,
-        "target_angle_deg": 0.04982423914295193,
-        "roll_err_deg": 0.014688292024800107
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 8,
-        "joint_deg": [
-          37.2163,
-          -53.497,
-          49.9247,
-          -55.2611,
-          -124.271,
-          137.0393
-        ],
-        "camera_position_m": [
-          2.8143571827653534e-17,
-          0.45961940777125593,
-          0.4596194077712559
-        ],
-        "elevation_deg": 44.99999999999999,
-        "azimuth_deg": 90.0,
-        "target_err_deg": 4.182619578303747e-06,
-        "ray_miss_m": 4.8458786874405004e-08,
-        "roll_err_deg": 0.0062963263592998656
-      }
-    },
-    {
-      "id": 10,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        55.5606,
-        -125.9594,
-        131.4384,
-        -99.9049,
-        -134.8283,
-        83.7309
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.40110907839782955,
-          0.23157570016350087,
-          0.4623669180793673
-        ],
-        "ray_origin_m": [
-          -0.3980471879935624,
-          0.22980783318210657,
-          0.45883145863420993
-        ],
-        "ray_axis_world": [
-          0.6123780808534263,
-          -0.3535733962788617,
-          -0.7070918890314792
-        ],
-        "ray_projection_m": 0.6494453119750168,
-        "ray_miss_m": 0.00054612041462528,
-        "target_angle_deg": 0.04818017299650482,
-        "roll_err_deg": 0.005205564556080104
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 10,
-        "joint_deg": [
-          55.5606,
-          -125.9594,
-          131.4384,
-          -99.9049,
-          -134.8283,
-          83.7309
-        ],
-        "camera_position_m": [
-          -0.39804208320226653,
-          0.22980970388562794,
-          0.4596194077712559
-        ],
-        "elevation_deg": 44.99999999999999,
-        "azimuth_deg": 150.0,
-        "target_err_deg": 1.9090959104164224e-06,
-        "ray_miss_m": 2.112032953382537e-08,
-        "roll_err_deg": 0.003510264571837476
-      }
-    },
-    {
-      "id": 11,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -113.8424,
-        -122.6027,
-        119.812,
-        -48.2921,
-        -65.3421,
-        -152.6692
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.4010953769281564,
-          -0.23157670764885777,
-          0.46236367278072793
-        ],
-        "ray_origin_m": [
-          -0.3980336445732206,
-          -0.22980883078284434,
-          0.45882808140539144
-        ],
-        "ray_axis_world": [
-          0.6123464709871613,
-          0.3535753732026861,
-          -0.707118275067298
-        ],
-        "ray_projection_m": 0.649434962173705,
-        "ray_miss_m": 0.0005648987606353884,
-        "target_angle_deg": 0.049837641275439395,
-        "roll_err_deg": 0.007956923734826793
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 11,
-        "joint_deg": [
-          -113.8424,
-          -122.6027,
-          119.812,
-          -48.2921,
-          -65.3421,
-          -152.6692
-        ],
-        "camera_position_m": [
-          -0.39804208320226653,
-          -0.22980970388562783,
-          0.4596194077712559
-        ],
-        "elevation_deg": 44.99999999999999,
-        "azimuth_deg": -150.00000000000003,
-        "target_err_deg": 2.9575586669421963e-06,
-        "ray_miss_m": 3.266034750691584e-08,
-        "roll_err_deg": 0.004558161011047845
-      }
-    },
-    {
       "id": 12,
       "ok": true,
       "reasons": [],
@@ -517,26 +226,32 @@
         -62.5451,
         -148.691
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.23157086653258768,
-          -0.40112085230018807,
-          0.4623330249034357
+          -0.2312133439974341,
+          -0.39984192563362236,
+          0.46460246395961885
         ],
         "ray_origin_m": [
-          -0.22980330763296777,
-          -0.39805871305729673,
-          0.4587976269352404
+          -0.2294462158239731,
+          -0.39681802913386016,
+          0.4610340878615476
         ],
         "ray_axis_world": [
-          0.3535117799239813,
-          0.6124278485782669,
-          -0.7070795936390571
+          0.3534256346921982,
+          0.6047792999524455,
+          -0.7136752196142493
         ],
-        "ray_projection_m": 0.6494268571751961,
-        "ray_miss_m": 0.0005647130592192357,
-        "target_angle_deg": 0.04982187972597938,
-        "roll_err_deg": 0.013275960661770116
+        "ray_projection_m": 0.650108108227641,
+        "ray_miss_m": 0.004689561667093938,
+        "target_angle_deg": 0.4132965388292774,
+        "roll_err_deg": 0.11163394859114653
       },
       "contacts": {
         "ur5e": 4,
@@ -544,7 +259,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 12,
         "joint_deg": [
@@ -568,440 +283,6 @@
       }
     },
     {
-      "id": 13,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -58.03,
-        -51.5857,
-        44.8491,
-        -42.9548,
-        -68.0128,
-        -156.1792
-      ],
-      "ray": {
-        "body_position_m": [
-          2.3434497557376125e-05,
-          -0.46318441896866686,
-          0.4622775554030023
-        ],
-        "ray_origin_m": [
-          2.3035550261695274e-05,
-          -0.4596485153570462,
-          0.45874239126393196
-        ],
-        "ray_axis_world": [
-          -7.97894591361703e-05,
-          0.7071807223241302,
-          -0.7070328278140723
-        ],
-        "ray_projection_m": 0.6494005010769315,
-        "ray_miss_m": 0.0005735365324472782,
-        "target_angle_deg": 0.050602384982707777,
-        "roll_err_deg": 0.016461485898918177
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 13,
-        "joint_deg": [
-          -58.03,
-          -51.5857,
-          44.8491,
-          -42.9548,
-          -68.0128,
-          -156.1792
-        ],
-        "camera_position_m": [
-          -8.44307154829606e-17,
-          -0.45961940777125593,
-          0.4596194077712559
-        ],
-        "elevation_deg": 44.99999999999999,
-        "azimuth_deg": -90.00000000000001,
-        "target_err_deg": 3.818191820832846e-06,
-        "ray_miss_m": 4.276737703333649e-08,
-        "roll_err_deg": 0.007152014395942019
-      }
-    },
-    {
-      "id": 14,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        17.0685,
-        -35.3636,
-        0.0063,
-        -32.4542,
-        -110.1293,
-        132.948
-      ],
-      "ray": {
-        "body_position_m": [
-          0.15400219224458347,
-          0.2798394487252955,
-          0.5608303784014811
-        ],
-        "ray_origin_m": [
-          0.15281175818656959,
-          0.27767381933058133,
-          0.5564837801823825
-        ],
-        "ray_axis_world": [
-          -0.23808681160277606,
-          -0.43312587894283383,
-          -0.8693196438197068
-        ],
-        "ray_projection_m": 0.6404124629186193,
-        "ray_miss_m": 0.0005082580892839627,
-        "target_angle_deg": 0.04547231507829783,
-        "roll_err_deg": 6.905940746557776
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 14,
-        "joint_deg": [
-          17.0685,
-          -35.3636,
-          0.0063,
-          -32.4542,
-          -110.1293,
-          132.948
-        ],
-        "camera_position_m": [
-          0.16250000000000006,
-          0.2814582562299426,
-          0.562916512459885
-        ],
-        "elevation_deg": 60.00000000000001,
-        "azimuth_deg": 59.99999999999999,
-        "target_err_deg": 0.01730285276146809,
-        "ray_miss_m": 0.00019362525971899916,
-        "roll_err_deg": 6.894740222849989
-      }
-    },
-    {
-      "id": 15,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        27.0526,
-        -69.7932,
-        60.0375,
-        -65.5314,
-        -116.4421,
-        120.5217
-      ],
-      "ray": {
-        "body_position_m": [
-          3.2875555394918864e-05,
-          0.32752349365113925,
-          0.5663979844798037
-        ],
-        "ray_origin_m": [
-          3.2452780052529345e-05,
-          0.32502314204135135,
-          0.5620680605025621
-        ],
-        "ray_axis_world": [
-          -8.455506847790395e-05,
-          -0.500070321957585,
-          -0.8659847954483251
-        ],
-        "ray_projection_m": 0.6492768244306795,
-        "ray_miss_m": 0.00039218610331881134,
-        "target_angle_deg": 0.03460866755793386,
-        "roll_err_deg": 0.01681155635813791
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 15,
-        "joint_deg": [
-          27.0526,
-          -69.7932,
-          60.0375,
-          -65.5314,
-          -116.4421,
-          120.5217
-        ],
-        "camera_position_m": [
-          1.9900510486144495e-17,
-          0.32500000000000007,
-          0.562916512459885
-        ],
-        "elevation_deg": 60.00000000000001,
-        "azimuth_deg": 90.0,
-        "target_err_deg": 2.699869328381916e-06,
-        "ray_miss_m": 3.121472783916213e-08,
-        "roll_err_deg": 0.005410546084798932
-      }
-    },
-    {
-      "id": 16,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        32.8602,
-        -96.9139,
-        93.8666,
-        -85.3023,
-        -119.9587,
-        93.2977
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.1637387393126712,
-          0.2836375634833181,
-          0.5664363664478462
-        ],
-        "ray_origin_m": [
-          -0.16248895012228412,
-          0.28147223623781203,
-          0.562106310455199
-        ],
-        "ray_axis_world": [
-          0.24995783807741173,
-          -0.43306544910121436,
-          -0.866011198529459
-        ],
-        "ray_projection_m": 0.6493016466981647,
-        "ray_miss_m": 0.0003931070656316317,
-        "target_angle_deg": 0.034688612171606695,
-        "roll_err_deg": 0.012491457818582574
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 16,
-        "joint_deg": [
-          32.8602,
-          -96.9139,
-          93.8666,
-          -85.3023,
-          -119.9587,
-          93.2977
-        ],
-        "camera_position_m": [
-          -0.16249999999999995,
-          0.28145825622994264,
-          0.562916512459885
-        ],
-        "elevation_deg": 60.00000000000001,
-        "azimuth_deg": 119.99999999999999,
-        "target_err_deg": 1.7075472925031877e-06,
-        "ray_miss_m": 1.905841909934953e-08,
-        "roll_err_deg": 0.004052474633542225
-      }
-    },
-    {
-      "id": 17,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        21.5891,
-        -128.7705,
-        117.7776,
-        -98.7402,
-        -113.0659,
-        47.5217
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.283630000184941,
-          0.16375396959063113,
-          0.5664586272917497
-        ],
-        "ray_origin_m": [
-          -0.28146495719972453,
-          0.16250383280460864,
-          0.5621285294997364
-        ],
-        "ray_axis_world": [
-          0.4330085970432914,
-          -0.2500273572044989,
-          -0.8660195584026578
-        ],
-        "ray_projection_m": 0.6493214509685379,
-        "ray_miss_m": 0.0003934428542457153,
-        "target_angle_deg": 0.03471718396815475,
-        "roll_err_deg": 0.005731209455774917
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 17,
-        "joint_deg": [
-          21.5891,
-          -128.7705,
-          117.7776,
-          -98.7402,
-          -113.0659,
-          47.5217
-        ],
-        "camera_position_m": [
-          -0.28145825622994264,
-          0.1625,
-          0.562916512459885
-        ],
-        "elevation_deg": 59.999999999999986,
-        "azimuth_deg": 150.0,
-        "target_err_deg": 0.0,
-        "ray_miss_m": 1.14849511574359e-08,
-        "roll_err_deg": 0.0022941136181824093
-      }
-    },
-    {
-      "id": 18,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -85.9864,
-        -126.9895,
-        108.4059,
-        -57.2203,
-        -63.2917,
-        -119.3689
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.28361330631413134,
-          -0.1637431918251514,
-          0.566454487259243
-        ],
-        "ray_origin_m": [
-          -0.28144844508183026,
-          -0.16249316420947577,
-          0.5621242670795145
-        ],
-        "ray_axis_world": [
-          0.4329722464602207,
-          0.25000552313512897,
-          -0.866044035945702
-        ],
-        "ray_projection_m": 0.649307923018451,
-        "ray_miss_m": 0.00041036439220731966,
-        "target_angle_deg": 0.03621108533178986,
-        "roll_err_deg": 0.007079969071305215
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 18,
-        "joint_deg": [
-          -85.9864,
-          -126.9895,
-          108.4059,
-          -57.2203,
-          -63.2917,
-          -119.3689
-        ],
-        "camera_position_m": [
-          -0.2814582562299427,
-          -0.16249999999999995,
-          0.562916512459885
-        ],
-        "elevation_deg": 59.999999999999986,
-        "azimuth_deg": -150.00000000000003,
-        "target_err_deg": 2.699869328381916e-06,
-        "ray_miss_m": 2.9233613106256006e-08,
-        "roll_err_deg": 0.0038858546856952894
-      }
-    },
-    {
-      "id": 19,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -66.7183,
-        -95.8235,
-        88.5409,
-        -63.6737,
-        -66.3722,
-        -130.7318
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.1637364188988993,
-          -0.28363615799624253,
-          0.5664355071054292
-        ],
-        "ray_origin_m": [
-          -0.16248671081232718,
-          -0.2814708960158481,
-          0.5621053950682395
-        ],
-        "ray_axis_world": [
-          0.2499416173144245,
-          0.4330523960788823,
-          -0.8660224074379305
-        ],
-        "ray_projection_m": 0.649299704709513,
-        "ray_miss_m": 0.00040635395184850136,
-        "target_angle_deg": 0.035857652811828525,
-        "roll_err_deg": 0.014489148216951978
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 19,
-        "joint_deg": [
-          -66.7183,
-          -95.8235,
-          88.5409,
-          -63.6737,
-          -66.3722,
-          -130.7318
-        ],
-        "camera_position_m": [
-          -0.16250000000000017,
-          -0.2814582562299425,
-          0.562916512459885
-        ],
-        "elevation_deg": 60.00000000000001,
-        "azimuth_deg": -120.00000000000004,
-        "target_err_deg": 2.091309789151873e-06,
-        "ray_miss_m": 2.501834106234484e-08,
-        "roll_err_deg": 0.005145586177200846
-      }
-    },
-    {
       "id": 20,
       "ok": true,
       "reasons": [],
@@ -1013,26 +294,32 @@
         -71.6897,
         -145.0227
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          3.06246429891082e-05,
-          -0.3275260117827308,
-          0.5663968756003046
+          -0.0005203495126547249,
+          -0.3259573347735603,
+          0.5702390604474749
         ],
         "ray_origin_m": [
-          3.01507878083352e-05,
-          -0.3250257074430247,
-          0.562066924332183
+          -0.0005023177426382996,
+          -0.3234506462848827,
+          0.5659128395011984
         ],
         "ray_axis_world": [
-          -9.477103615460059e-05,
-          0.5000608679412095,
-          -0.865990253624332
+          0.0036063540032850727,
+          0.5013376977355211,
+          -0.8652441892552936
         ],
-        "ray_projection_m": 0.6492771185808613,
-        "ray_miss_m": 0.00040264560434188635,
-        "target_angle_deg": 0.035531655365498495,
-        "roll_err_deg": 0.018934473073848206
+        "ray_projection_m": 0.651812609878507,
+        "ray_miss_m": 0.004270412263610967,
+        "target_angle_deg": 0.37537337431689205,
+        "roll_err_deg": 0.24178580184649318
       },
       "contacts": {
         "ur5e": 4,
@@ -1040,7 +327,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 20,
         "joint_deg": [
@@ -1064,502 +351,6 @@
       }
     },
     {
-      "id": 21,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -10.6715,
-        -41.4145,
-        0.0042,
-        -34.7349,
-        -92.6071,
-        169.658
-      ],
-      "ray": {
-        "body_position_m": [
-          0.1568777425388984,
-          0.00022297989635191846,
-          0.6228876188381007
-        ],
-        "ray_origin_m": [
-          0.15565947193809135,
-          0.00022092609580608128,
-          0.6180383083175099
-        ],
-        "ray_axis_world": [
-          -0.24365412016141075,
-          -0.0004107601091674354,
-          -0.9698621041181585
-        ],
-        "ray_projection_m": 0.6373390965579401,
-        "ray_miss_m": 0.0003828303326182931,
-        "target_angle_deg": 0.03441583891740855,
-        "roll_err_deg": 0.10933056174803883
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 21,
-        "joint_deg": [
-          -10.6715,
-          -41.4145,
-          0.0042,
-          -34.7349,
-          -92.6071,
-          169.658
-        ],
-        "camera_position_m": [
-          0.16823237931663848,
-          0.0,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 0.0,
-        "target_err_deg": 0.01869445495005432,
-        "ray_miss_m": 0.00020822207286097584,
-        "roll_err_deg": 0.10837790485256998
-      }
-    },
-    {
-      "id": 22,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -1.306,
-        -46.3405,
-        8.7365,
-        -39.5015,
-        -97.7287,
-        149.5589
-      ],
-      "ray": {
-        "body_position_m": [
-          0.14687155286802972,
-          0.0847716155466977,
-          0.6318063389533709
-        ],
-        "ray_origin_m": [
-          0.14575013842429954,
-          0.08412442120388455,
-          0.6269768908350013
-        ],
-        "ray_axis_world": [
-          -0.22428288874603514,
-          -0.1294388685626291,
-          -0.965889623673927
-        ],
-        "ray_projection_m": 0.6491687051209215,
-        "ray_miss_m": 0.0001871532591560788,
-        "target_angle_deg": 0.016518189300125666,
-        "roll_err_deg": 0.01994883889173269
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 22,
-        "joint_deg": [
-          -1.306,
-          -46.3405,
-          8.7365,
-          -39.5015,
-          -97.7287,
-          149.5589
-        ],
-        "camera_position_m": [
-          0.1456935142273087,
-          0.08411618965831923,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 29.999999999999996,
-        "target_err_deg": 1.0491346209810032e-05,
-        "ray_miss_m": 1.1913806955547492e-07,
-        "roll_err_deg": 0.008518792456930421
-      }
-    },
-    {
-      "id": 23,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        6.4158,
-        -65.2873,
-        42.1569,
-        -57.8315,
-        -102.0214,
-        127.363
-      ],
-      "ray": {
-        "body_position_m": [
-          0.08481116681680674,
-          0.1468282661341953,
-          0.6318299026370633
-        ],
-        "ray_origin_m": [
-          0.08416352054284315,
-          0.14570732965984595,
-          0.6270004041409154
-        ],
-        "ray_axis_world": [
-          -0.12952925479271904,
-          -0.2241872948698686,
-          -0.96589969922957
-        ],
-        "ray_projection_m": 0.6491868719523283,
-        "ray_miss_m": 0.00019022195292735234,
-        "target_angle_deg": 0.01678856307629879,
-        "roll_err_deg": 0.025222654514197324
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 23,
-        "joint_deg": [
-          6.4158,
-          -65.2873,
-          42.1569,
-          -57.8315,
-          -102.0214,
-          127.363
-        ],
-        "camera_position_m": [
-          0.08411618965831925,
-          0.14569351422730867,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 59.99999999999999,
-        "target_err_deg": 2.561320938754782e-06,
-        "ray_miss_m": 3.0001051559510483e-08,
-        "roll_err_deg": 0.005890370695649594
-      }
-    },
-    {
-      "id": 24,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        11.2353,
-        -81.8944,
-        65.7781,
-        -70.8951,
-        -104.7059,
-        101.616
-      ],
-      "ray": {
-        "body_position_m": [
-          3.2401867008234416e-05,
-          0.16954137209747167,
-          0.6318524066105273
-        ],
-        "ray_origin_m": [
-          3.195518378820908e-05,
-          0.16824704227026546,
-          0.6270228403671801
-        ],
-        "ray_axis_world": [
-          -8.933664400506691e-05,
-          -0.25886596544123824,
-          -0.965913248669434
-        ],
-        "ray_projection_m": 0.6492031046136928,
-        "ray_miss_m": 0.00019888663898643641,
-        "target_angle_deg": 0.017552849902649513,
-        "roll_err_deg": 0.025547483037803877
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 24,
-        "joint_deg": [
-          11.2353,
-          -81.8944,
-          65.7781,
-          -70.8951,
-          -104.7059,
-          101.616
-        ],
-        "camera_position_m": [
-          1.0301262242153236e-17,
-          0.16823237931663848,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 90.0,
-        "target_err_deg": 1.7075472925031877e-06,
-        "ray_miss_m": 1.8618317416901954e-08,
-        "roll_err_deg": 0.004611999496624911
-      }
-    },
-    {
-      "id": 25,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        10.1232,
-        -99.17,
-        85.0372,
-        -81.0725,
-        -104.0873,
-        69.4761
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.0847467089508635,
-          0.14682493738791275,
-          0.6318730407217322
-        ],
-        "ray_origin_m": [
-          -0.08409996083384697,
-          0.14570402273416963,
-          0.6270434168013674
-        ],
-        "ray_axis_world": [
-          0.129349623403307,
-          -0.2241829307486219,
-          -0.9659247840729531
-        ],
-        "ray_projection_m": 0.6492194300787286,
-        "ray_miss_m": 0.00020932118446142224,
-        "target_angle_deg": 0.018473291858684494,
-        "roll_err_deg": 0.019905373041622883
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 25,
-        "joint_deg": [
-          10.1232,
-          -99.17,
-          85.0372,
-          -81.0725,
-          -104.0873,
-          69.4761
-        ],
-        "camera_position_m": [
-          -0.0841161896583192,
-          0.1456935142273087,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 119.99999999999999,
-        "target_err_deg": 8.537736462515939e-07,
-        "ray_miss_m": 1.0516174648219882e-08,
-        "roll_err_deg": 0.003206193215284473
-      }
-    },
-    {
-      "id": 26,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -3.1425,
-        -115.4361,
-        98.0239,
-        -86.0318,
-        -96.715,
-        26.0639
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.14680897175718513,
-          0.08477142460343143,
-          0.6318856714631865
-        ],
-        "ray_origin_m": [
-          -0.14568844350190902,
-          0.08412422793848122,
-          0.6270560179656771
-        ],
-        "ray_axis_world": [
-          0.22410565105522112,
-          -0.12943933299004248,
-          -0.9659306995018889
-        ],
-        "ray_projection_m": 0.6492312454953318,
-        "ray_miss_m": 0.0002187139824293041,
-        "target_angle_deg": 0.01930188621080297,
-        "roll_err_deg": 0.01157767573829624
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 26,
-        "joint_deg": [
-          -3.1425,
-          -115.4361,
-          98.0239,
-          -86.0318,
-          -96.715,
-          26.0639
-        ],
-        "camera_position_m": [
-          -0.1456935142273087,
-          0.08411618965831923,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 150.0,
-        "target_err_deg": 8.537736462515939e-07,
-        "ray_miss_m": 2.9173427078181697e-09,
-        "roll_err_deg": 0.001186515625681772
-      }
-    },
-    {
-      "id": 27,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -30.4941,
-        -123.3136,
-        101.3373,
-        -81.0248,
-        -82.4534,
-        -29.6308
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.16952266267425586,
-          1.0544927900190126e-05,
-          0.6318878257798164
-        ],
-        "ray_origin_m": [
-          -0.16822875848083138,
-          1.0431244968463677e-05,
-          0.6270581454668646
-        ],
-        "ray_axis_world": [
-          0.2587808386848963,
-          -2.273658634529007e-05,
-          -0.9659360625903711
-        ],
-        "ray_projection_m": 0.6492324554952427,
-        "ray_miss_m": 0.00022763298102948358,
-        "target_angle_deg": 0.020088965730892267,
-        "roll_err_deg": 0.0030654857801487435
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 27,
-        "joint_deg": [
-          -30.4941,
-          -123.3136,
-          101.3373,
-          -81.0248,
-          -82.4534,
-          -29.6308
-        ],
-        "camera_position_m": [
-          -0.16823237931663848,
-          2.060252448430647e-17,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": 180.0,
-        "target_err_deg": 0.0,
-        "ray_miss_m": 8.58858033899804e-09,
-        "roll_err_deg": 0.0018376616505474202
-      }
-    },
-    {
-      "id": 28,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -46.6451,
-        -115.0242,
-        95.1795,
-        -73.6972,
-        -75.4149,
-        -76.188
-      ],
-      "ray": {
-        "body_position_m": [
-          -0.14680372847401996,
-          -0.0847577439142882,
-          0.6318837346752377
-        ],
-        "ray_origin_m": [
-          -0.1456832713978214,
-          -0.08411071819131798,
-          0.6270540417601331
-        ],
-        "ray_axis_world": [
-          0.22409141523971282,
-          0.12940514459404398,
-          -0.9659385830209172
-        ],
-        "ray_projection_m": 0.6492264226890673,
-        "ray_miss_m": 0.00022770574398997822,
-        "target_angle_deg": 0.020095573914428476,
-        "roll_err_deg": 0.008829836400390584
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 28,
-        "joint_deg": [
-          -46.6451,
-          -115.0242,
-          95.1795,
-          -73.6972,
-          -75.4149,
-          -76.188
-        ],
-        "camera_position_m": [
-          -0.14569351422730872,
-          -0.0841161896583192,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": -150.00000000000003,
-        "target_err_deg": 1.4787793334710982e-06,
-        "ray_miss_m": 1.4681166247191993e-08,
-        "roll_err_deg": 0.0034621547768865055
-      }
-    },
-    {
       "id": 29,
       "ok": true,
       "reasons": [],
@@ -1571,26 +362,32 @@
         -75.6055,
         -106.6911
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 3,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.08474364724631694,
-          -0.1468198915857747,
-          0.6318709379809682
+          -0.08733574338919231,
+          -0.14701102439415795,
+          0.6336745635029066
         ],
         "ray_origin_m": [
-          -0.08409696480528556,
-          -0.14569908142987217,
-          0.6270412810143827
+          -0.08666650893811195,
+          -0.14586873057548205,
+          0.6288530191360775
         ],
         "ray_axis_world": [
-          0.12933648820627713,
-          0.22416203118050426,
-          -0.9659313933170919
+          0.13384689021607157,
+          0.22845876373517898,
+          -0.9643088733658323
         ],
-        "ray_projection_m": 0.6492158663687332,
-        "ray_miss_m": 0.00022083981367833819,
-        "target_angle_deg": 0.019489956166780415,
-        "roll_err_deg": 0.021372863261830518
+        "ray_projection_m": 0.6513335789579573,
+        "ray_miss_m": 0.0030755372865274473,
+        "target_angle_deg": 0.27054339328800586,
+        "roll_err_deg": 0.4470872960277372
       },
       "contacts": {
         "ur5e": 4,
@@ -1598,7 +395,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 29,
         "joint_deg": [
@@ -1620,192 +417,6 @@
         "ray_miss_m": 1.676616465245709e-08,
         "roll_err_deg": 0.004465704416016963
       }
-    },
-    {
-      "id": 30,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -39.2886,
-        -81.2084,
-        63.2174,
-        -62.3795,
-        -78.4443,
-        -130.2593
-      ],
-      "ray": {
-        "body_position_m": [
-          3.2606696892030695e-05,
-          -0.16954177687576816,
-          0.6318511424078498
-        ],
-        "ray_origin_m": [
-          3.2121586140380555e-05,
-          -0.16824752766934842,
-          0.6270215545624587
-        ],
-        "ray_axis_world": [
-          -9.70221503300284e-05,
-          0.2588498412839505,
-          -0.9659175690782191
-        ],
-        "ray_projection_m": 0.6492019846927493,
-        "ray_miss_m": 0.00021108188510222378,
-        "target_angle_deg": 0.018629180108980004,
-        "roll_err_deg": 0.028191609367354882
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 30,
-        "joint_deg": [
-          -39.2886,
-          -81.2084,
-          63.2174,
-          -62.3795,
-          -78.4443,
-          -130.2593
-        ],
-        "camera_position_m": [
-          -3.09037867264597e-17,
-          -0.16823237931663848,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": -90.00000000000001,
-        "target_err_deg": 1.7075472925031877e-06,
-        "ray_miss_m": 2.037544300774359e-08,
-        "roll_err_deg": 0.005552601240343499
-      }
-    },
-    {
-      "id": 31,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -30.1778,
-        -64.4553,
-        39.7976,
-        -52.2556,
-        -82.6045,
-        -151.0199
-      ],
-      "ray": {
-        "body_position_m": [
-          0.08481022091466141,
-          -0.14683252616458403,
-          0.6318284073055245
-        ],
-        "ray_origin_m": [
-          0.08416254695035386,
-          -0.14571164846964882,
-          0.6269988988803372
-        ],
-        "ray_axis_world": [
-          -0.12953479286150937,
-          0.2241755389870445,
-          -0.9659016850374544
-        ],
-        "ray_projection_m": 0.6491862583634317,
-        "ray_miss_m": 0.00019989536284068248,
-        "target_angle_deg": 0.0176423331851502,
-        "roll_err_deg": 0.028581715401674476
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 31,
-        "joint_deg": [
-          -30.1778,
-          -64.4553,
-          39.7976,
-          -52.2556,
-          -82.6045,
-          -151.0199
-        ],
-        "camera_position_m": [
-          0.08411618965831925,
-          -0.14569351422730867,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": -59.99999999999999,
-        "target_err_deg": 2.561320938754782e-06,
-        "ray_miss_m": 2.9049972583910778e-08,
-        "roll_err_deg": 0.006749196187084636
-      }
-    },
-    {
-      "id": 32,
-      "ok": true,
-      "reasons": [],
-      "joint_deg": [
-        -20.3409,
-        -42.3866,
-        0.2116,
-        -33.0466,
-        -87.5035,
-        -170.5093
-      ],
-      "ray": {
-        "body_position_m": [
-          0.146608152262125,
-          -0.0847540044751434,
-          0.6316194053054786
-        ],
-        "ray_origin_m": [
-          0.14548835258748302,
-          -0.08410680016370885,
-          0.626789583852471
-        ],
-        "ray_axis_world": [
-          -0.2239599349283969,
-          0.1294408622869128,
-          -0.9659642906015155
-        ],
-        "ray_projection_m": 0.6489267744381871,
-        "ray_miss_m": 0.00019599898452464499,
-        "target_angle_deg": 0.01730536431712414,
-        "roll_err_deg": 0.1294778457063209
-      },
-      "contacts": {
-        "ur5e": 4,
-        "camera": 0,
-        "ur5e_delta": 0,
-        "camera_delta": 0
-      },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
-      "meta": {
-        "id": 32,
-        "joint_deg": [
-          -20.3409,
-          -42.3866,
-          0.2116,
-          -33.0466,
-          -87.5035,
-          -170.5093
-        ],
-        "camera_position_m": [
-          0.14569351422730864,
-          -0.08411618965831931,
-          0.6278517870878945
-        ],
-        "elevation_deg": 75.00000000000003,
-        "azimuth_deg": -30.00000000000003,
-        "target_err_deg": 0.0003862559163751361,
-        "ray_miss_m": 4.380273081223767e-06,
-        "roll_err_deg": 0.11564247263502479
-      }
     }
   ],
   "all_results": [
@@ -1821,26 +432,32 @@
         -129.1652,
         151.939
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 11,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          1.4758883808829485e-05,
-          0.5672629093927974,
-          0.3265956422084904
+          0.004922553983718746,
+          0.5617958733584492,
+          0.33502503152089225
         ],
         "ray_origin_m": [
-          1.4496087949109236e-05,
-          0.5629324401343226,
-          0.32409623509232405
+          0.0049087178456902435,
+          0.5574969399293161,
+          0.33247180220624634
         ],
         "ray_axis_world": [
-          -5.255917194404991e-05,
-          -0.866093851694958,
-          -0.499881423233276
+          -0.0027672276057005146,
+          -0.8597866858265986,
+          -0.5106458629291852
         ],
-        "ray_projection_m": 0.6495620133443766,
-        "ray_miss_m": 0.0007019877051941096,
-        "target_angle_deg": 0.06192005734832243,
-        "roll_err_deg": 0.014872299773871715
+        "ray_projection_m": 0.6491173802170582,
+        "ray_miss_m": 0.0033255832349470735,
+        "target_angle_deg": 0.29353738249415534,
+        "roll_err_deg": 0.462312407252562
       },
       "contacts": {
         "ur5e": 4,
@@ -1848,7 +465,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 1,
         "joint_deg": [
@@ -1883,26 +500,32 @@
         -138.6949,
         138.9175
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 6,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.2836178854258836,
-          0.4912596186278927,
-          0.3266636919696434
+          -0.2822899028062417,
+          0.4897417348072037,
+          0.3318298109790465
         ],
         "ray_origin_m": [
-          -0.28145291031382236,
-          0.48750934742477875,
-          0.3241640222580116
+          -0.280140878194757,
+          0.4860126726485494,
+          0.32928505389120377
         ],
         "ray_axis_world": [
-          0.43299502241225746,
-          -0.7500542406227919,
-          -0.4999339423263595
+          0.4298049222969354,
+          -0.7458124317308525,
+          -0.5089514175685513
         ],
-        "ray_projection_m": 0.6495867601963514,
-        "ray_miss_m": 0.0006773881861805546,
-        "target_angle_deg": 0.05974793894779968,
-        "roll_err_deg": 0.011584941613535321
+        "ray_projection_m": 0.6504703165867832,
+        "ray_miss_m": 0.0020599918297910975,
+        "target_angle_deg": 0.18145092878865038,
+        "roll_err_deg": 1.038521101931606
       },
       "contacts": {
         "ur5e": 4,
@@ -1910,7 +533,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 2,
         "joint_deg": [
@@ -1937,7 +560,8 @@
       "id": 3,
       "ok": false,
       "reasons": [
-        "contacts ur5e+4 camera+0"
+        "ray miss 6.9 mm",
+        "collision ur5e+4 camera+0"
       ],
       "joint_deg": [
         77.5947,
@@ -1947,26 +571,32 @@
         -145.6402,
         122.3798
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 5,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.49232780291473277,
-          0.2826631422914614,
-          0.32583766769406064
+          -0.48906013699322376,
+          0.2843410338258865,
+          0.3267470763190307
         ],
         "ray_origin_m": [
-          -0.4885779865776995,
-          0.2804978626327321,
-          0.3233375794080172
+          -0.48535150211772554,
+          0.2821323282718824,
+          0.32422365658859553
         ],
         "ray_axis_world": [
-          0.7499632674066525,
-          -0.43305593174586354,
-          -0.5000176572086829
+          0.7417269750996477,
+          -0.4417411108008204,
+          -0.5046839460870377
         ],
-        "ray_projection_m": 0.6495613053950394,
-        "ray_miss_m": 0.002191050154148606,
-        "target_angle_deg": 0.19326497648547342,
-        "roll_err_deg": 0.5929814172149248
+        "ray_projection_m": 0.6482582240313948,
+        "ray_miss_m": 0.006854613875866062,
+        "target_angle_deg": 0.6058169331717879,
+        "roll_err_deg": 0.2668192716644085
       },
       "contacts": {
         "ur5e": 8,
@@ -1974,7 +604,7 @@
         "ur5e_delta": 4,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 3,
         "joint_deg": [
@@ -2001,7 +631,7 @@
       "id": 4,
       "ok": false,
       "reasons": [
-        "timeout"
+        "plan_failed: MoveIt error code 99999"
       ],
       "joint_deg": [
         118.7659,
@@ -2011,7 +641,20 @@
         -139.3891,
         137.6713
       ],
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "planning": {
+        "enabled": true,
+        "success": false,
+        "waypoints": 0,
+        "error": "MoveIt error code 99999"
+      },
+      "ray": {},
+      "contacts": {
+        "ur5e": 0,
+        "camera": 0,
+        "ur5e_delta": 0,
+        "camera_delta": 0
+      },
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 4,
         "joint_deg": [
@@ -2036,8 +679,10 @@
     },
     {
       "id": 5,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "plan_failed: MoveIt error code 99999"
+      ],
       "joint_deg": [
         -125.0642,
         -103.758,
@@ -2046,34 +691,20 @@
         -68.585,
         -166.907
       ],
-      "ray": {
-        "body_position_m": [
-          -0.49150713499490556,
-          -0.2839987795676837,
-          0.32706705222839344
-        ],
-        "ray_origin_m": [
-          -0.48775703075650306,
-          -0.2818339286823341,
-          0.3245670244594843
-        ],
-        "ray_axis_world": [
-          0.7500208476804985,
-          0.43297017706992286,
-          -0.5000055537818217
-        ],
-        "ray_projection_m": 0.6501389424802001,
-        "ray_miss_m": 0.0006270933979885735,
-        "target_angle_deg": 0.05526479275935305,
-        "roll_err_deg": 0.0054966464561778524
+      "planning": {
+        "enabled": true,
+        "success": false,
+        "waypoints": 0,
+        "error": "MoveIt error code 99999"
       },
+      "ray": {},
       "contacts": {
-        "ur5e": 4,
+        "ur5e": 0,
         "camera": 0,
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 5,
         "joint_deg": [
@@ -2098,8 +729,10 @@
     },
     {
       "id": 6,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 5.6 mm"
+      ],
       "joint_deg": [
         -86.03,
         -68.0002,
@@ -2108,26 +741,32 @@
         -61.0595,
         -161.376
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 10,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.2836232859998937,
-          -0.4912619342811407,
-          0.3266623387835679
+          -0.2822481507145896,
+          -0.49303123545294303,
+          0.327282796672171
         ],
         "ray_origin_m": [
-          -0.28145835415148585,
-          -0.4875116630490714,
-          0.3241626316451889
+          -0.2800640719068915,
+          -0.4892973428391378,
+          0.32477523895392507
         ],
         "ray_axis_world": [
-          0.43298636968158144,
-          0.7500542464138525,
-          -0.4999414276757953
+          0.43681576153962487,
+          0.7467785227610482,
+          -0.5015115436491808
         ],
-        "ray_projection_m": 0.6495901528906787,
-        "ray_miss_m": 0.0006868428740473946,
-        "target_angle_deg": 0.060581557514834,
-        "roll_err_deg": 0.013248172523519482
+        "ray_projection_m": 0.650611679153029,
+        "ray_miss_m": 0.0055832669436756115,
+        "target_angle_deg": 0.4916754334342378,
+        "roll_err_deg": 0.04160910880266754
       },
       "contacts": {
         "ur5e": 4,
@@ -2135,7 +774,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 6,
         "joint_deg": [
@@ -2170,26 +809,32 @@
         -65.9529,
         -165.0626
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 6,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          1.2152511066734981e-05,
-          -0.5672665518295545,
-          0.32659370901115947
+          0.004104772189771502,
+          -0.5653967947939289,
+          0.3228959299251668
         ],
         "ray_origin_m": [
-          1.1874184375823144e-05,
-          -0.5629360962810119,
-          0.3240942781430155
+          0.004060946436586407,
+          -0.5610455997214023,
+          0.32043317115821907
         ],
         "ray_axis_world": [
-          -5.566533818236742e-05,
-          0.8660911097085188,
-          -0.49988617362879395
+          -0.008765150637019008,
+          0.8702390145053193,
+          -0.49255175338955115
         ],
-        "ray_projection_m": 0.6495641975798818,
-        "ray_miss_m": 0.0007092140351489003,
-        "target_angle_deg": 0.06255725759682104,
-        "roll_err_deg": 0.016335850528525448
+        "ray_projection_m": 0.6461092848994995,
+        "ray_miss_m": 0.002977481801590409,
+        "target_angle_deg": 0.2640357245627258,
+        "roll_err_deg": 0.3338937269087452
       },
       "contacts": {
         "ur5e": 4,
@@ -2197,7 +842,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 7,
         "joint_deg": [
@@ -2222,8 +867,10 @@
     },
     {
       "id": 8,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.8 mm"
+      ],
       "joint_deg": [
         37.2163,
         -53.497,
@@ -2232,26 +879,32 @@
         -124.271,
         137.0393
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 15,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          2.8059557651630423e-05,
-          0.463180514876367,
-          0.46228009508878715
+          -0.0006776304227258267,
+          0.45983341693896207,
+          0.4645368451767364
         ],
         "ray_origin_m": [
-          2.7697928079717098e-05,
-          0.459644590353749,
-          0.45874495186119757
+          -0.0007243377191524475,
+          0.4562956445947827,
+          0.46100385985703574
         ],
         "ray_axis_world": [
-          -7.232591438266489e-05,
-          -0.7071849045236066,
-          -0.7070286455179166
+          -0.00934145928532415,
+          -0.7075544688358686,
+          -0.7065970639401304
         ],
-        "ray_projection_m": 0.6493995396999905,
-        "ray_miss_m": 0.0005647160471056133,
-        "target_angle_deg": 0.04982423914295193,
-        "roll_err_deg": 0.014688292024800107
+        "ray_projection_m": 0.6485912299121183,
+        "ray_miss_m": 0.007759847000485076,
+        "target_angle_deg": 0.6854629700508843,
+        "roll_err_deg": 0.6190929022099612
       },
       "contacts": {
         "ur5e": 4,
@@ -2259,7 +912,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 8,
         "joint_deg": [
@@ -2286,7 +939,7 @@
       "id": 9,
       "ok": false,
       "reasons": [
-        "contacts ur5e+2 camera+0"
+        "collision ur5e+2 camera+0"
       ],
       "joint_deg": [
         49.7676,
@@ -2296,26 +949,32 @@
         -131.7158,
         116.937
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 5,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.23158834779125337,
-          0.40118151287549325,
-          0.46198552696388007
+          -0.23155912068888046,
+          0.4026312643425518,
+          0.45893486654644233
         ],
         "ray_origin_m": [
-          -0.2298207441516094,
-          0.39811942901436687,
-          0.45845010339653386
+          -0.2297810674739464,
+          0.39952934465186885,
+          0.4554396382280894
         ],
         "ray_axis_world": [
-          0.35352072792879197,
-          -0.6124167722252751,
-          -0.7070847134692368
+          0.355610642986813,
+          -0.6203839381365914,
+          -0.6990456636705785
         ],
-        "ray_projection_m": 0.6492244724428419,
-        "ray_miss_m": 0.0008578384063174365,
-        "target_angle_deg": 0.07570646772721361,
-        "roll_err_deg": 0.010941191172689395
+        "ray_projection_m": 0.6479472855539072,
+        "ray_miss_m": 0.0035518192626614632,
+        "target_angle_deg": 0.3140721777600829,
+        "roll_err_deg": 0.922691596269153
       },
       "contacts": {
         "ur5e": 6,
@@ -2323,7 +982,7 @@
         "ur5e_delta": 2,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 9,
         "joint_deg": [
@@ -2348,8 +1007,10 @@
     },
     {
       "id": 10,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.6 mm"
+      ],
       "joint_deg": [
         55.5606,
         -125.9594,
@@ -2358,26 +1019,32 @@
         -134.8283,
         83.7309
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 8,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.40110907839782955,
-          0.23157570016350087,
-          0.4623669180793673
+          -0.3979706172775523,
+          0.23203189410486885,
+          0.4580092812376348
         ],
         "ray_origin_m": [
-          -0.3980471879935624,
-          0.22980783318210657,
-          0.45883145863420993
+          -0.3949536955312095,
+          0.230234437123649,
+          0.4544501617429974
         ],
         "ray_axis_world": [
-          0.6123780808534263,
-          -0.3535733962788617,
-          -0.7070918890314792
+          0.6033843492685546,
+          -0.35949139624397364,
+          -0.7118238989274814
         ],
-        "ray_projection_m": 0.6494453119750168,
-        "ray_miss_m": 0.00054612041462528,
-        "target_angle_deg": 0.04818017299650482,
-        "roll_err_deg": 0.005205564556080104
+        "ray_projection_m": 0.6445646638344606,
+        "ray_miss_m": 0.007593503513408609,
+        "target_angle_deg": 0.6749603280835272,
+        "roll_err_deg": 0.1868924111262608
       },
       "contacts": {
         "ur5e": 4,
@@ -2385,7 +1052,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 10,
         "joint_deg": [
@@ -2410,8 +1077,10 @@
     },
     {
       "id": 11,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.8 mm"
+      ],
       "joint_deg": [
         -113.8424,
         -122.6027,
@@ -2420,26 +1089,32 @@
         -65.3421,
         -152.6692
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 15,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.4010953769281564,
-          -0.23157670764885777,
-          0.46236367278072793
+          -0.402108866987187,
+          -0.23434987407661753,
+          0.46369351613708104
         ],
         "ray_origin_m": [
-          -0.3980336445732206,
-          -0.22980883078284434,
-          0.45882808140539144
+          -0.3990043777798403,
+          -0.23259831465069392,
+          0.46018720948492897
         ],
         "ray_axis_world": [
-          0.6123464709871613,
-          0.3535753732026861,
-          -0.707118275067298
+          0.6208978414693421,
+          0.3503118851847254,
+          -0.7012613304304149
         ],
-        "ray_projection_m": 0.649434962173705,
-        "ray_miss_m": 0.0005648987606353884,
-        "target_angle_deg": 0.049837641275439395,
-        "roll_err_deg": 0.007956923734826793
+        "ray_projection_m": 0.6519344057668567,
+        "ray_miss_m": 0.007763234941839166,
+        "target_angle_deg": 0.682245899402731,
+        "roll_err_deg": 0.3331845040138626
       },
       "contacts": {
         "ur5e": 4,
@@ -2447,7 +1122,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 11,
         "joint_deg": [
@@ -2482,26 +1157,32 @@
         -62.5451,
         -148.691
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.23157086653258768,
-          -0.40112085230018807,
-          0.4623330249034357
+          -0.2312133439974341,
+          -0.39984192563362236,
+          0.46460246395961885
         ],
         "ray_origin_m": [
-          -0.22980330763296777,
-          -0.39805871305729673,
-          0.4587976269352404
+          -0.2294462158239731,
+          -0.39681802913386016,
+          0.4610340878615476
         ],
         "ray_axis_world": [
-          0.3535117799239813,
-          0.6124278485782669,
-          -0.7070795936390571
+          0.3534256346921982,
+          0.6047792999524455,
+          -0.7136752196142493
         ],
-        "ray_projection_m": 0.6494268571751961,
-        "ray_miss_m": 0.0005647130592192357,
-        "target_angle_deg": 0.04982187972597938,
-        "roll_err_deg": 0.013275960661770116
+        "ray_projection_m": 0.650108108227641,
+        "ray_miss_m": 0.004689561667093938,
+        "target_angle_deg": 0.4132965388292774,
+        "roll_err_deg": 0.11163394859114653
       },
       "contacts": {
         "ur5e": 4,
@@ -2509,7 +1190,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 12,
         "joint_deg": [
@@ -2534,8 +1215,10 @@
     },
     {
       "id": 13,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.6 mm"
+      ],
       "joint_deg": [
         -58.03,
         -51.5857,
@@ -2544,26 +1227,32 @@
         -68.0128,
         -156.1792
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 5,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          2.3434497557376125e-05,
-          -0.46318441896866686,
-          0.4622775554030023
+          -0.0038421739759291794,
+          -0.467480971017,
+          0.46456479929311156
         ],
         "ray_origin_m": [
-          2.3035550261695274e-05,
-          -0.4596485153570462,
-          0.45874239126393196
+          -0.003810398905280175,
+          -0.46397539521878184,
+          0.46099970060333695
         ],
         "ray_axis_world": [
-          -7.97894591361703e-05,
-          0.7071807223241302,
-          -0.7070328278140723
+          0.006355014129800914,
+          0.7011151596436249,
+          -0.7130197379549212
         ],
-        "ray_projection_m": 0.6494005010769315,
-        "ray_miss_m": 0.0005735365324472782,
-        "target_angle_deg": 0.050602384982707777,
-        "roll_err_deg": 0.016461485898918177
+        "ray_projection_m": 0.6540262841499018,
+        "ray_miss_m": 0.007617749384191055,
+        "target_angle_deg": 0.6673205096449206,
+        "roll_err_deg": 0.03376967559729833
       },
       "contacts": {
         "ur5e": 4,
@@ -2571,7 +1260,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 13,
         "joint_deg": [
@@ -2596,8 +1285,10 @@
     },
     {
       "id": 14,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.0 mm"
+      ],
       "joint_deg": [
         17.0685,
         -35.3636,
@@ -2606,26 +1297,32 @@
         -110.1293,
         132.948
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 14,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.15400219224458347,
-          0.2798394487252955,
-          0.5608303784014811
+          0.1484118556429766,
+          0.2819496021022835,
+          0.5674699854012439
         ],
         "ray_origin_m": [
-          0.15281175818656959,
-          0.27767381933058133,
-          0.5564837801823825
+          0.1472415619288434,
+          0.2798259145877142,
+          0.5630973015614125
         ],
         "ray_axis_world": [
-          -0.23808681160277606,
-          -0.43312587894283383,
-          -0.8693196438197068
+          -0.23405874282663586,
+          -0.4247375029138558,
+          -0.8745367679662859
         ],
-        "ray_projection_m": 0.6404124629186193,
-        "ray_miss_m": 0.0005082580892839627,
-        "target_angle_deg": 0.04547231507829783,
-        "roll_err_deg": 6.905940746557776
+        "ray_projection_m": 0.6457650292475217,
+        "ray_miss_m": 0.0069798324326644555,
+        "target_angle_deg": 0.6192645150172267,
+        "roll_err_deg": 7.508332104833139
       },
       "contacts": {
         "ur5e": 4,
@@ -2633,7 +1330,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 14,
         "joint_deg": [
@@ -2658,8 +1355,10 @@
     },
     {
       "id": 15,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 10.8 mm"
+      ],
       "joint_deg": [
         27.0526,
         -69.7932,
@@ -2668,26 +1367,32 @@
         -116.4421,
         120.5217
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 5,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          3.2875555394918864e-05,
-          0.32752349365113925,
-          0.5663979844798037
+          0.005895559802700777,
+          0.32440021219588827,
+          0.557754421946075
         ],
         "ray_origin_m": [
-          3.2452780052529345e-05,
-          0.32502314204135135,
-          0.5620680605025621
+          0.005815039057366748,
+          0.3218213068910105,
+          0.553471576649074
         ],
         "ray_axis_world": [
-          -8.455506847790395e-05,
-          -0.500070321957585,
-          -0.8659847954483251
+          -0.016104149066805965,
+          -0.5157810609755561,
+          -0.8565690594002121
         ],
-        "ray_projection_m": 0.6492768244306795,
-        "ray_miss_m": 0.00039218610331881134,
-        "target_angle_deg": 0.03460866755793386,
-        "roll_err_deg": 0.01681155635813791
+        "ray_projection_m": 0.6401696091836442,
+        "ray_miss_m": 0.01079008268498101,
+        "target_angle_deg": 0.9656310688986323,
+        "roll_err_deg": 1.7591586516148678
       },
       "contacts": {
         "ur5e": 4,
@@ -2695,7 +1400,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 15,
         "joint_deg": [
@@ -2720,8 +1425,10 @@
     },
     {
       "id": 16,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 5.9 mm"
+      ],
       "joint_deg": [
         32.8602,
         -96.9139,
@@ -2730,26 +1437,32 @@
         -119.9587,
         93.2977
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.1637387393126712,
-          0.2836375634833181,
-          0.5664363664478462
+          -0.16145697938348053,
+          0.2831183065096551,
+          0.565658809519512
         ],
         "ray_origin_m": [
-          -0.16248895012228412,
-          0.28147223623781203,
-          0.562106310455199
+          -0.1602559704404769,
+          0.2809698119588526,
+          0.5613066205663532
         ],
         "ray_axis_world": [
-          0.24995783807741173,
-          -0.43306544910121436,
-          -0.866011198529459
+          0.24020178860072616,
+          -0.429698910160489,
+          -0.8704377906317602
         ],
-        "ray_projection_m": 0.6493016466981647,
-        "ray_miss_m": 0.0003931070656316317,
-        "target_angle_deg": 0.034688612171606695,
-        "roll_err_deg": 0.012491457818582574
+        "ray_projection_m": 0.6478086873932203,
+        "ray_miss_m": 0.005919300930420761,
+        "target_angle_deg": 0.5235211092463243,
+        "roll_err_deg": 0.9422955646023183
       },
       "contacts": {
         "ur5e": 4,
@@ -2757,7 +1470,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 16,
         "joint_deg": [
@@ -2782,8 +1495,10 @@
     },
     {
       "id": 17,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 8.3 mm"
+      ],
       "joint_deg": [
         21.5891,
         -128.7705,
@@ -2792,26 +1507,32 @@
         -113.0659,
         47.5217
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 5,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.283630000184941,
-          0.16375396959063113,
-          0.5664586272917497
+          -0.2814344213745563,
+          0.16201783778217094,
+          0.5710467108695215
         ],
         "ray_origin_m": [
-          -0.28146495719972453,
-          0.16250383280460864,
-          0.5621285294997364
+          -0.27924341616946796,
+          0.16076007664777398,
+          0.5667319069203164
         ],
         "ray_axis_world": [
-          0.4330085970432914,
-          -0.2500273572044989,
-          -0.8660195584026578
+          0.4382010410176663,
+          -0.25155222687938994,
+          -0.8629607898410294
         ],
-        "ray_projection_m": 0.6493214509685379,
-        "ray_miss_m": 0.0003934428542457153,
-        "target_angle_deg": 0.03471718396815475,
-        "roll_err_deg": 0.005731209455774917
+        "ray_projection_m": 0.6518717249609083,
+        "ray_miss_m": 0.008306397282874665,
+        "target_angle_deg": 0.7300450891996262,
+        "roll_err_deg": 0.4523116851571168
       },
       "contacts": {
         "ur5e": 4,
@@ -2819,7 +1540,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 17,
         "joint_deg": [
@@ -2844,8 +1565,10 @@
     },
     {
       "id": 18,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 9.4 mm"
+      ],
       "joint_deg": [
         -85.9864,
         -126.9895,
@@ -2854,26 +1577,32 @@
         -63.2917,
         -119.3689
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 11,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.28361330631413134,
-          -0.1637431918251514,
-          0.566454487259243
+          -0.2834790387644584,
+          -0.16538976979554024,
+          0.5635593252799107
         ],
         "ray_origin_m": [
-          -0.28144844508183026,
-          -0.16249316420947577,
-          0.5621242670795145
+          -0.28135912116741507,
+          -0.1640745575203548,
+          0.5592261779188177
         ],
         "ray_axis_world": [
-          0.4329722464602207,
-          0.25000552313512897,
-          -0.866044035945702
+          0.4239835194086651,
+          0.2630424550370907,
+          -0.8666294722186076
         ],
-        "ray_projection_m": 0.649307923018451,
-        "ray_miss_m": 0.00041036439220731966,
-        "target_angle_deg": 0.03621108533178986,
-        "roll_err_deg": 0.007079969071305215
+        "ray_projection_m": 0.6470920922501823,
+        "ray_miss_m": 0.009442335864135709,
+        "target_angle_deg": 0.8359978544611971,
+        "roll_err_deg": 1.60358010401212
       },
       "contacts": {
         "ur5e": 4,
@@ -2881,7 +1610,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 18,
         "joint_deg": [
@@ -2906,8 +1635,10 @@
     },
     {
       "id": 19,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 6.5 mm"
+      ],
       "joint_deg": [
         -66.7183,
         -95.8235,
@@ -2916,26 +1647,32 @@
         -66.3722,
         -130.7318
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.1637364188988993,
-          -0.28363615799624253,
-          0.5664355071054292
+          -0.16376957779565313,
+          -0.28195951460934715,
+          0.5677629588434956
         ],
         "ray_origin_m": [
-          -0.16248671081232718,
-          -0.2814708960158481,
-          0.5621053950682395
+          -0.16254359880113842,
+          -0.2798417121873257,
+          0.5634026964194793
         ],
         "ray_axis_world": [
-          0.2499416173144245,
-          0.4330523960788823,
-          -0.8660224074379305
+          0.24519579890294368,
+          0.42356048440429717,
+          -0.8720524848032626
         ],
-        "ray_projection_m": 0.649299704709513,
-        "ray_miss_m": 0.00040635395184850136,
-        "target_angle_deg": 0.035857652811828525,
-        "roll_err_deg": 0.014489148216951978
+        "ray_projection_m": 0.6497016200926614,
+        "ray_miss_m": 0.006496812516193657,
+        "target_angle_deg": 0.5729207369636408,
+        "roll_err_deg": 0.7202371474346255
       },
       "contacts": {
         "ur5e": 4,
@@ -2943,7 +1680,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 19,
         "joint_deg": [
@@ -2978,26 +1715,32 @@
         -71.6897,
         -145.0227
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          3.06246429891082e-05,
-          -0.3275260117827308,
-          0.5663968756003046
+          -0.0005203495126547249,
+          -0.3259573347735603,
+          0.5702390604474749
         ],
         "ray_origin_m": [
-          3.01507878083352e-05,
-          -0.3250257074430247,
-          0.562066924332183
+          -0.0005023177426382996,
+          -0.3234506462848827,
+          0.5659128395011984
         ],
         "ray_axis_world": [
-          -9.477103615460059e-05,
-          0.5000608679412095,
-          -0.865990253624332
+          0.0036063540032850727,
+          0.5013376977355211,
+          -0.8652441892552936
         ],
-        "ray_projection_m": 0.6492771185808613,
-        "ray_miss_m": 0.00040264560434188635,
-        "target_angle_deg": 0.035531655365498495,
-        "roll_err_deg": 0.018934473073848206
+        "ray_projection_m": 0.651812609878507,
+        "ray_miss_m": 0.004270412263610967,
+        "target_angle_deg": 0.37537337431689205,
+        "roll_err_deg": 0.24178580184649318
       },
       "contacts": {
         "ur5e": 4,
@@ -3005,7 +1748,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 20,
         "joint_deg": [
@@ -3030,8 +1773,10 @@
     },
     {
       "id": 21,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.8 mm"
+      ],
       "joint_deg": [
         -10.6715,
         -41.4145,
@@ -3040,26 +1785,32 @@
         -92.6071,
         169.658
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 14,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.1568777425388984,
-          0.00022297989635191846,
-          0.6228876188381007
+          0.1576317276130937,
+          -0.0005078870420415231,
+          0.6232537978424452
         ],
         "ray_origin_m": [
-          0.15565947193809135,
-          0.00022092609580608128,
-          0.6180383083175099
+          0.15645985673101315,
+          -0.0005275242027291616,
+          0.6183931051945141
         ],
         "ray_axis_world": [
-          -0.24365412016141075,
-          -0.0004107601091674354,
-          -0.9698621041181585
+          -0.23437417641610758,
+          -0.003927432137527699,
+          -0.9721385295862296
         ],
-        "ray_projection_m": 0.6373390965579401,
-        "ray_miss_m": 0.0003828303326182931,
-        "target_angle_deg": 0.03441583891740855,
-        "roll_err_deg": 0.10933056174803883
+        "ray_projection_m": 0.6378318422380638,
+        "ray_miss_m": 0.007780657387700054,
+        "target_angle_deg": 0.698893799440228,
+        "roll_err_deg": 0.41452180732747296
       },
       "contacts": {
         "ur5e": 4,
@@ -3067,7 +1818,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 21,
         "joint_deg": [
@@ -3092,8 +1843,10 @@
     },
     {
       "id": 22,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 9.9 mm"
+      ],
       "joint_deg": [
         -1.306,
         -46.3405,
@@ -3102,26 +1855,32 @@
         -97.7287,
         149.5589
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 3,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.14687155286802972,
-          0.0847716155466977,
-          0.6318063389533709
+          0.14397586512233135,
+          0.08624680199245316,
+          0.637556763748974
         ],
         "ray_origin_m": [
-          0.14575013842429954,
-          0.08412442120388455,
-          0.6269768908350013
+          0.1429540376152897,
+          0.08556964268313261,
+          0.632709359926756
         ],
         "ray_axis_world": [
-          -0.22428288874603514,
-          -0.1294388685626291,
-          -0.965889623673927
+          -0.20436550140833148,
+          -0.13543186186411135,
+          -0.9694807644435973
         ],
-        "ray_projection_m": 0.6491687051209215,
-        "ray_miss_m": 0.0001871532591560788,
-        "target_angle_deg": 0.016518189300125666,
-        "roll_err_deg": 0.01994883889173269
+        "ray_projection_m": 0.6542032835356282,
+        "ray_miss_m": 0.009859947746343937,
+        "target_angle_deg": 0.8634787323283835,
+        "roll_err_deg": 3.8644807631360236
       },
       "contacts": {
         "ur5e": 4,
@@ -3129,7 +1888,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 22,
         "joint_deg": [
@@ -3154,8 +1913,10 @@
     },
     {
       "id": 23,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.5 mm"
+      ],
       "joint_deg": [
         6.4158,
         -65.2873,
@@ -3164,26 +1925,32 @@
         -102.0214,
         127.363
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.08481116681680674,
-          0.1468282661341953,
-          0.6318299026370633
+          0.0815305896702724,
+          0.1412295983824827,
+          0.6393338644245552
         ],
         "ray_origin_m": [
-          0.08416352054284315,
-          0.14570732965984595,
-          0.6270004041409154
+          0.08095388787695451,
+          0.1401207924610302,
+          0.6344925872717643
         ],
         "ray_axis_world": [
-          -0.12952925479271904,
-          -0.2241872948698686,
-          -0.96589969922957
+          -0.11534035866357595,
+          -0.221761184290499,
+          -0.9682554305581939
         ],
-        "ray_projection_m": 0.6491868719523283,
-        "ray_miss_m": 0.00019022195292735234,
-        "target_angle_deg": 0.01678856307629879,
-        "roll_err_deg": 0.025222654514197324
+        "ray_projection_m": 0.6547614966176246,
+        "ray_miss_m": 0.007456158003120879,
+        "target_angle_deg": 0.6524328664435932,
+        "roll_err_deg": 3.4130741972374503
       },
       "contacts": {
         "ur5e": 4,
@@ -3191,7 +1958,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 23,
         "joint_deg": [
@@ -3216,8 +1983,10 @@
     },
     {
       "id": 24,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 5.1 mm"
+      ],
       "joint_deg": [
         11.2353,
         -81.8944,
@@ -3226,26 +1995,32 @@
         -104.7059,
         101.616
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          3.2401867008234416e-05,
-          0.16954137209747167,
-          0.6318524066105273
+          -0.0027461851041954183,
+          0.16912675613784006,
+          0.6338062449152277
         ],
         "ray_origin_m": [
-          3.195518378820908e-05,
-          0.16824704227026546,
-          0.6270228403671801
+          -0.002760958606892446,
+          0.16782231456129762,
+          0.6289794225736653
         ],
         "ray_axis_world": [
-          -8.933664400506691e-05,
-          -0.25886596544123824,
-          -0.965913248669434
+          -0.0029547005394055526,
+          -0.2608883153084909,
+          -0.9653644683124711
         ],
-        "ray_projection_m": 0.6492031046136928,
-        "ray_miss_m": 0.00019888663898643641,
-        "target_angle_deg": 0.017552849902649513,
-        "roll_err_deg": 0.025547483037803877
+        "ray_projection_m": 0.650969108963495,
+        "ray_miss_m": 0.005126924371880716,
+        "target_angle_deg": 0.4512426947764915,
+        "roll_err_deg": 0.3069386116946548
       },
       "contacts": {
         "ur5e": 4,
@@ -3253,7 +2028,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 24,
         "joint_deg": [
@@ -3278,8 +2053,10 @@
     },
     {
       "id": 25,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 9.5 mm"
+      ],
       "joint_deg": [
         10.1232,
         -99.17,
@@ -3288,26 +2065,32 @@
         -104.0873,
         69.4761
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.0847467089508635,
-          0.14682493738791275,
-          0.6318730407217322
+          -0.08299759389383177,
+          0.14477829260866049,
+          0.6272921400341486
         ],
         "ray_origin_m": [
-          -0.08409996083384697,
-          0.14570402273416963,
-          0.6270434168013674
+          -0.08243069329310865,
+          0.1436570950912201,
+          0.6224525594907765
         ],
         "ray_axis_world": [
-          0.129349623403307,
-          -0.2241829307486219,
-          -0.9659247840729531
+          0.1133801201446249,
+          -0.22423950348807803,
+          -0.9679161086744092
         ],
-        "ray_projection_m": 0.6492194300787286,
-        "ray_miss_m": 0.00020932118446142224,
-        "target_angle_deg": 0.018473291858684494,
-        "roll_err_deg": 0.019905373041622883
+        "ray_projection_m": 0.6440414568017108,
+        "ray_miss_m": 0.009485299372143999,
+        "target_angle_deg": 0.8437784971134714,
+        "roll_err_deg": 2.477551980679521
       },
       "contacts": {
         "ur5e": 4,
@@ -3315,7 +2098,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 25,
         "joint_deg": [
@@ -3340,8 +2123,10 @@
     },
     {
       "id": 26,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 10.3 mm"
+      ],
       "joint_deg": [
         -3.1425,
         -115.4361,
@@ -3350,26 +2135,32 @@
         -96.715,
         26.0639
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.14680897175718513,
-          0.08477142460343143,
-          0.6318856714631865
+          -0.14789576611907548,
+          0.08758503616396743,
+          0.6360452464913542
         ],
         "ray_origin_m": [
-          -0.14568844350190902,
-          0.08412422793848122,
-          0.6270560179656771
+          -0.146725814807988,
+          0.0869825544923471,
+          0.6312215311426789
         ],
         "ray_axis_world": [
-          0.22410565105522112,
-          -0.12943933299004248,
-          -0.9659306995018889
+          0.23399026221749758,
+          -0.12049633432406484,
+          -0.9647430697350721
         ],
-        "ray_projection_m": 0.6492312454953318,
-        "ray_miss_m": 0.0002187139824293041,
-        "target_angle_deg": 0.01930188621080297,
-        "roll_err_deg": 0.01157767573829624
+        "ray_projection_m": 0.6537800884849285,
+        "ray_miss_m": 0.010326993552293743,
+        "target_angle_deg": 0.9049586438499022,
+        "roll_err_deg": 2.1093674354241676
       },
       "contacts": {
         "ur5e": 4,
@@ -3377,7 +2168,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 26,
         "joint_deg": [
@@ -3402,8 +2193,10 @@
     },
     {
       "id": 27,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 6.0 mm"
+      ],
       "joint_deg": [
         -30.4941,
         -123.3136,
@@ -3412,26 +2205,32 @@
         -82.4534,
         -29.6308
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.16952266267425586,
-          1.0544927900190126e-05,
-          0.6318878257798164
+          -0.16642272499812666,
+          -0.00210002488384267,
+          0.6263782013043812
         ],
         "ray_origin_m": [
-          -0.16822875848083138,
-          1.0431244968463677e-05,
-          0.6270581454668646
+          -0.16516410336940962,
+          -0.0020460188640757343,
+          0.6215395077879912
         ],
         "ray_axis_world": [
-          0.2587808386848963,
-          -2.273658634529007e-05,
-          -0.9659360625903711
+          0.2517243257434079,
+          0.01080120395338712,
+          -0.9677387032779996
         ],
-        "ray_projection_m": 0.6492324554952427,
-        "ray_miss_m": 0.00022763298102948358,
-        "target_angle_deg": 0.020088965730892267,
-        "roll_err_deg": 0.0030654857801487435
+        "ray_projection_m": 0.6430857593275193,
+        "ray_miss_m": 0.005952573099054896,
+        "target_angle_deg": 0.5303298525115298,
+        "roll_err_deg": 2.1374743517474264
       },
       "contacts": {
         "ur5e": 4,
@@ -3439,7 +2238,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 27,
         "joint_deg": [
@@ -3464,8 +2263,10 @@
     },
     {
       "id": 28,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.0 mm"
+      ],
       "joint_deg": [
         -46.6451,
         -115.0242,
@@ -3474,26 +2275,32 @@
         -75.4149,
         -76.188
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.14680372847401996,
-          -0.0847577439142882,
-          0.6318837346752377
+          -0.14922732156825086,
+          -0.08224377845574718,
+          0.6370244638981077
         ],
         "ray_origin_m": [
-          -0.1456832713978214,
-          -0.08411071819131798,
-          0.6270540417601331
+          -0.14804933756141236,
+          -0.08164459047707327,
+          0.6322022934898948
         ],
         "ray_axis_world": [
-          0.22409141523971282,
-          0.12940514459404398,
-          -0.9659385830209172
+          0.23559680136769962,
+          0.11983759573478225,
+          -0.9644340816426055
         ],
-        "ray_projection_m": 0.6492264226890673,
-        "ray_miss_m": 0.00022770574398997822,
-        "target_angle_deg": 0.020095573914428476,
-        "roll_err_deg": 0.008829836400390584
+        "ray_projection_m": 0.6543814801358745,
+        "ray_miss_m": 0.0070045596297840145,
+        "target_angle_deg": 0.6132758788218299,
+        "roll_err_deg": 2.8220352363894534
       },
       "contacts": {
         "ur5e": 4,
@@ -3501,7 +2308,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 28,
         "joint_deg": [
@@ -3536,26 +2343,32 @@
         -75.6055,
         -106.6911
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 3,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          -0.08474364724631694,
-          -0.1468198915857747,
-          0.6318709379809682
+          -0.08733574338919231,
+          -0.14701102439415795,
+          0.6336745635029066
         ],
         "ray_origin_m": [
-          -0.08409696480528556,
-          -0.14569908142987217,
-          0.6270412810143827
+          -0.08666650893811195,
+          -0.14586873057548205,
+          0.6288530191360775
         ],
         "ray_axis_world": [
-          0.12933648820627713,
-          0.22416203118050426,
-          -0.9659313933170919
+          0.13384689021607157,
+          0.22845876373517898,
+          -0.9643088733658323
         ],
-        "ray_projection_m": 0.6492158663687332,
-        "ray_miss_m": 0.00022083981367833819,
-        "target_angle_deg": 0.019489956166780415,
-        "roll_err_deg": 0.021372863261830518
+        "ray_projection_m": 0.6513335789579573,
+        "ray_miss_m": 0.0030755372865274473,
+        "target_angle_deg": 0.27054339328800586,
+        "roll_err_deg": 0.4470872960277372
       },
       "contacts": {
         "ur5e": 4,
@@ -3563,7 +2376,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 29,
         "joint_deg": [
@@ -3588,8 +2401,10 @@
     },
     {
       "id": 30,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 9.0 mm"
+      ],
       "joint_deg": [
         -39.2886,
         -81.2084,
@@ -3598,26 +2413,32 @@
         -78.4443,
         -130.2593
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 3,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          3.2606696892030695e-05,
-          -0.16954177687576816,
-          0.6318511424078498
+          0.002574322663852285,
+          -0.1721300014736328,
+          0.6258378704242444
         ],
         "ray_origin_m": [
-          3.2121586140380555e-05,
-          -0.16824752766934842,
-          0.6270215545624587
+          0.0024863022571916466,
+          -0.1707933073921741,
+          0.62102066154974
         ],
         "ray_axis_world": [
-          -9.70221503300284e-05,
-          0.2588498412839505,
-          -0.9659175690782191
+          -0.017604081332127708,
+          0.2673388162917422,
+          -0.9634417749008924
         ],
-        "ray_projection_m": 0.6492019846927493,
-        "ray_miss_m": 0.00021108188510222378,
-        "target_angle_deg": 0.018629180108980004,
-        "roll_err_deg": 0.028191609367354882
+        "ray_projection_m": 0.6440206981095352,
+        "ray_miss_m": 0.008974298137199268,
+        "target_angle_deg": 0.7983534243788696,
+        "roll_err_deg": 3.9295699021668793
       },
       "contacts": {
         "ur5e": 4,
@@ -3625,7 +2446,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 30,
         "joint_deg": [
@@ -3650,8 +2471,10 @@
     },
     {
       "id": 31,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 7.4 mm"
+      ],
       "joint_deg": [
         -30.1778,
         -64.4553,
@@ -3660,26 +2483,32 @@
         -82.6045,
         -151.0199
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.08481022091466141,
-          -0.14683252616458403,
-          0.6318284073055245
+          0.08288199972706693,
+          -0.15226318556697224,
+          0.6313608710170725
         ],
         "ray_origin_m": [
-          0.08416254695035386,
-          -0.14571164846964882,
-          0.6269988988803372
+          0.08225600261598263,
+          -0.15115467822443818,
+          0.6265256523985959
         ],
         "ray_axis_world": [
-          -0.12953479286150937,
-          0.2241755389870445,
-          -0.9659016850374544
+          -0.1251994222168602,
+          0.22170146850681438,
+          -0.9670437236953077
         ],
-        "ray_projection_m": 0.6491862583634317,
-        "ray_miss_m": 0.00019989536284068248,
-        "target_angle_deg": 0.0176423331851502,
-        "roll_err_deg": 0.028581715401674476
+        "ray_projection_m": 0.6496873180215926,
+        "ray_miss_m": 0.007387058338080848,
+        "target_angle_deg": 0.6514349537139943,
+        "roll_err_deg": 0.08133533494441135
       },
       "contacts": {
         "ur5e": 4,
@@ -3687,7 +2516,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 31,
         "joint_deg": [
@@ -3712,8 +2541,10 @@
     },
     {
       "id": 32,
-      "ok": true,
-      "reasons": [],
+      "ok": false,
+      "reasons": [
+        "ray miss 11.0 mm"
+      ],
       "joint_deg": [
         -20.3409,
         -42.3866,
@@ -3722,26 +2553,32 @@
         -87.5035,
         -170.5093
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 4,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          0.146608152262125,
-          -0.0847540044751434,
-          0.6316194053054786
+          0.14864262856240532,
+          -0.07842331343878743,
+          0.6296899184121647
         ],
         "ray_origin_m": [
-          0.14548835258748302,
-          -0.08410680016370885,
-          0.626789583852471
+          0.14749992885991714,
+          -0.07773813802417207,
+          0.6248707097591657
         ],
         "ray_axis_world": [
-          -0.2239599349283969,
-          0.1294408622869128,
-          -0.9659642906015155
+          -0.22853994049763787,
+          0.13703508292307276,
+          -0.9638417305997924
         ],
-        "ray_projection_m": 0.6489267744381871,
-        "ray_miss_m": 0.00019599898452464499,
-        "target_angle_deg": 0.01730536431712414,
-        "roll_err_deg": 0.1294778457063209
+        "ray_projection_m": 0.6466389434508739,
+        "ray_miss_m": 0.01099671972939982,
+        "target_angle_deg": 0.9742761505027406,
+        "roll_err_deg": 1.2245102799664118
       },
       "contacts": {
         "ur5e": 4,
@@ -3749,7 +2586,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 32,
         "joint_deg": [
@@ -3776,7 +2613,7 @@
       "id": 33,
       "ok": false,
       "reasons": [
-        "roll 150.1 deg"
+        "roll 82.5 deg"
       ],
       "joint_deg": [
         -15.0711,
@@ -3786,26 +2623,32 @@
         -90.0002,
         4.5779
       ],
+      "planning": {
+        "enabled": true,
+        "success": true,
+        "waypoints": 10,
+        "error": ""
+      },
       "ray": {
         "body_position_m": [
-          2.4120566668679733e-05,
-          3.4291973292251143e-06,
-          0.6541818457050466
+          0.0003721104716957052,
+          -0.001987042815610242,
+          0.6560762507305148
         ],
         "ray_origin_m": [
-          2.37151664308893e-05,
-          3.3555345149040293e-06,
-          0.6491818457220241
+          0.00039152074620651836,
+          -0.0019491503077003194,
+          0.6510764319938916
         ],
         "ray_axis_world": [
-          -8.108004755808668e-05,
-          -1.473256286421698e-05,
-          -0.9999999966044889
+          0.0038820549021626296,
+          0.007578501581984561,
+          -0.9999637473246261
         ],
-        "ray_projection_m": 0.6491818454899824,
-        "ray_miss_m": 2.9579442387365035e-05,
-        "target_angle_deg": 0.0026106354328401934,
-        "roll_err_deg": 150.05249767481797
+        "ray_projection_m": 0.6510660804650172,
+        "ray_miss_m": 0.004175121702782602,
+        "target_angle_deg": 0.36741827081770545,
+        "roll_err_deg": 82.49118022243212
       },
       "contacts": {
         "ur5e": 4,
@@ -3813,7 +2656,7 @@
         "ur5e_delta": 0,
         "camera_delta": 0
       },
-      "source": "/home/cho/webots_program/controllers/ycb_supervisor_four_view/candidate_viewpoints.json",
+      "source": "/home/cho/webots_program/controllers/ycb_supervisor_capture/candidate_viewpoints.json",
       "meta": {
         "id": 33,
         "joint_deg": [

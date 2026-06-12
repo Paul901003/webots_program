@@ -11,7 +11,7 @@ REFERENCE_Y  = 0.0
 # 偏移量：在參考點基礎上再平移
 X_OFFSET     = 0.0
 Z_OFFSET     = 0.1
-SPAWN_CLEARANCE = 0.01
+SPAWN_CLEARANCE = 0.0   # 直接放在靜止高度，不從高處落下（搭配 WorldInfo defaultDamping/bounce0 防滾走）
 SPACING_MARGIN = 0.02
 ARM_SETTLE_TIME_SEC = 2.0
 POST_ARRIVAL_PAUSE_SEC = 0.75
@@ -110,6 +110,77 @@ MASS_TABLE = {
 }
 
 ALL_OBJECTS = list(MASS_TABLE.keys())
+
+# ── SAM prompt 對照表(物體名 → 交給 Grounded-SAM 的 prompt 文字)──────────────
+# 與名稱解耦:可逐項調整 prompt 而不動 MASS_TABLE/資產名稱。
+# 初值等同舊規則(去純數字前綴、底線換空格);cups/colored_wood_blocks 的
+# 編號前綴(065-b / 070-a)目前仍保留,可視需要改成 "cups" / "colored wood blocks"。
+PROMPT_TABLE = {
+    "002_master_chef_can": "master chef can",
+    "003_cracker_box": "cracker box",
+    "004_sugar_box": "sugar box",
+    "005_tomato_soup_can": "tomato soup can",
+    "006_mustard_bottle": "mustard bottle",
+    "007_tuna_fish_can": "tuna fish can",
+    "008_pudding_box": "pudding box",
+    "009_gelatin_box": "gelatin box",
+    "010_potted_meat_can": "potted meat can",
+    "011_banana": "banana",
+    "012_strawberry": "strawberry",
+    "013_apple": "apple",
+    "014_lemon": "lemon",
+    "015_peach": "peach",
+    "016_pear": "pear",
+    "017_orange": "orange",
+    "018_plum": "plum",
+    "019_pitcher_base": "pitcher base",
+    "021_bleach_cleanser": "bleach cleanser",
+    "022_windex_bottle": "windex bottle",
+    "024_bowl": "bowl",
+    "025_mug": "mug",
+    "026_sponge": "sponge",
+    "028_skillet_lid": "skillet lid",
+    "029_plate": "plate",
+    "030_fork": "fork",
+    "031_spoon": "spoon",
+    "032_knife": "knife",
+    "033_spatula": "spatula",
+    "035_power_drill": "power drill",
+    "036_wood_block": "wood block",
+    "037_scissors": "scissors",
+    "038_padlock": "padlock",
+    "040_large_marker": "large marker",
+    "042_adjustable_wrench": "adjustable wrench",
+    "043_phillips_screwdriver": "phillips screwdriver",
+    "044_flat_screwdriver": "flat screwdriver",
+    "048_hammer": "hammer",
+    "050_medium_clamp": "medium clamp",
+    "051_large_clamp": "large clamp",
+    "052_extra_large_clamp": "extra large clamp",
+    "053_mini_soccer_ball": "mini soccer ball",
+    "054_softball": "softball",
+    "055_baseball": "baseball",
+    "056_tennis_ball": "tennis ball",
+    "057_racquetball": "racquetball",
+    "058_golf_ball": "golf ball",
+    "059_chain": "chain",
+    "061_foam_brick": "foam brick",
+    "062_dice": "dice",
+    "065-a_cups": "orange cups",
+    "065-b_cups": "blue cups",
+    "065-c_cups": "green cups",
+    "065-d_cups": "yellow cups",
+    "065-e_cups": "red cups",
+    "065-f_cups": "purple cups",
+    "065-g_cups": "orange cups",
+    "065-h_cups": "blue cups",
+    "065-i_cups": "green cups",
+    "065-j_cups": "yellow cups",
+    "070-a_colored_wood_blocks": "colored wood blocks",
+    "070-b_colored_wood_blocks": "blue wood blocks",
+    "071_nine_hole_peg_test": "nine hole peg test",
+    "077_rubiks_cube": "rubiks cube",
+}
 
 TARGET_OBJECTS = [
     # "005_tomato_soup_can",

@@ -22,8 +22,111 @@ TexturedBackgroundLight {
 }
 blank_floor {
 }
+DEF HEMISPHERE_R05 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.1 0.3 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.5
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r05"
+}
+DEF HEMISPHERE_R055 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.16 0.38 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.55
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r055"
+}
+DEF HEMISPHERE_R065 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.22 0.46 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.65
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r065"
+}
+DEF HEMISPHERE_R07 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.28 0.54 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.7
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r07"
+}
+DEF HEMISPHERE_R075 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.34 0.62 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.75
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r075"
+}
+DEF HEMISPHERE_R08 Solid {
+  children [
+    Shape {
+      appearance Appearance {
+        material Material {
+          diffuseColor 0.4 0.7 1.0
+          transparency 0.92
+        }
+      }
+      geometry Sphere {
+        radius 0.8
+        subdivision 3
+      }
+    }
+  ]
+  name "hemisphere_r08"
+}
+
 DEF UR5E UR5e {
-  translation -0.5 0 0
+  translation -0.4 0 0
   controller "ur5e_test_controller"
   toolSlot [
     Receiver {
