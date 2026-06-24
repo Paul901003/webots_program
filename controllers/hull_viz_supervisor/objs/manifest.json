@@ -1,0 +1,425 @@
+{
+  "scene": "n3_scene0030",
+  "root": "v3/instance_hull_voxel",
+  "source": "occ.npz",
+  "hull": 32,
+  "gt": 3,
+  "ycb": 3,
+  "items": [
+    {
+      "file": "inst_00.obj",
+      "name": "inst_00",
+      "color": [
+        0.9,
+        0.2,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_01.obj",
+      "name": "inst_01",
+      "color": [
+        0.2,
+        0.6,
+        0.95
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_02.obj",
+      "name": "inst_02",
+      "color": [
+        0.2,
+        0.8,
+        0.3
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_03.obj",
+      "name": "inst_03",
+      "color": [
+        0.95,
+        0.75,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_04.obj",
+      "name": "inst_04",
+      "color": [
+        0.7,
+        0.3,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_05.obj",
+      "name": "inst_05",
+      "color": [
+        0.95,
+        0.5,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_06.obj",
+      "name": "inst_06",
+      "color": [
+        0.1,
+        0.8,
+        0.8
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_07.obj",
+      "name": "inst_07",
+      "color": [
+        0.9,
+        0.4,
+        0.6
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_08.obj",
+      "name": "inst_08",
+      "color": [
+        0.5,
+        0.7,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_09.obj",
+      "name": "inst_09",
+      "color": [
+        0.4,
+        0.4,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_10.obj",
+      "name": "inst_10",
+      "color": [
+        0.9,
+        0.2,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_11.obj",
+      "name": "inst_11",
+      "color": [
+        0.2,
+        0.6,
+        0.95
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_12.obj",
+      "name": "inst_12",
+      "color": [
+        0.2,
+        0.8,
+        0.3
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_13.obj",
+      "name": "inst_13",
+      "color": [
+        0.95,
+        0.75,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_14.obj",
+      "name": "inst_14",
+      "color": [
+        0.7,
+        0.3,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_15.obj",
+      "name": "inst_15",
+      "color": [
+        0.95,
+        0.5,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_16.obj",
+      "name": "inst_16",
+      "color": [
+        0.1,
+        0.8,
+        0.8
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_17.obj",
+      "name": "inst_17",
+      "color": [
+        0.9,
+        0.4,
+        0.6
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_18.obj",
+      "name": "inst_18",
+      "color": [
+        0.5,
+        0.7,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_19.obj",
+      "name": "inst_19",
+      "color": [
+        0.4,
+        0.4,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_20.obj",
+      "name": "inst_20",
+      "color": [
+        0.9,
+        0.2,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_21.obj",
+      "name": "inst_21",
+      "color": [
+        0.2,
+        0.6,
+        0.95
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_22.obj",
+      "name": "inst_22",
+      "color": [
+        0.2,
+        0.8,
+        0.3
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_23.obj",
+      "name": "inst_23",
+      "color": [
+        0.95,
+        0.75,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_24.obj",
+      "name": "inst_24",
+      "color": [
+        0.7,
+        0.3,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_25.obj",
+      "name": "inst_25",
+      "color": [
+        0.95,
+        0.5,
+        0.1
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_26.obj",
+      "name": "inst_26",
+      "color": [
+        0.1,
+        0.8,
+        0.8
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_27.obj",
+      "name": "inst_27",
+      "color": [
+        0.9,
+        0.4,
+        0.6
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_28.obj",
+      "name": "inst_28",
+      "color": [
+        0.5,
+        0.7,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_29.obj",
+      "name": "inst_29",
+      "color": [
+        0.4,
+        0.4,
+        0.9
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_30.obj",
+      "name": "inst_30",
+      "color": [
+        0.9,
+        0.2,
+        0.2
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "inst_31.obj",
+      "name": "inst_31",
+      "color": [
+        0.2,
+        0.6,
+        0.95
+      ],
+      "transparency": 0.0
+    },
+    {
+      "file": "gt_013_apple.obj",
+      "name": "gt_013_apple",
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.6
+    },
+    {
+      "file": "gt_035_power_drill.obj",
+      "name": "gt_035_power_drill",
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.6
+    },
+    {
+      "file": "gt_065-j_cups.obj",
+      "name": "gt_065-j_cups",
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.6
+    }
+  ],
+  "ycb_items": [
+    {
+      "name": "ycb_013_apple",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/013_apple/google_16k/textured.obj",
+      "translation": [
+        0.57884,
+        -0.16152,
+        0.00148
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.25,
+        0.5,
+        0.3
+      ],
+      "transparency": 0.3
+    },
+    {
+      "name": "ycb_035_power_drill",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/035_power_drill/google_16k/textured.obj",
+      "translation": [
+        0.26186,
+        -0.19929,
+        0.00316
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.25,
+        0.5,
+        0.3
+      ],
+      "transparency": 0.3
+    },
+    {
+      "name": "ycb_065-j_cups",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/065-j_cups/google_16k/textured.obj",
+      "translation": [
+        0.47944,
+        -0.1347,
+        0.00055
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.25,
+        0.5,
+        0.3
+      ],
+      "transparency": 0.3
+    }
+  ]
+}

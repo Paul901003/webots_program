@@ -5,7 +5,7 @@
 ```
 A 視角規劃：A-0（選 x_offset）→ A-1 → A-2 → A-3 → A-4 → A-5（拍攝）
 B 場景擺位：B-1（生成多物體 plan,強制不重疊）
-C 後處理  ：C-1 GT 標籤 → C-2 產遮罩(A grounded_sam / B sam_clip) → C-3 評估 → C-4 visual hull → C-5 驗證
+C 後處理  ：C-1 GT 標籤 → C-2 產遮罩(A grounded_sam / B sam_clip) → C-3 評估 → C-4 visual hull(A foreground / B instance,皆 depth-free+label-free) → C-5 驗證
 ```
 
 | 步驟 | 腳本 / 世界檔                            | 說明                                      | Webots | Planning Bridge |
@@ -327,31 +327,57 @@ python tools/aggregate_eval.py     # 一次列出所有方法夾的 n1/n3/n4/n5 
 
 ### C-4　Visual Hull（torchhull 雕殼）
 
-`build_torchhull.py` 依遮罩/depth/位姿雕 3D 殼;`run_visual_hull_multi.py` 為批次包裝(依門檻找 grounded_sam 遮罩)。**torchhull 需 CUDA 12.1+**,已自動指向 `/usr/local/cuda-12.6`。
+雕殼一律靠 `torchhull.visual_hull`(octree 雕刻),**它強制要一個 cube**(`cube_corner_bfl`+`cube_length`,無預設)當八叉樹根——體素解析度 = `cube_length / 2^level`。**torchhull 需 CUDA 12.1+**,已指向 `/usr/local/cuda-12.6`(設 `CUDACXX`)。
+
+目前採用兩種**完全 depth-free、label-free** 的多物體方法(cube 用已知工作空間幾何寫死,不靠深度;物體切分靠幾何,不靠辨識標籤):
+
+#### 方法 A — foreground(前景合併 → 3D 連通元件分物體)
+不分物體、不分類:每 view 取「所有非背景前景」union,12 view 合併雕一坨,再用 3D 連通元件切開(物體空間不重疊 → 自然分坨)。
+```bash
+$GS_PY foreground_hull/make_foreground.py n3_scene0001   # 出 view_XX_mask_foreground.png
+$VH_PY foreground_hull/split_hull.py     n3_scene0001    # 固定 cube 雕殼 + 連通元件切
+```
+→ `data/eval/foreground/<scene>/components/obj_*.obj`、`report.txt`。
+缺點:物體**重疊/接觸**時會幻影橋接,切不開(非保證)。
+
+#### 方法 B — instance(多視角幾何關聯 → per-object 單獨雕)
+SAM 出 class-agnostic 遮罩 → 純幾何把跨視角遮罩關聯成 instance(不看標籤、不用深度)→ 每 instance 用自己遮罩單獨雕。**解掉「同物體跨視角被辨識成不同東西 → 對應不上」**。所有關聯法輸入皆 = `sam_only` 遮罩 + 相機位姿,輸出統一 schema `instances.json`(中心 + 各視角遮罩),可互換餵 carve/評估。
+
+**關聯方法族(輸出 `data/eval/<method>/<scene>/instances.json`)**
+| 程式 | 方法 | env |
+|---|---|---|
+| **`instance_hull/associate_voxel.py --multi-label`** | **VOXEL 多標籤(目前最佳)**:工作空間切體素→投影回各 view→落遮罩內視角數≥keep_frac保留(visual hull)→「多標籤 bitmask 相鄰一致」連通分物體 | webots_visual_hull |
+| `instance_hull/epipolar_match.py` | **Epipolar+SymNMF**(Doi et al. ACCV2020):對極帶相似度→SymNMF 圖聚類→3D 體素去重。漏檢極低但過檢偏高 | webots_visual_hull |
+| `instance_hull/associate.py` | set-cover(質心射線交會,原始) | grounded_sam |
+| `associate_hdbscan.py` / `associate_dbscan.py` | 點分群(實驗,較差) | webots_visual_hull |
+| `clip_hull.py` / `voxel_candidates.py`+`filter_candidates_clip.py` | CLIP 外觀(實驗,判別力不足、棄用) | grounded_sam |
 
 ```bash
-# A: 批次(找 grounded_sam_<門檻> 遮罩)
-$VH_PY tools/run_visual_hull_multi.py 1 3 4 5
-$VH_PY tools/run_visual_hull_multi.py 3 --masks-partial          # 較不易塌空(見下)
-# 任一 pipeline 單場景:直接指 --mask-dir(A 或 B 的場景夾皆可)
-env CUDA_HOME=/usr/local/cuda-12.6 CUDACXX=/usr/local/cuda-12.6/bin/nvcc PATH=/usr/local/cuda-12.6/bin:$PATH \
-  $VH_PY Grounded-Segment-Anything/webots_visual_hull/build_torchhull.py \
-  --scene-dir data/captures/multi_n3/n3_scene0001 \
-  --mask-dir data/eval/sam_clip/multi_n3/n3_scene0001 --device cuda
+# 目前最佳:VOXEL 多標籤
+$VH_PY sam_only/sam_only.py n3_scene0001          # (grounded_sam)各 view SAM 遮罩
+$VH_PY instance_hull/associate_voxel.py 1 3 4 5 --multi-label   # → instance_hull_voxel_ml/
+$VH_PY instance_hull/carve_instances.py n3_scene0001 --root=instance_hull_voxel_ml  # per-object 雕殼
 ```
-→ hull 輸出在該遮罩資料夾:`.../<scene>/visual_hull_<class>.obj` + `hull_build_info.json`(各物體 used/skipped 視角與 status)
 
-**防塌空兩機制**：
-- **空遮罩跳過**(預設、自動)：某視角全空遮罩 → 不納入交集。
-- **`--masks-partial`**(可選、預設關)：非空但視角間不一致而塌空時開啟;交集較不激進、hull 較寬鬆但較易建出。單場景:`MASKS_PARTIAL=1 ./tools/run_one_scene.sh`。
+**評估(用 GT,只打分;方法本身零 GT)**
+| 程式 | 指標 |
+|---|---|
+| `instance_hull/eval_reproj.py --root=<method>` | 找到率 + 重投影遮罩 vs GT 遮罩 IoU |
+| `instance_hull/eval_clip_match.py --root=<method>` | CLIP 特徵↔名詞配對 + 漏檢/過檢/3D IoU(vs **GT visual hull**)|
+| `instance_hull/precompute_clip.py`(grounded_sam)| 預存每遮罩 CLIP 影像特徵 + 物體名詞文字特徵 |
+- 全 17 方法比較結論:3D IoU 都 ~0.79(定位相近),**真正差別在過檢率** → **voxel 多標籤最均衡(過檢最低)**;set-cover/epipolar 漏檢最低但過檢高。詳見 `data/eval/eval_clip_detail.csv`。
+- `eval_3diou.py`(vs mesh)棄用:YCB mesh 非封閉、hull 本質填空腔。
 
-> 小球/相似圓罐/細長工具易因遮罩不一致塌空(列為 partial,非流程錯誤);多數可用 `--masks-partial` 救回。
+> 棄用:舊 **per-class**(`build_torchhull.py --class-name`)被跨視角辨識不一致打壞、原靠 depth;舊 set-cover 的 `run_all.sh`(sam_only→associate.py→carve)仍可用但已非最佳。
 
 ### C-5　驗證（兩種）
 
-**3D(Webots)** — 手臂 Home + 物體(實際位姿) + 各物體 hull(不同色)：
+**3D(Webots)** — 手臂 Home + 物體(實際位姿) + 各物體 hull(不同色)。用 `VH_SOURCE` 選方法:
 ```bash
-VH_SCENE=n3_scene0001 webots worlds/ycb_visual_hull_view.wbt    # 非預設:加 VH_MASKDIR=<方法夾>
+# 方法 B(instance)
+VH_SCENE=n3_scene0001 VH_SOURCE=instance   webots worlds/ycb_visual_hull_view.wbt
+# 方法 A(foreground)
+VH_SCENE=n3_scene0001 VH_SOURCE=foreground webots worlds/ycb_visual_hull_view.wbt
 ```
 **2D 重投影** — hull 投回各拍攝視角疊圖檢查貼合：
 ```bash

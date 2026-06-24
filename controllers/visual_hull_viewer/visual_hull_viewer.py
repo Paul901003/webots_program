@@ -8,9 +8,13 @@
   - 環境變數 VH_SCENE="n3_scene0002"
   - .wbt controllerArgs ["n3_scene0002"]
 
+hull 來源 VH_SOURCE:
+  - class(預設):per-class hull,data/eval/<VH_MASKDIR>/multi_n{N}/<scene>/visual_hull_<class>.obj
+  - foreground :前景合併→連通元件分離,data/eval/foreground/<scene>/components/obj_*.obj
+  - instance   :B 方法(幾何關聯→per-object 雕殼),data/eval/instance_hull/<scene>/visual_hull_inst_*.obj
+
 讀:
   data/captures/multi_n{N}/<scene>/scene_manifest.json   物體名稱 + 實際位姿(actual)
-  data/captures/multi_n{N}/<scene>/sam_masks/visual_hull_<class>.obj
 """
 
 from controller import Supervisor
@@ -159,27 +163,58 @@ def main():
         raise SystemExit(f"找不到 manifest: {manifest_path}")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     objects = manifest["actual"]["viewpoints"][0]["objects"]   # 實際位姿
-    # mask/hull 在 data/eval/<MASK_SUBDIR>/multi_n{N}/<scene>/
-    mask_dir = EVAL / MASK_SUBDIR / f"multi_{group}" / scene
 
+    # hull 來源:VH_SOURCE=class(預設,per-class)或 foreground(前景合併→連通元件分離)
+    source = os.environ.get("VH_SOURCE", "class")
     root = robot.getRoot().getField("children")
-    print(f"[VH-Viewer] 場景 {scene}: {len(objects)} 物體")
-    n_obj = n_hull = 0
-    for i, o in enumerate(objects):
+    print(f"[VH-Viewer] 場景 {scene}: {len(objects)} 物體  (hull 來源: {source})")
+
+    # 1) 擺 YCB 物體(實際位姿)
+    n_obj = 0
+    for o in objects:
         name = o["name"]
         if name not in MASS_TABLE:
             continue
         root.importMFNodeFromString(-1, make_object_vrml(
             name, o["position_m"], o.get("rotation_axis_angle")))
         n_obj += 1
-        hp = mask_dir / hull_filename(name)
-        if hp.exists():
+
+    # 2) 疊 hull
+    n_hull = 0
+    if source == "instance":
+        inst_dir = EVAL / "instance_hull" / scene
+        hulls = sorted(inst_dir.glob("visual_hull_inst_*.obj"))
+        for i, hp in enumerate(hulls):
             color = HULL_COLORS[i % len(HULL_COLORS)]
-            root.importMFNodeFromString(-1, make_hull_vrml(hp, f"vh_hull_{sanitize(name)}", color))
+            root.importMFNodeFromString(-1, make_hull_vrml(hp, f"vh_inst_{hp.stem}", color))
             n_hull += 1
-            print(f"[VH-Viewer] {name}: hull 色 RGB{tuple(round(c,1) for c in color)}")
-        else:
-            print(f"[VH-Viewer] 無 hull: {hp.name}")
+            print(f"[VH-Viewer] {hp.name}: 色 RGB{tuple(round(c,1) for c in color)}")
+        if not hulls:
+            print(f"[VH-Viewer] 無 instance hull: {inst_dir}（先跑 associate.py→carve_instances.py）")
+    elif source == "foreground":
+        comp_dir = EVAL / "foreground" / scene / "components"
+        comps = sorted(comp_dir.glob("obj_*.obj"))
+        for i, hp in enumerate(comps):
+            color = HULL_COLORS[i % len(HULL_COLORS)]
+            root.importMFNodeFromString(-1, make_hull_vrml(hp, f"vh_fg_{hp.stem}", color))
+            n_hull += 1
+            print(f"[VH-Viewer] {hp.name}: 色 RGB{tuple(round(c,1) for c in color)}")
+        if not comps:
+            print(f"[VH-Viewer] 無 foreground 元件: {comp_dir}（先跑 make_foreground→build_torchhull→split_hull）")
+    else:
+        mask_dir = EVAL / MASK_SUBDIR / f"multi_{group}" / scene
+        for i, o in enumerate(objects):
+            name = o["name"]
+            if name not in MASS_TABLE:
+                continue
+            hp = mask_dir / hull_filename(name)
+            if hp.exists():
+                color = HULL_COLORS[i % len(HULL_COLORS)]
+                root.importMFNodeFromString(-1, make_hull_vrml(hp, f"vh_hull_{sanitize(name)}", color))
+                n_hull += 1
+                print(f"[VH-Viewer] {name}: hull 色 RGB{tuple(round(c,1) for c in color)}")
+            else:
+                print(f"[VH-Viewer] 無 hull: {hp.name}")
     print(f"[VH-Viewer] 已擺物體 {n_obj}，疊 hull {n_hull}。手臂在 Home。")
 
     while robot.step(timestep) != -1:

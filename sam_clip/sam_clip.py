@@ -67,7 +67,7 @@ def _masked_crop(image_rgb: np.ndarray, seg: np.ndarray, bbox, pad: int = 12) ->
     m = seg[y0:y1, x0:x1]
     
     # 修正: 100% 塗成純灰色，完全抹除框內任何屬於背景的紋理
-    crop[~m] = np.array([256, 256, 256], dtype=np.uint8)
+    crop[~m] = np.array([255, 255, 255], dtype=np.uint8)
     
     return Image.fromarray(crop)
 

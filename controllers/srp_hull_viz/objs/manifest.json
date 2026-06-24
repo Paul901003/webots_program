@@ -1,0 +1,30 @@
+{
+  "source": "n1_scene0024",
+  "hull": 0,
+  "gt": 0,
+  "ycb": 1,
+  "items": [],
+  "ycb_items": [
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/028_skillet_lid/google_16k/textured.obj",
+      "translation": [
+        0.34112699999999996,
+        -0.024286500000000003,
+        0.0049716033591754374
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_028_skillet_lid"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "../protos/blank_floor.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation -0.3 0.3 0.9 2.0
+  position 0.35 -1.1 0.85
+  followType "None"
+}
+Background {
+  skyColor [ 0.2 0.2 0.25 ]
+}
+DirectionalLight {
+  direction 0.5 -0.5 -1
+  intensity 2
+  castShadows TRUE
+}
+DirectionalLight {
+  direction -0.5 0.5 -1
+  intensity 1
+}
+blank_floor {
+}
+Robot {
+  supervisor TRUE
+  controller "srp_hull_viz"
+  controllerArgs [ "n3_scene0030" "1" ]
+  name "srp_hull_viz"
+}

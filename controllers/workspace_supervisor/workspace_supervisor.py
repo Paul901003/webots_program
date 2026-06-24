@@ -23,6 +23,13 @@ from config import (
     WORKSPACE_DEF,
     WORKSPACE_NAME,
     WORKSPACE_RADIUS,
+    WS_OBJECT_DEF,
+    WS_OBJECT_NAME,
+    WS_OBJECT_CENTER_X,
+    WS_OBJECT_CENTER_Y,
+    WS_OBJECT_CENTER_Z,
+    WS_OBJECT_RADIUS,
+    WS_OBJECT_COLOR_RGB,
 )
 
 
@@ -160,6 +167,7 @@ def remove_existing_workspace(supervisor: Supervisor):
     for def_name in (
         WORKSPACE_DEF,
         CAPTURE_WORKSPACE_DEF,
+        WS_OBJECT_DEF,
     ):
         node = supervisor.getFromDef(def_name)
         if node is not None:
@@ -201,6 +209,22 @@ def main():
                 workspace_table_z,
                 CAPTURE_RADIUS,
                 CAPTURE_COLOR_RGB,
+            ),
+        ),
+    )
+
+    supervisor.getRoot().getField("children").importMFNodeFromString(
+        -1,
+        build_workspace_node(
+            WS_OBJECT_DEF,
+            WS_OBJECT_NAME,
+            build_hemisphere_shapes(
+                WS_OBJECT_CENTER_X,
+                WS_OBJECT_CENTER_Y,
+                WS_OBJECT_CENTER_Z,
+                workspace_table_z,
+                WS_OBJECT_RADIUS,
+                WS_OBJECT_COLOR_RGB,
             ),
         ),
     )
