@@ -17,6 +17,7 @@ GT(per-object,公平 hull-vs-hull):用 amodal 遮罩(data/labels/<scene>/amodal/
 import argparse
 import csv
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -31,10 +32,11 @@ sys.path.insert(0, str(REPO / "srp" / "stage1_hull"))
 import camera as cam            # noqa: E402
 from carve import carve_visual_hull   # noqa: E402
 
-CAPTURES = REPO / "data" / "captures"
+# 路徑可用 env 覆寫(新資料:captures_fast + srp_hull_fast + 獨立 GT 快取避免撞舊)
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
 LABELS = REPO / "data" / "labels"
-HULL_ROOT = REPO / "data" / "eval" / "srp_hull"
-GT_CACHE = REPO / "data" / "eval" / "gt_hull_cache"
+HULL_ROOT = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_hull")))
+GT_CACHE = Path(os.environ.get("GT_CACHE", str(REPO / "data" / "eval" / "gt_hull_cache")))
 
 
 def gt_object_hulls(scene, grid_min, grid_max, vs, shape):

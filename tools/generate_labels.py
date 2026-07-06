@@ -57,6 +57,7 @@ def ycb_center(name: str) -> np.ndarray:
 CAM_FOV_H  = 1.4746   # 水平 FOV (radians)，來自 proto
 CAM_WIDTH  = 1280
 CAM_HEIGHT = 720
+EL_AZ_TARGET = (0.35, 0.0, 0.0)   # el/az 命名的物體中心(與拍攝端 X_OFFSET=0.35 一致)
 
 # ── UR5e 機器人底座在世界座標的位姿（來自 .wbt）────────────────────────────────
 ROBOT_BASE_XYZ = np.array([-0.4, 0.0, 0.0])
@@ -157,6 +158,17 @@ def camera_pose_matrix(eye: np.ndarray, target: np.ndarray) -> np.ndarray:
     return pose
 
 
+def el_az_name(cam_pos, target=EL_AZ_TARGET):
+    """相機位置相對物體中心 target 的 el/az → 檔名(與拍攝端 gen_multicam_world.el_az_name 完全一致)。"""
+    d = np.asarray(cam_pos, float) - np.asarray(target, float)
+    dist = float(np.linalg.norm(d))
+    el = round(math.degrees(math.asin(max(-1.0, min(1.0, d[2] / max(dist, 1e-9))))))
+    if el >= 88:
+        return "view_el90"
+    az = round(math.degrees(math.atan2(d[1], d[0])) % 360)
+    return f"view_el{el:02d}_az{az:03d}"
+
+
 # ── UR5e FK（來自 Webots UR5e.proto）─────────────────────────────────────────
 
 def _ur5e_link_transforms(joint_rad: list) -> tuple[list, np.ndarray]:
@@ -236,12 +248,31 @@ def load_gripper_nodes(gripper_mesh_dir: str, joint_rad: list,
     tf = _ur5e_link_transforms(joint_rad)
     T_w3 = tf["wrist_3"]
 
-    # 夾爪基座在世界座標
-    T_grip = T_w3 @ _tf(axis=[0, 1, 0], angle=math.pi / 2) \
-                  @ _tf(axis=[1, 0, 0], angle=-math.pi / 2)
+
+    # wrist_3 -> toolSlot（UR5e.proto: wrist_3_link 下 Pose{translation 0 0.1 0}，+Y）
+    T_toolslot = T_w3 @ _tf([0, 0.1, 0])
+
+    # toolSlot -> gripper
+    T_grip = (
+        T_toolslot
+        @ _tf(axis=[0, 1, 0], angle=math.pi / 2)
+        @ _tf(axis=[1, 0, 0], angle=-math.pi / 2)
+    )
+
 
     nodes = []
     d = gripper_mesh_dir
+    print("T_w3")
+    print(T_w3[:3, 3])
+
+    print("T_toolslot")
+    print(T_toolslot[:3, 3])
+
+    print("T_grip")
+    print(T_grip[:3, 3])
+
+    print("offset =",
+        np.linalg.norm(T_toolslot[:3,3] - T_w3[:3,3]))
 
     def stl(fname, t):
         _load_mesh(os.path.join(d, fname), t, nodes)
@@ -340,7 +371,7 @@ def render_color(robot_nodes: list, ycb_mesh, ycb_tf: np.ndarray,
     fx, fy = K[0, 0], K[1, 1]
     cx, cy = K[0, 2], K[1, 2]
     scene.add(pyrender.IntrinsicsCamera(fx=fx, fy=fy, cx=cx, cy=cy,
-                                         znear=0.05, zfar=10.0), pose=cam_pose)
+                                         znear=0.01, zfar=10.0), pose=cam_pose)
     scene.add(pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=4.0),
                pose=cam_pose)
 
@@ -431,10 +462,13 @@ def render_labels(actual_viewpoints, planned_objects, obj_name_to_cat_id,
             tf[:3, 3] = np.array(pos) - Raa @ ycb_center(name)   # 對齊 Webots 置中擺法 T(pos)@R@T(-center)
             ycb_entries.append((mesh, tf, cat_id, name))
 
-        arm_nodes     = load_robot_scene_nodes(args.arm_mesh_dir, joint_rad)
-        gripper_nodes = load_gripper_nodes(args.gripper_mesh_dir, joint_rad,
-                                           args.gripper_angle)
-        all_robot_nodes = arm_nodes + gripper_nodes
+        if getattr(args, "no_arm", False):
+            all_robot_nodes = []          # 不渲手臂/夾爪(相機瞬移影像無手臂,避免幻影 arm 遮罩/遮擋物體)
+        else:
+            arm_nodes     = load_robot_scene_nodes(args.arm_mesh_dir, joint_rad)
+            gripper_nodes = load_gripper_nodes(args.gripper_mesh_dir, joint_rad,
+                                               args.gripper_angle)
+            all_robot_nodes = arm_nodes + gripper_nodes
 
         scene = pyrender.Scene(bg_color=[0, 0, 0, 255])
         seg_node_map = {}
@@ -453,7 +487,7 @@ def render_labels(actual_viewpoints, planned_objects, obj_name_to_cat_id,
         fx, fy = K[0, 0], K[1, 1]
         cx, cy = K[0, 2], K[1, 2]
         scene.add(pyrender.IntrinsicsCamera(fx=fx, fy=fy, cx=cx, cy=cy,
-                                             znear=0.05, zfar=10.0), pose=cam_pose)
+                                             znear=0.01, zfar=10.0), pose=cam_pose)
         renderer = pyrender.OffscreenRenderer(CAM_WIDTH, CAM_HEIGHT)
         try:
             seg_color, _ = renderer.render(scene, flags=pyrender.RenderFlags.SEG,
@@ -469,7 +503,8 @@ def render_labels(actual_viewpoints, planned_objects, obj_name_to_cat_id,
                                  cam_pose, K,
                                  extra_ycb=ycb_entries[1:])
 
-        img_filename = f"viewpoint_{vp_id:04d}.png"
+        view_name = el_az_name(cam_pos_m)          # el/az 命名(與拍攝端一致)
+        img_filename = f"{view_name}.png"
         Image.fromarray(color_img).save(os.path.join(images_dir, img_filename))
 
         mask_vis = np.zeros((CAM_HEIGHT, CAM_WIDTH), dtype=np.uint8)
@@ -516,7 +551,7 @@ def render_labels(actual_viewpoints, planned_objects, obj_name_to_cat_id,
             ann_id += 1
 
         Image.fromarray(mask_vis).save(
-            os.path.join(masks_dir, f"viewpoint_{vp_id:04d}_mask.png"))
+            os.path.join(masks_dir, f"{view_name}_mask.png"))
         print(f"robot={int(robot_mask.sum())}px  ycb={total_ycb_px}px")
 
     ann_path = os.path.join(out_dir, "annotations.json")
@@ -539,6 +574,8 @@ def main():
     parser.add_argument("--ycb-assets", default=DEFAULT_ASSETS)
     parser.add_argument("--gripper-angle", type=float, default=0.0,
                         help="夾爪開合角度 (rad)，0=完全開啟，最大≈0.7")
+    parser.add_argument("--no-arm", action="store_true",
+                        help="不渲染手臂/夾爪(相機瞬移影像無手臂,避免幻影 arm 遮罩與遮擋物體)")
     args = parser.parse_args()
 
     # ── 讀取場景資訊 ─────────────────────────────────────────────────────────

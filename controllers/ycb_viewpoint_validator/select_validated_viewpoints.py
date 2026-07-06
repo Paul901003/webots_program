@@ -157,19 +157,27 @@ def main():
     print(f"[A-3] 合併後共 {len(validated)} 個通過視角，來自 {len(validated_files)} 個檔案")
     print(f"[A-3] target_m = {target_m}  count = {count}")
 
-    # 方位角群組（度）：group_a=90/135，group_b=270/225（=-90/-135）
-    AZ_GROUP_A = {90, 135}
-    AZ_GROUP_B = {270, -90, 225, -135}
+    # 方位角群組（正規化 0~360）：中心=180、A=[90,180) 左半、B=(180,270] 右半（互不重疊）
+    def az360(v):
+        return round(float(v.get("meta", {}).get("azimuth_deg", 0))) % 360
 
-    def az_normalized(v):
-        az = v.get("meta", {}).get("azimuth_deg", 0)
-        return round(float(az))
+    def el_deg(v):
+        return abs(float(v.get("meta", {}).get("elevation_deg", 90)))
+
+    def in_az_center(v):
+        return az360(v) == 180
+
+    def in_az_a(v):
+        return 90 <= az360(v) < 180
+
+    def in_az_b(v):
+        return 180 < az360(v) <= 270
 
     def has_group_a(pool):
-        return any(az_normalized(v) in AZ_GROUP_A for v in pool)
+        return any(in_az_a(v) for v in pool)
 
     def has_group_b(pool):
-        return any(az_normalized(v) in AZ_GROUP_B for v in pool)
+        return any(in_az_b(v) for v in pool)
 
     def satisfies_az_constraint(pool):
         return has_group_a(pool) and has_group_b(pool)
@@ -204,44 +212,34 @@ def main():
 
     pool = by_radius[best_radius]
     print(f"[A-3] 選用半徑 {best_radius}m（{len(pool)} 個視角，工作球半徑最大）")
-    print(f"[A-3] 方位角群組 A(90/135): {'有' if has_group_a(pool) else '無'}  群組 B(270/225): {'有' if has_group_b(pool) else '無'}")
+    print(f"[A-3] 方位角群組 A[90,180): {'有' if has_group_a(pool) else '無'}  群組 B(180,270]: {'有' if has_group_b(pool) else '無'}")
 
-    low_el = [v for v in pool if abs(v.get("meta", {}).get("elevation_deg", 90)) < 30]
-
-    if not low_el:
-        print("[A-3] 警告：無 20 度仰角視角可選")
-
-    # 先從群組 A 和群組 B 各保留一個（分布最佳的），再保留 20 度仰角一個，其餘空間分布選取
+    # 強制保留：天頂(el=90) + 中心(az=180,有才留) + 群組 A/B 各挑「仰角最小」(最側視)。
     forced = []
     used = set()
 
-    # 群組 A：az=90/135，選 roll 最小的
-    group_a_pool = [v for v in pool if az_normalized(v) in AZ_GROUP_A]
-    if group_a_pool:
-        pick_a = min(group_a_pool, key=lambda v: candidate_roll_error(v))
-        forced.append(pick_a)
-        used.add(id(pick_a))
-        print(f"[A-3] 群組 A 保留 1 個: el={round(pick_a.get('meta',{}).get('elevation_deg',0))}  az={az_normalized(pick_a)}")
+    def by_el_then_roll(v):
+        return (el_deg(v), candidate_roll_error(v))   # 先比仰角(小=側視),並列再比 roll
 
-    # 群組 B：az=270/225，選 roll 最小的
-    group_b_pool = [v for v in pool if az_normalized(v) in AZ_GROUP_B]
-    if group_b_pool:
-        pick_b = min(group_b_pool, key=lambda v: candidate_roll_error(v))
-        forced.append(pick_b)
-        used.add(id(pick_b))
-        print(f"[A-3] 群組 B 保留 1 個: el={round(pick_b.get('meta',{}).get('elevation_deg',0))}  az={az_normalized(pick_b)}")
+    def is_zenith(v):
+        return round(el_deg(v)) == 90
 
-    # 20 度仰角：選 roll 最小的（未已選）
-    low_el_avail = [v for v in low_el if id(v) not in used]
-    if low_el_avail:
-        pick_low = min(low_el_avail, key=lambda v: candidate_roll_error(v))
-        forced.append(pick_low)
-        used.add(id(pick_low))
-        print(f"[A-3] 20 度仰角保留 1 個: el={round(pick_low.get('meta',{}).get('elevation_deg',0))}  az={az_normalized(pick_low)}")
-    else:
-        print("[A-3] 警告：無額外 20 度仰角視角可選")
+    def force_one(filt, label, key):
+        cand = [v for v in pool if filt(v) and id(v) not in used]
+        if not cand:
+            print(f"[A-3] 警告：無 {label} 可選")
+            return
+        pick = min(cand, key=key)
+        forced.append(pick)
+        used.add(id(pick))
+        print(f"[A-3] {label} 保留 1 個: el={round(el_deg(pick))} az={az360(pick)}")
 
-    # 剩餘視角用空間分布算法補滿
+    force_one(is_zenith,     "天頂(el=90)",    candidate_roll_error)   # ① 天頂保留
+    force_one(in_az_center,  "中心(az=180)",   by_el_then_roll)        # ② 180 有才留,挑仰角最小
+    force_one(in_az_a,       "群組 A[90,180)", by_el_then_roll)        # ③ 左半挑仰角最小
+    force_one(in_az_b,       "群組 B(180,270]", by_el_then_roll)       # ④ 右半挑仰角最小
+
+    # 其餘用空間分布(最遠點)補滿到 count
     remaining_pool = [v for v in pool if id(v) not in used]
     rest = select_spread_viewpoints(remaining_pool, count - len(forced), target_m)
     selected = forced + rest

@@ -42,6 +42,9 @@ def main():
                         help="物體中心 x 軸偏移（m），拍攝球體與工作球體同步移動（預設 0.0）")
     parser.add_argument("--output", default=None,
                         help="輸出路徑（預設依 x_offset 自動命名）")
+    parser.add_argument("--moveit-ik", action="store_true",
+                        help="改用 MoveIt 解關節角：每視角的多組 IK 解逐一送 MoveIt 規劃，"
+                             "挑第一個無自撞+從Home可達者（需先 ros2 launch planning_bridge）")
     args = parser.parse_args()
 
     # 套用 x_offset：覆蓋 _gen 模組的 OBJECT_CENTER_M
@@ -69,27 +72,51 @@ def main():
     print(f"  Azimuths    : {config.AZIMUTH_STEPS} steps")
     print(f"  Output      : {output_path}")
 
+    if args.moveit_ik:
+        print("  IK 模式     : MoveIt（多解逐一規劃挑無自撞+可達）")
+        _gen.start_moveit_bridge()
+    else:
+        print("  IK 模式     : Webots 數值 IK + capsule 自碰撞（原行為）")
+
+    import math
+
+    def _base_record(rid, r, p_cam, j_deg):
+        el, az = _gen._elevation_azimuth(p_cam)
+        joints_rad = [math.radians(v) for v in j_deg]
+        return {
+            "id": rid,
+            "radius_m": float(r),
+            "joint_deg": [round(v, 4) for v in j_deg],
+            "camera_position_m": [float(v) for v in p_cam],
+            "elevation_deg": float(el),
+            "azimuth_deg": float(az),
+            "target_err_deg": _gen.camera_target_angle_deg(joints_rad, _gen.OBJECT_CENTER_M),
+            "ray_miss_m": _gen.camera_ray_miss_distance_m(joints_rad, _gen.OBJECT_CENTER_M),
+            "roll_err_deg": _gen.camera_roll_error_deg(joints_rad, _gen.OBJECT_CENTER_M),
+        }
+
     all_records = []
-    for r in args.radii:
-        _gen.HEMISPHERE_RADIUS_M = r
-        print(f"\n  半徑 {r}m ...")
-        valid = _gen.find_valid_viewpoints()
-        print(f"    有效: {len(valid)} 個")
-        for p_cam, j_deg in valid:
-            import math
-            el, az = _gen._elevation_azimuth(p_cam)
-            joints_rad = [math.radians(v) for v in j_deg]
-            all_records.append({
-                "id": len(all_records) + 1,
-                "radius_m": float(r),
-                "joint_deg": [round(v, 4) for v in j_deg],
-                "camera_position_m": [float(v) for v in p_cam],
-                "elevation_deg": float(el),
-                "azimuth_deg": float(az),
-                "target_err_deg": _gen.camera_target_angle_deg(joints_rad, _gen.OBJECT_CENTER_M),
-                "ray_miss_m": _gen.camera_ray_miss_distance_m(joints_rad, _gen.OBJECT_CENTER_M),
-                "roll_err_deg": _gen.camera_roll_error_deg(joints_rad, _gen.OBJECT_CENTER_M),
-            })
+    try:
+        for r in args.radii:
+            _gen.HEMISPHERE_RADIUS_M = r
+            print(f"\n  半徑 {r}m ...")
+            if args.moveit_ik:
+                # MoveIt 模式:每視角取「殘差最小中第一個規劃成功」的解 + 記錄 home→視角路徑。
+                for p_cam, sol in _gen.moveit_solve_viewpoints():
+                    rec = _base_record(len(all_records) + 1, r, p_cam, sol["joint_deg"])
+                    rec["n_ik_solutions"] = sol["n_ik_solutions"]
+                    rec["ik_rank_used"] = sol["ik_rank_used"]
+                    rec["n_waypoints"] = sol["n_waypoints"]
+                    rec["path_rad"] = sol["path_rad"]
+                    all_records.append(rec)
+            else:
+                valid = _gen.find_valid_viewpoints()
+                print(f"    有效: {len(valid)} 個")
+                for p_cam, j_deg in valid:
+                    all_records.append(_base_record(len(all_records) + 1, r, p_cam, j_deg))
+    finally:
+        if args.moveit_ik:
+            _gen.stop_moveit_bridge()
 
     if not all_records:
         print("ERROR: 沒有有效的候選點")

@@ -17,9 +17,26 @@ CURRENT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = CURRENT_DIR.parents[1]
 
 _MULTI_MODE = "--multi" in " ".join(sys.argv[1:])
-PLANNED_PATHS_PATH = REPO_ROOT / "data" / "viewpoints" / (
-    "planned_paths_multi_latest.json" if _MULTI_MODE else "planned_paths_latest.json"
-)
+_VP_DIR = REPO_ROOT / "data" / "viewpoints"
+
+# 視角數量參數:env EXEC_COUNT 優先,否則 argv "--count N";設了就讀對應的 n{count} 路徑檔。
+# x_offset 由 env EXEC_X_OFFSET(預設 0.35)決定檔名 tag。env 優先,免改 .wbt(同 VALIDATOR_ARGS 慣例)。
+_count = os.environ.get("EXEC_COUNT")
+if _count is None:
+    for _i, _a in enumerate(sys.argv):
+        if _a == "--count" and _i + 1 < len(sys.argv):
+            _count = sys.argv[_i + 1]
+_x_off = float(os.environ.get("EXEC_X_OFFSET", "0.35"))
+
+if _MULTI_MODE and _count:
+    _tag = f"x{int(round(_x_off * 100)):+04d}"
+    PLANNED_PATHS_PATH = _VP_DIR / f"planned_paths_multi_n{int(_count)}_{_tag}.json"
+elif _MULTI_MODE:
+    PLANNED_PATHS_PATH = _VP_DIR / "planned_paths_multi_latest.json"
+else:
+    PLANNED_PATHS_PATH = _VP_DIR / "planned_paths_latest.json"
+print(f"[A-5] 視角數量={_count or '(latest)'}  讀取路徑檔: {PLANNED_PATHS_PATH.name}", flush=True)
+
 CAPTURES_DIR = REPO_ROOT / "data" / "captures" / ("a5_multi" if _MULTI_MODE else "a5")
 
 # YCB spawn helpers from shared module
@@ -101,6 +118,10 @@ def load_planned_paths():
     paths 是 list of dict: {from_id, to_id, positions (list of 6-float lists)}。
     相容舊格式 waypoints_rad 與新格式 waypoints（含 positions/velocities/time）。
     """
+    if not PLANNED_PATHS_PATH.is_file():
+        avail = sorted(p.name for p in _VP_DIR.glob("planned_paths_multi_n*_x*.json"))
+        raise FileNotFoundError(
+            f"找不到路徑檔 {PLANNED_PATHS_PATH.name}。可用: {avail or '(無 n{count} 檔,先跑 A-4)'}")
     with PLANNED_PATHS_PATH.open(encoding="utf-8") as f:
         data = json.load(f)
 

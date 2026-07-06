@@ -1,5 +1,13 @@
 # CLAUDE.md — 專案說明
 
+## ⚠ 工作準則（最高優先）
+
+**永遠不在沒有數據／證據佐證的狀態下推論原因或下結論。**
+任何「失敗成因、因果關係、為什麼會這樣、結論」都必須**先用實際數據／實驗／程式驗證證明**，
+才能陳述為事實。未經驗證的想法一律明確標示為「**待驗證假設**」，並在動手做任何依賴它的修改前先驗證。
+- 反例（禁止）：看到碰撞就斷定「夾爪撞桌」並據此改程式 → 實測發現夾爪沒碰桌、真正是相機撞手臂。
+- 正確：先用 fcl/FK 或 log 把碰撞的實際 link 對印出來，確認後再說成因、再決定修法。
+
 ## 專案概述
 
 在 Webots 模擬環境中，使用 UR5e + Robotiq 2F-140 夾爪對 YCB 物件進行多視角影像擷取，
@@ -181,3 +189,4 @@ python tools/evaluate_masks.py \
 - 階段二產遮罩腳本輸出命名統一為 `view_XX_mask_<class>.png`，方法之間可互換評估、互餵建 hull。
 - 後處理腳本參數慣例：傳 `n3_scene0001`=單場景、`3`=整組 n3、`1 3 4 5`=多組；`FORCE=1`=忽略已存在重做。
 - `data/` 不進 git；`data/eval/<method>/` 子目錄名常含閾值（如 `grounded_sam_0.25_0.25_0.8`）以區分參數。
+- **相機 mount 是「從 world 檔解析」不是讀 config**：A-1 視角生成的相機位移由 `load_wbt_mounts()` 從 `candidate_viewpoint_config.WORLD_FILE`（`worlds/ycb_supervisor_four_view_capture_multi.wbt`）的 `DEF UR5E_CAMERA translation` 讀取；`T_FLANGE_TO_D455_M` 只是 fallback。相機 mount **散在多個 world 檔**（A-1 來源／A-2 validator／armmove·multicam 拍攝 world／MoveIt URDF），改一定要**全部同步**再重跑，詳見 `PIPELINE.md` A-1 的「★★ 相機 mount 來源」。

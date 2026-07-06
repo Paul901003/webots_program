@@ -32,7 +32,7 @@ JOINT_NAMES = [
     "wrist_2_joint",
     "wrist_3_joint",
 ]
-PLAN_TIMEOUT_SEC = 20.0
+PLAN_TIMEOUT_SEC = 50.0   # > planning_bridge 的 allowed_planning_time(45s),避免 client 提前砍斷
 
 
 class BridgeNode(Node):

@@ -19,6 +19,7 @@ local SAM 遮罩 ID 焊成 global instance(幾何一致性,非外觀)。3D 不�
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -36,11 +37,22 @@ import masks as MK     # noqa: E402
 def _device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-CAPTURES = REPO / "data" / "captures"
-SAM_ROOT = REPO / "data" / "eval" / "sam_only"
-HULL_ROOT = REPO / "data" / "eval" / "srp_hull"
+# 路徑可用 env 覆寫(新資料:captures_fast + sam_only_fast + srp_hull_fast + srp_arm_masks)
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
+SAM_ROOT = Path(os.environ.get("SAM_ROOT", str(REPO / "data" / "eval" / "sam_only")))
+HULL_ROOT = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_hull")))
+ARM_MASK_ROOT = Path(os.environ.get("ARM_MASK_ROOT", str(REPO / "data" / "eval" / "srp_arm_masks")))
 MAX_AREA_FRAC = 0.50
 BORDER = 2
+
+
+def load_arm_mask(scene, view):
+    """FK 手臂剪影(bool);不存在回 None。label 圖要把手臂像素設 0(排除手臂)。"""
+    p = ARM_MASK_ROOT / scene / f"{view}_arm.png"
+    if not p.is_file():
+        return None
+    a = cv2.imread(str(p), cv2.IMREAD_GRAYSCALE)
+    return (a > 127) if a is not None else None
 
 
 class UF:
@@ -113,6 +125,9 @@ def process(scene, agree_frac, min_vox, min_views, min_frac, hull_root=HULL_ROOT
         img, files = view_label_image(vdir, cover)
         if img is None:
             continue
+        arm = load_arm_mask(scene, vdir.name)      # 手臂像素設 0(與 Stage 1 一致排除手臂)
+        if arm is not None and arm.shape == img.shape:
+            img[arm] = 0
         H, W = img.shape
         C, R_body = cam.load_pose(pose)
         R_w2c, t = cam.pose_to_w2c(C, R_body)

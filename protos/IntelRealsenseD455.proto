@@ -77,7 +77,7 @@ PROTO IntelRealsenseD455 [
         near IS minRange
         minRange IS minRange
         maxRange IS maxRange
-        noise 0.01
+        noise 0        # GT depth:關閉感測器雜訊(原 0.01≈逐像素±高斯);保留 1mm 量化
         resolution 0.001
       }
 
@@ -88,7 +88,7 @@ PROTO IntelRealsenseD455 [
         fieldOfView IS fieldOfView
         width %<= width >%
         height %<= height >%
-        near IS minRange
+        near 0.01        # RGB 近面解綁 minRange:真實 RGB 無近限制,只設渲染必要的小 near(不能為0)
         far 10
         exposure 0.5
         antiAliasing TRUE

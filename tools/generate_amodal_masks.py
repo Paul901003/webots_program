@@ -8,6 +8,7 @@
 用法: ./tools/generate_amodal_masks.py n3_scene0030 [更多場景 或 組號 3 4 5]
 """
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -19,7 +20,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "tools"))
 import generate_labels as GL  # 重用 ycb_center / camera_intrinsics / webots_camera_pose / load_ycb_mesh / _axis_angle_to_mat / 常數
 
-CAPTURES = REPO / "data" / "captures"
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
 LABELS = REPO / "data" / "labels"
 ASSETS = str(REPO / "urdfs" / "ycb_assets")
 
@@ -30,7 +31,8 @@ def resolve_scenes(targets):
         if "scene" in str(a):
             out.append(a)
         else:
-            out += [d.name for d in sorted((CAPTURES / f"multi_n{a}").glob(f"n{a}_scene*"))]
+            g = f"n{a}" if str(a).isdigit() else a   # "3"→n3;"occ3"/"stack3"/"n3" 直接當組名
+            out += [d.name for d in sorted((CAPTURES / f"multi_{g}").glob(f"{g}_scene*"))]
     return out
 
 
@@ -69,9 +71,9 @@ def process_scene(scene, renderer):
     coco = {"images": [], "annotations": [],
             "categories": [{"id": cat_id[nm], "name": nm} for nm in names]}
     ann = 1
-    for vp in views:
-        vname = vp.stem.replace("_pose", "")          # view_01
-        vid = int(vname.split("_")[1])
+    for vi, vp in enumerate(views, 1):
+        vname = vp.stem.replace("_pose", "")          # view_el30_az135(新命名不再是數字)
+        vid = vi
         cam_pos, rpy = load_pose(vp)
         cam_pose = GL.webots_camera_pose(cam_pos, rpy)
         coco["images"].append({"id": vid, "file_name": f"images/{vname}.png",

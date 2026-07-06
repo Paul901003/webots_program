@@ -187,7 +187,8 @@ class PlanningBridge(Node):
         req = GetMotionPlan.Request()
         req.motion_plan_request = mpr
         future = self._plan_client.call_async(req)
-        result = self._wait_future(future, timeout_sec=15.0)
+        # 等待時限需 ≥ allowed_planning_time(45s),否則難路段在此被提前切斷成假性 timeout
+        result = self._wait_future(future, timeout_sec=allowed_time + 5.0)
 
         if result is None:
             return {"success": False, "waypoints": [], "error": "Planning timeout"}

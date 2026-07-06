@@ -29,7 +29,28 @@ REPO_ROOT           = os.path.dirname(os.path.dirname(CURRENT_DIR))
 DATA_DIR            = os.path.join(REPO_ROOT, "data")
 SCENE_PLAN_PATH        = os.path.join(DATA_DIR, "scene_plans", "multi_scene_plan.json")
 SINGLE_SCENE_PLAN_PATH = os.path.join(DATA_DIR, "scene_plans", "single_scene_plan.json")
-PLANNED_PATHS_PATH  = os.path.join(DATA_DIR, "viewpoints", "planned_paths.json")
+# occ/stack 場景:CAPTURE_SCENE=<名稱> 時跨這些 plan 找(與 movingcam 同來源,可比較)
+EXTRA_SCENE_PLANS = [
+    os.path.join(DATA_DIR, "scene_plans", "occ_scene_plan.json"),
+    os.path.join(DATA_DIR, "scene_plans", "stack_scene_plan.json"),
+]
+# 視角數量參數(EXEC_COUNT):讀 planned_paths_multi_n{count} 的 tour 當「拍哪些視角」,
+# 與多相機(同一份 validated/selected)對齊以便比較。不設則用舊的 planned_paths.json + scene_plan 視角。
+_EXEC_COUNT = os.environ.get("EXEC_COUNT")
+_EXEC_X_OFF = float(os.environ.get("EXEC_X_OFFSET", "0.35"))
+if _EXEC_COUNT:
+    _tag = f"x{int(round(_EXEC_X_OFF * 100)):+04d}"
+    PLANNED_PATHS_PATH = os.path.join(DATA_DIR, "viewpoints",
+                                      f"planned_paths_multi_n{int(_EXEC_COUNT)}_{_tag}.json")
+else:
+    PLANNED_PATHS_PATH = os.path.join(DATA_DIR, "viewpoints", "planned_paths.json")
+# 手臂移動拍攝輸出根(比較用,避免覆蓋既有 multi_n{N}):env ARMMOVE_ROOT
+_ARMMOVE_ROOT = os.environ.get("ARMMOVE_ROOT")
+TOUR_VIEWPOINTS = None   # {to_id: [joint_deg×6]};EXEC_COUNT 時由 planned_paths 取
+# 瞬移模式:設 TELEPORT_VIEWPOINTS=<validated 檔> → 直接讀其 joint_deg 當視角、不走規劃路徑
+# (path_dict=None → 迴圈自動走 send_waypoint 直接切姿態)。不設此變數則行為與原本完全相同。
+_TELEPORT_SRC = os.environ.get("TELEPORT_VIEWPOINTS")
+TELEPORT_VPS = None      # [{"id","joint_deg"}];瞬移模式的視角清單
 CAPTURES_DIR        = os.path.join(DATA_DIR, "captures", "multi")
 UR5E_DEF            = "UR5E"
 CAMERA_DEF          = "UR5E_CAMERA"
@@ -124,7 +145,9 @@ def clear_ycb_objects(supervisor):
 def spawn_objects(supervisor, objects):
     """生成物體並回傳各物體的理論生成位置 {name: [x, y, z]}。
     objects: list of dict，含 name 與可選 position_m [x, y, z]。
-    有 position_m 時直接使用，z 自動調整為物體半高+間隙。
+    x,y 用 plan 值;z：plan 有顯式非零 z(occ/stack 墊高/堆疊)則直接用該 z,
+    否則(multi 的 z=0 占位)才用「物體半高+間隙」丟落高度靠物理沉澱。
+    ★勿再改回「一律覆蓋 z」——那會毀掉 occ/stack 的墊高/堆疊(曾回歸過)。
     """
     if not objects:
         return {}
@@ -137,10 +160,13 @@ def spawn_objects(supervisor, objects):
         pos_m = None if isinstance(obj, str) else obj.get("position_m")
         if pos_m is not None:
             x, y = float(pos_m[0]), float(pos_m[1])
+            # plan 有顯式非零 z(occ/stack)→ 直接用;multi 的 z=0 占位 → 丟落沉澱
+            z = float(pos_m[2]) if len(pos_m) >= 3 and abs(float(pos_m[2])) > 1e-6 \
+                else max(SPAWN_HEIGHT, _half_height(name) + SPAWN_CLEARANCE)
         else:
             x = REFERENCE_X + X_OFFSET
             y = REFERENCE_Y + Z_OFFSET
-        z = max(SPAWN_HEIGHT, _half_height(name) + SPAWN_CLEARANCE)
+            z = max(SPAWN_HEIGHT, _half_height(name) + SPAWN_CLEARANCE)
         root.importMFNodeFromString(-1, _make_vrml(name, x, y, z))
         spawn_positions[name] = [x, y, z]
     return spawn_positions
@@ -241,18 +267,39 @@ def send_path(emitter, waypoints_rad, command_id):
     emitter.send(json.dumps(payload).encode("utf-8"))
 
 
+def load_teleport_viewpoints(path):
+    """瞬移模式:讀 validated/selected 視角檔 → [{"id","joint_deg"}]，供直接切姿態(不走路徑)。"""
+    if not os.path.isabs(path):
+        path = os.path.join(DATA_DIR, "viewpoints", path)
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    vps = data.get("validated") or data.get("selected") or data.get("viewpoints") or []
+    out = []
+    for v in vps:
+        jd = v.get("joint_deg")
+        if jd and len(jd) == 6 and v.get("ok", True):
+            out.append({"id": int(v.get("id", len(out) + 1)),
+                        "joint_deg": [float(x) for x in jd]})
+    return out
+
+
 def load_planned_paths():
     if not os.path.exists(PLANNED_PATHS_PATH):
         return None, []
     with open(PLANNED_PATHS_PATH, encoding="utf-8") as f:
         data = json.load(f)
     path_dict = {}
+    vp_joints = {}   # to_id → joint_deg(由 path 終點取,弧度→度)
     for entry in data.get("paths", []):
         key = (str(entry["from_id"]), str(entry["to_id"]))
         if "waypoints_rad" in entry:
-            path_dict[key] = [list(wp) for wp in entry["waypoints_rad"]]
+            wps = [list(wp) for wp in entry["waypoints_rad"]]
         else:
-            path_dict[key] = [wp["positions"] for wp in entry["waypoints"]]
+            wps = [wp["positions"] for wp in entry["waypoints"]]
+        path_dict[key] = wps
+        to_id = str(entry["to_id"])
+        if to_id != "home" and wps:
+            vp_joints[to_id] = [math.degrees(v) for v in wps[-1]]
     visit_order = []
     cur = "home"
     visited = set()
@@ -267,7 +314,7 @@ def load_planned_paths():
                 break
         if not found:
             break
-    return path_dict, visit_order
+    return path_dict, visit_order, vp_joints
 
 
 def wait_seconds(supervisor, timestep, seconds):
@@ -346,7 +393,14 @@ def run_scene(supervisor, timestep, emitter, receiver, camera_node, scene, path_
     scene_name = scene.get("scene_name", label)
     scene_id   = scene_name
     n_objs     = len(scene_objects)
-    base_dir   = captures_dir or os.path.join(DATA_DIR, "captures", f"multi_n{n_objs}")
+    if captures_dir:
+        base_dir = captures_dir
+    else:
+        # 用場景名前綴當組別(n3/occ3/stack3...),與 movingcam 的 multi_{group} 對齊;
+        # 不可用 n_objs(occ3 也有 3 物件 → 會撞進 multi_n3)。
+        group = scene_name.split("_")[0]
+        base_dir = os.path.join(_ARMMOVE_ROOT or os.path.join(DATA_DIR, "captures"),
+                                f"multi_{group}")
     scene_dir  = os.path.join(base_dir, scene_name)
     os.makedirs(scene_dir, exist_ok=True)
     print(f"[Supervisor] 場景目錄: {scene_dir}")
@@ -366,12 +420,20 @@ def run_scene(supervisor, timestep, emitter, receiver, camera_node, scene, path_
     current_deg = HOME_POSE_DEG[:]
     actual_viewpoints = []
 
-    viewpoints = scene["viewpoints"]
-    if visit_order:
-        vp_by_id = {str(vp["id"]): vp for vp in viewpoints}
-        ordered = [vp_by_id[vid] for vid in visit_order if vid in vp_by_id]
-        remaining = [vp for vp in viewpoints if str(vp["id"]) not in set(visit_order)]
-        viewpoints = ordered + remaining
+    if TELEPORT_VPS is not None:
+        # 瞬移模式:視角=validated 的 joint_deg;path_dict 為 None → 每視角走 send_waypoint 直接切姿態。
+        viewpoints = TELEPORT_VPS
+    elif TOUR_VIEWPOINTS:
+        # 視角來源 = planned_paths tour(與多相機同一份視角),依 tour 順序。id 轉 int 供 view_NN 命名。
+        viewpoints = [{"id": int(vid), "joint_deg": TOUR_VIEWPOINTS[vid]}
+                      for vid in visit_order if vid in TOUR_VIEWPOINTS]
+    else:
+        viewpoints = scene["viewpoints"]
+        if visit_order:
+            vp_by_id = {str(vp["id"]): vp for vp in viewpoints}
+            ordered = [vp_by_id[vid] for vid in visit_order if vid in vp_by_id]
+            remaining = [vp for vp in viewpoints if str(vp["id"]) not in set(visit_order)]
+            viewpoints = ordered + remaining
 
     for vp in viewpoints:
         vp_id     = vp["id"]
@@ -412,7 +474,12 @@ def run_scene(supervisor, timestep, emitter, receiver, camera_node, scene, path_
         # 手臂到位後讀取物體實際位姿
         actual_objects = read_object_poses(supervisor, names)
 
-        view_name     = f"view_{vp_id:02d}"
+        # 檔名 = 相機位置相對物體中心的 el/az(與多相機 gen_multicam_world 同算法 → 兩邊一致對應)
+        _tgt = [_EXEC_X_OFF, 0.0, 0.0]
+        _d = [cam_pos[k] - _tgt[k] for k in range(3)]
+        _dist = math.sqrt(sum(c * c for c in _d)) or 1e-9
+        _el = round(math.degrees(math.asin(max(-1.0, min(1.0, _d[2] / _dist)))))
+        view_name = "view_el90" if _el >= 88 else f"view_el{_el:02d}_az{round(math.degrees(math.atan2(_d[1], _d[0])) % 360):03d}"
         capture_token = f"{vp_id}_{int(supervisor.getTime() * 1000)}"
         joint_str     = ",".join(f"{d:.6f}" for d in joint_deg)
         camera_node.getField("customData").setSFString(
@@ -480,7 +547,7 @@ def run_scene(supervisor, timestep, emitter, receiver, camera_node, scene, path_
                 for n in names
             ],
             "viewpoints": [{"id": vp["id"], "joint_deg": vp["joint_deg"]}
-                           for vp in scene["viewpoints"]],
+                           for vp in viewpoints],
         },
         "actual": {
             "viewpoints": actual_viewpoints,
@@ -510,15 +577,42 @@ def main():
         elif n_filter is not None and arg.startswith("--") and arg[2:].isdigit():
             scene_num = int(arg[2:])
 
-    if n_filter == 1:
+    # CAPTURE_SCENE=<名稱>:跨 multi/occ/stack 所有 plan 找單一場景(占用優先,給 occ/stack 用)
+    capture_scene = os.environ.get("CAPTURE_SCENE")
+    if capture_scene:
+        scenes = None
+        for pf in [SCENE_PLAN_PATH] + EXTRA_SCENE_PLANS:
+            if not os.path.exists(pf):
+                continue
+            for s in json.load(open(pf, encoding="utf-8")).get("scenes", []):
+                if s.get("scene_name") == capture_scene:
+                    scenes = [s]; break
+            if scenes:
+                break
+        if not scenes:
+            print(f"[Supervisor] 找不到場景 {capture_scene}（multi/occ/stack 皆無）")
+            supervisor.simulationQuit(1); return
+        print(f"[Supervisor] 單一場景(CAPTURE_SCENE)：{capture_scene}")
+        all_scenes = scenes
+        n_filter = None  # 跳過下面 --N 篩選分支
+        _skip_filter = True
+    else:
+        _skip_filter = False
+
+    if _skip_filter:
+        pass
+    elif n_filter == 1:
         with open(SINGLE_SCENE_PLAN_PATH, encoding="utf-8") as f:
             plan = json.load(f)
+        all_scenes = plan["scenes"]
     else:
         with open(SCENE_PLAN_PATH, encoding="utf-8") as f:
             plan = json.load(f)
-    all_scenes = plan["scenes"]
+        all_scenes = plan["scenes"]
 
-    if n_filter is not None:
+    if _skip_filter:
+        scenes = all_scenes
+    elif n_filter is not None:
         prefix = f"n{n_filter}_"
         scenes = [s for s in all_scenes if s.get("scene_name", "").startswith(prefix)]
         if scene_num is not None:
@@ -539,13 +633,26 @@ def main():
     else:
         print(f"[Supervisor] 找不到 {ARM_STATUS_RECEIVER}，改用時間等待")
 
-    path_dict, visit_order = load_planned_paths()
-    if path_dict:
-        print(f"[Supervisor] 載入規劃路徑：{len(path_dict)} 條路段")
-        if visit_order:
-            print(f"[Supervisor] 規劃遍歷順序: home → {' → '.join(visit_order)} → home")
+    global TOUR_VIEWPOINTS, TELEPORT_VPS
+    if _TELEPORT_SRC:
+        # 瞬移模式:讀 validated 的 joint_deg,不載入 planned_paths(path_dict=None → send_waypoint)。
+        TELEPORT_VPS = load_teleport_viewpoints(_TELEPORT_SRC)
+        path_dict, visit_order = None, []
+        print(f"[Supervisor] 瞬移模式:{len(TELEPORT_VPS)} 個視角(直接切姿態,無規劃路徑) "
+              f"來源 {os.path.basename(_TELEPORT_SRC)}")
     else:
-        print("[Supervisor] 未找到 planned_paths.json，使用直接 joint 控制")
+        print(f"[Supervisor] 路徑檔: {os.path.basename(PLANNED_PATHS_PATH)}"
+              + (f"  (EXEC_COUNT={_EXEC_COUNT})" if _EXEC_COUNT else ""))
+        path_dict, visit_order, vp_joints = load_planned_paths()
+        if path_dict:
+            print(f"[Supervisor] 載入規劃路徑：{len(path_dict)} 條路段")
+            if visit_order:
+                print(f"[Supervisor] 規劃遍歷順序: home → {' → '.join(visit_order)} → home")
+            if _EXEC_COUNT:
+                TOUR_VIEWPOINTS = vp_joints   # 視角來源改用 tour(與多相機對齊)
+                print(f"[Supervisor] EXEC_COUNT 模式:拍 tour 的 {len(vp_joints)} 個視角(非 scene_plan)")
+        else:
+            print("[Supervisor] 未找到 planned_paths，使用直接 joint 控制")
 
     print(f"[Supervisor] 共 {len(scenes)} 個場景")
     for i, scene in enumerate(scenes, 1):

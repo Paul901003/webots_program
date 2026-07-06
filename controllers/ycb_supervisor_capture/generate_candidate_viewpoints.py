@@ -571,8 +571,15 @@ def _roll_residual(T_cam: np.ndarray, aim_axis: np.ndarray) -> np.ndarray:
 
 
 def find_best_webots_ik(p_cam_target: np.ndarray,
-                        look_target: np.ndarray) -> list | None:
-    """Numerically solve joints against the actual Webots UR5e + Camera chain."""
+                        look_target: np.ndarray,
+                        return_all: bool = False,
+                        use_capsule: bool = True):
+    """Numerically solve joints against the actual Webots UR5e + Camera chain.
+
+    return_all=True  → 回傳全部「幾何合格」解(deg,殘差小到大、去重不同手肘分支),
+                       供 MoveIt 逐一驗證挑無自撞解;否則回傳單一最佳解(原行為)。
+    use_capsule=False → 略過 capsule 自碰撞過濾,改由 MoveIt 當自碰撞權威。
+    """
     lower, upper = _joint_bounds_rad()
     ref = np.array([math.radians(v) for v in REFERENCE_DEG], dtype=float)
     def residual(q: np.ndarray) -> np.ndarray:
@@ -589,7 +596,7 @@ def find_best_webots_ik(p_cam_target: np.ndarray,
             (q - ref) * 0.02,
         ])
 
-    best = None
+    sols = []
     for seed in _webots_ik_seeds():
         result = least_squares(
             residual,
@@ -613,16 +620,25 @@ def find_best_webots_ik(p_cam_target: np.ndarray,
             continue
         if _roll_err > MAX_CAMERA_ROLL_ERROR_DEG:
             continue
-        if not is_collision_free(result.x.tolist()):
+        if use_capsule and not is_collision_free(result.x.tolist()):
             continue
 
         score = float(np.linalg.norm(residual(result.x)))
-        if best is None or score < best[0]:
-            best = (score, result.x)
+        sols.append((score, result.x))
 
-    if best is None:
+    if not sols:
         return None
-    return [math.degrees(v) for v in best[1]]
+    sols.sort(key=lambda s: s[0])
+    if not return_all:
+        return [math.degrees(v) for v in sols[0][1]]
+    uniq, seen = [], set()
+    for _, q in sols:
+        key = tuple(int(round(math.degrees(v))) for v in q)   # 1° 桶去重(不同手肘分支)
+        if key in seen:
+            continue
+        seen.add(key)
+        uniq.append([math.degrees(v) for v in q])
+    return uniq
 
 
 # =============================================================================
@@ -655,7 +671,15 @@ def sample_hemisphere() -> list:
         dy = HEMISPHERE_RADIUS_M * cos(el_rad) * sin(az_rad)
         dz = HEMISPHERE_RADIUS_M * sin(el_rad)
         positions.append(OBJECT_CENTER_M + np.array([dx, dy, dz]))
-    return positions
+    # 依位置去重:base 格(15° 步)與 EXTRA_VIEWPOINTS_DEG 可能落在同一 (el,az)(如 az210),
+    # 否則同位姿會各自解一次 IK → 產生重複候選(el/az 命名時撞名)。
+    unique, seen = [], set()
+    for p in positions:
+        key = tuple(round(float(v), 6) for v in p)
+        if key not in seen:
+            seen.add(key)
+            unique.append(p)
+    return unique
 
 
 def deduplicate_viewpoints(valid: list,
@@ -687,6 +711,107 @@ def _min_angle_to_selected(selected: list, candidate: np.ndarray) -> float:
     )
 
 
+# =============================================================================
+# MoveIt IK 驗證(選用):8 解中挑「MoveIt 從 Home 規劃成功(無自撞+可達)」者
+#   需先 ros2 launch planning_bridge;A-1 透過 relay subprocess 呼叫 MoveIt。
+# =============================================================================
+MOVEIT_IK = False
+_BRIDGE_PROC = None
+_BRIDGE_QUEUE = None
+MOVEIT_HOME_DEG = [0.0, -90.0, 90.0, -90.0, -90.0, 0.0]
+_ROS2_TEST_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "ycb_supervisor_ros2_test")
+
+
+def start_moveit_bridge(timeout_sec: float = 40.0) -> bool:
+    """啟動 relay bridge 並等待 READY(獨立於 Webots,不呼叫 supervisor.step)。"""
+    global _BRIDGE_PROC, _BRIDGE_QUEUE, MOVEIT_IK
+    import queue as _queue
+    import time as _time
+    if _ROS2_TEST_DIR not in sys.path:
+        sys.path.insert(0, _ROS2_TEST_DIR)
+    from ros2_bridge_utils import launch_ros2_bridge
+    proc, q = launch_ros2_bridge()
+    if proc is None:
+        raise RuntimeError("無法啟動 ROS2 bridge subprocess")
+    deadline = _time.time() + timeout_sec
+    while _time.time() < deadline:
+        if proc.poll() is not None:
+            raise RuntimeError("ROS2 bridge 意外結束(確認已 ros2 launch planning_bridge)")
+        try:
+            line = q.get(timeout=0.2)
+        except _queue.Empty:
+            continue
+        if line == "READY":
+            _BRIDGE_PROC, _BRIDGE_QUEUE, MOVEIT_IK = proc, q, True
+            print("[A-1] MoveIt bridge 已就緒")
+            return True
+        if line:
+            print(f"[Bridge] {line}")
+    proc.terminate()
+    raise RuntimeError("ROS2 bridge 啟動逾時")
+
+
+def stop_moveit_bridge():
+    global _BRIDGE_PROC, _BRIDGE_QUEUE, MOVEIT_IK
+    if _BRIDGE_PROC is not None:
+        from ros2_bridge_utils import stop_ros2_bridge
+        stop_ros2_bridge(_BRIDGE_PROC)
+    _BRIDGE_PROC, _BRIDGE_QUEUE, MOVEIT_IK = None, None, False
+
+
+def _moveit_plan_full(target_deg: list):
+    """MoveIt 從 Home 規劃到此關節組態;回傳結果 dict(success, waypoints)。"""
+    from ros2_bridge_utils import request_plan
+    home_rad = [math.radians(d) for d in MOVEIT_HOME_DEG]
+    target_rad = [math.radians(d) for d in target_deg]
+    return request_plan(_BRIDGE_PROC, _BRIDGE_QUEUE, home_rad, target_rad, [], timeout=60.0)
+
+
+def _moveit_solve(p_cam, look_target):
+    """殘差最小(最接近 HOME)中,第一個 MoveIt 規劃成功的 IK 解(早停)。
+    回傳 {joint_deg, n_waypoints, path_rad, n_ik_solutions, ik_rank_used} 或 None。
+    path_rad = home→視角的關節軌跡(各 waypoint 6 軸,弧度)。
+    """
+    sols = find_best_webots_ik(p_cam, look_target, return_all=True, use_capsule=False)
+    if not sols:
+        return None
+    for rank, j_deg in enumerate(sols):
+        res = _moveit_plan_full(j_deg)
+        if res and res.get("success"):
+            wps = res.get("waypoints") or []
+            # waypoint 可能是 {"positions":[...]} 或純 list(相容兩種格式)
+            path = [wp["positions"] if isinstance(wp, dict) else wp for wp in wps]
+            return {
+                "joint_deg": [round(v, 4) for v in j_deg],
+                "n_waypoints": len(path),
+                "path_rad": [[round(float(v), 6) for v in wp] for wp in path],
+                "n_ik_solutions": len(sols),
+                "ik_rank_used": rank,
+            }
+    return None
+
+
+def _moveit_pick_joints(p_cam, look_target):
+    """find_valid_viewpoints 單策略用:回傳 fast 版 joint_deg。"""
+    sol = _moveit_solve(p_cam, look_target)
+    return sol["joint_deg"] if sol else None
+
+
+def moveit_solve_viewpoints():
+    """MoveIt 模式:對取樣視角逐一解,回傳 [(p_cam, solve_dict)](含路徑)。"""
+    candidates = sample_hemisphere()
+    print(f"  Candidates sampled : {len(candidates)}")
+    out = []
+    for p_cam in candidates:
+        sol = _moveit_solve(p_cam, OBJECT_CENTER_M)
+        if sol is not None:
+            out.append((p_cam, sol))
+    print(f"  Valid after MoveIt IK : {len(out)}")
+    return out
+
+
 def find_valid_viewpoints() -> list:
     """Return all valid (cam_pos_world, joints_deg) pairs."""
     candidates = sample_hemisphere()
@@ -694,11 +819,15 @@ def find_valid_viewpoints() -> list:
 
     valid = []
     for p_cam in candidates:
-        j_deg = find_best_webots_ik(p_cam, OBJECT_CENTER_M)
+        if MOVEIT_IK:
+            j_deg = _moveit_pick_joints(p_cam, OBJECT_CENTER_M)
+        else:
+            j_deg = find_best_webots_ik(p_cam, OBJECT_CENTER_M)
         if j_deg is not None:
             valid.append((p_cam, j_deg))
 
-    print(f"  Valid after Webots IK + collision filter : {len(valid)}")
+    tag = "MoveIt IK" if MOVEIT_IK else "Webots IK + capsule"
+    print(f"  Valid after {tag} : {len(valid)}")
     unique = deduplicate_viewpoints(valid)
     if len(unique) != len(valid):
         print(f"  Unique after duplicate filter : {len(unique)}")

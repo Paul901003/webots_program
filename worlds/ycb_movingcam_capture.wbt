@@ -1,0 +1,51 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "../protos/blank_floor.proto"
+EXTERNPROTO "../protos/IntelRealsenseD455.proto"
+
+WorldInfo {
+  basicTimeStep 16
+  defaultDamping Damping {
+    linear 0.5
+    angular 0.5
+  }
+  contactProperties [
+    ContactProperties {
+      coulombFriction [ 1 ]
+      bounce 0
+      bounceVelocity 0
+      softCFM 0.0001
+    }
+  ]
+}
+Viewpoint {
+  orientation 1 0 -1 3.14
+  position 0 0 5.5
+  followType "None"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 1.2
+  castShadows FALSE
+}
+blank_floor {
+}
+DEF MOVING_CAM IntelRealsenseD455 {
+  translation 0 0 1
+  name "movingcam"
+  controller "realsense_auto_capture_controller"
+  resolution "HD"
+  minRange 0.3
+  maxRange 3.0
+  fps 30
+  physics NULL
+}
+Robot {
+  supervisor TRUE
+  controller "ycb_supervisor_movingcam"
+  controllerArgs []
+  customData "capture_mode=multi"
+}

@@ -40,46 +40,28 @@ DEF WORKSPACE_SPHERE Solid {
   ]
   name "workspace_sphere_r035"
 }
-Solid {
+DEF CAPTURE_SPHERE Solid {
   translation 0.35 0 0
   children [
     Shape {
       appearance Appearance {
         material Material {
-          diffuseColor 1.0 0.6 0.1
-          transparency 0.82
+          diffuseColor 0.2 0.4 1.0
+          transparency 0.9
         }
       }
       geometry Sphere {
-        radius 0.3
+        radius 0.65
         subdivision 3
       }
     }
   ]
-  name "workspace_sphere_r030"
-}
-Solid {
-  translation 0.35 0 0
-  children [
-    Shape {
-      appearance Appearance {
-        material Material {
-          diffuseColor 0.2 0.8 0.3
-          transparency 0.82
-        }
-      }
-      geometry Sphere {
-        radius 0.25
-        subdivision 3
-      }
-    }
-  ]
-  name "workspace_sphere_r025"
+  name "capture_sphere_r065"
 }
 
 DEF UR5E UR5e {
   translation -0.4 0 0
-  controller "<none>"
+  controller "ur5e_auto_capture_controller"
   toolSlot [
     Receiver {
       name "arm_command_receiver"
@@ -92,7 +74,7 @@ DEF UR5E UR5e {
     DEF UR5E_CAMERA IntelRealsenseD455 {
       translation 0 -0.03 0.05
       rotation 0 0 1 1.5708
-      controller "<none>"
+      controller "realsense_auto_capture_controller"
       resolution "HD"
       minRange 0.3
       maxRange 3.0
@@ -110,7 +92,7 @@ DEF UR5E UR5e {
 }
 Robot {
   supervisor TRUE
-  controller "<none>"
+  controller "ycb_path_executor"
   controllerArgs "--multi"
   children [
     Emitter {

@@ -216,6 +216,32 @@ class LatestResult:
         return d
 
 
+def load_validated_viewpoints(path):
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    validated = data.get("validated", [])
+    if not validated:
+        raise ValueError("validated_viewpoints.json 無 validated 欄位")
+
+    result = []
+
+    for vp in validated:
+        radius_m = (
+            vp.get("radius_m")
+            or vp.get("meta", {}).get("radius_m")
+            or HEMISPHERE_RADIUS_M
+        )
+
+        result.append({
+            "id": vp["id"],
+            "joint_rad": deg_to_rad(vp["joint_deg"]),
+            "radius_m": radius_m,
+        })
+
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description="A-4: 規劃視角間路徑")
     parser.add_argument("--vel-scale", type=float, default=0.2,
@@ -228,6 +254,7 @@ def main():
                         help=f"sphere_r = cam_r - ws_offset（預設 {WORKSPACE_SPHERE_OFFSET_M}）")
     parser.add_argument("--x-offset", type=float, default=0.0,
                         help="物體中心 x 軸偏移（m），拍攝球體與工作球體同步移動（預設 0.0）")
+    parser.add_argument("--all-validated", action="store_true")
     args = parser.parse_args()
 
     ws_offset  = args.ws_offset
@@ -253,8 +280,40 @@ def main():
         print("  source ~/webots_program/ros2_ws/install/setup.bash")
         sys.exit(1)
 
-    viewpoints = load_selected_viewpoints(selected_viewpoints_path)
-    viewpoints = nearest_neighbor_order(viewpoints, HOME_RAD)
+    if args.all_validated:
+        validated_file = (
+            "validated_viewpoints_multi_latest.json"
+            if args.multi
+            else "validated_viewpoints_latest.json"
+        )
+
+        viewpoints = load_validated_viewpoints(
+            os.path.join(
+                VIEWPOINTS_DIR,
+                validated_file
+            )
+        )
+    else:
+        viewpoints = load_selected_viewpoints(
+            selected_viewpoints_path
+        )
+
+    viewpoints = nearest_neighbor_order(
+        viewpoints,
+        HOME_RAD
+    )
+        
+    if args.all_validated:
+        planned_paths_path = os.path.join(
+            VIEWPOINTS_DIR,
+            "planned_paths_multi_all_validated.json"
+        )
+
+        planned_paths_latest = os.path.join(
+            VIEWPOINTS_DIR,
+            "planned_paths_multi_all_validated_latest.json"
+        )
+
     print(f"載入 {len(viewpoints)} 個視角（nearest-neighbor 排序後）")
     print("  排序: home →", " → ".join(str(vp["id"]) for vp in viewpoints), "→ home")
     print(f"速度 scaling={args.vel_scale}  加速度 scaling={args.acc_scale}")

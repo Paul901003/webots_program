@@ -87,18 +87,20 @@ def main():
 
     suf = f"_{args.tag}" if args.tag else ""
     ip = REPO / "data" / "eval" / args.root / args.scene / f"instances{suf}.npz"
-    if not ip.is_file():
-        print(f"[gen_viz] 找不到 {ip}(先跑 associate.py)"); sys.exit(1)
-    z = np.load(ip)
-    labels = z["labels"]; gm = z["grid_min"]; vs = float(z["voxel_size"])
-
     items = []
-    k_ids = [k for k in range(1, int(labels.max()) + 1) if (labels == k).any()]
-    for idx, k in enumerate(k_ids):
-        f = f"inst_{k:02d}.obj"
-        if inst_obj(labels == k, gm, vs, out / f):
-            items.append({"file": f, "color": PALETTE[idx % len(PALETTE)],
-                          "transparency": 0.30, "name": f"inst_{k:02d}"})
+    if not ip.is_file():
+        print(f"[gen_viz] 無 {ip} → 只顯示 GT(hull 空,可能是空 hull/未跑 associate)")
+    else:
+        z = np.load(ip)
+        labels = z["labels"]; gm = z["grid_min"]; vs = float(z["voxel_size"])
+        k_ids = [k for k in range(1, int(labels.max()) + 1) if (labels == k).any()]
+        if not k_ids:
+            print(f"[gen_viz] {args.scene}: instances 為空(空 hull)→ 只顯示 GT")
+        for idx, k in enumerate(k_ids):
+            f = f"inst_{k:02d}.obj"
+            if inst_obj(labels == k, gm, vs, out / f):
+                items.append({"file": f, "color": PALETTE[idx % len(PALETTE)],
+                              "transparency": 0.30, "name": f"inst_{k:02d}"})
 
     ycb_items = []
     if not args.no_gt:

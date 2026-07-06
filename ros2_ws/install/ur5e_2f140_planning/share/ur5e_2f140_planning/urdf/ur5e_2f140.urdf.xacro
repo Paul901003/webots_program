@@ -36,4 +36,35 @@
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </xacro:robotiq_gripper>
 
+  <!-- IntelRealsense D455 相機:與 Webots toolSlot 同一掛載(已驗證 tool0→D455 body)。
+       collision 用簡化 mesh(凸包精簡,公尺單位),讓 MoveIt 規劃含相機、最貼近真實。 -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://ur5e_2f140_planning/meshes/IntelRealsenseD455_collision.stl"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="camera_mount" type="fixed">
+    <parent link="tool0"/>
+    <child link="camera_link"/>
+    <origin xyz="0 -0.10 -0.03" rpy="1.570796 -1.570796 0"/>
+  </joint>
+
+  <!-- 桌面/地面:平面用 box(頂面 world z=0)。base 坐桌上 → SRDF 設 base↔table 免碰撞。 -->
+  <link name="table_link">
+    <collision>
+      <origin xyz="0 0 -0.05" rpy="0 0 0"/>
+      <geometry>
+        <box size="3.0 3.0 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="table_mount" type="fixed">
+    <parent link="world"/>
+    <child link="table_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
 </robot>

@@ -9,6 +9,8 @@ response_adapters:
   - default_planning_response_adapters/AddTimeOptimalParameterization
   - default_planning_response_adapters/DisplayMotionPath
 ur5e_arm:
-  default_planner_config: RRTsharp
+  # RRTConnect:貪婪雙向,找「可行」路徑快又穩(視角驗證要的是可達性,非最佳化)。
+  # 原 RRTsharp 是漸近最佳化型,難 case 常耗盡時間預算仍找不到第一條路 → 假性 99999。
+  default_planner_config: RRTConnect
   longest_valid_segment_fraction: 0.005
   simplify_solutions: true

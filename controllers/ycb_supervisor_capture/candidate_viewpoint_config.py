@@ -1,8 +1,10 @@
 """Editable parameters for generate_candidate_viewpoints.py."""
 
 # Scene file used to derive the actual UR5e/camera/gripper mounting
-# relationship. Values below are fallback defaults if parsing fails.
-WORLD_FILE = "../../worlds/ycb_supervisor_capture.wbt"
+# relationship. ★A-1 的相機 mount 由此 world 檔的 DEF UR5E_CAMERA translation 解析而來
+# （config 下方的 T_FLANGE_TO_D455_M 只是解析失敗時的 fallback）→ 改相機 mount 要改這個 world。
+# 指向實際 armmove 拍攝 world，作為單一真相來源。
+WORLD_FILE = "../../worlds/ycb_supervisor_four_view_capture_multi.wbt"
 UR5E_DEF = "UR5E"
 CAMERA_DEF = "UR5E_CAMERA"
 
@@ -23,7 +25,8 @@ LINK_CLEARANCE_M = 0.06
 # The official Webots UR5e toolSlot is 0.1 m along wrist_3_link local +Y.
 WEBOTS_TOOL_SLOT_TRANSLATION_M = [0.0, 0.1, 0.0]
 
-# toolSlot mounts the D455 body at translation 0 -0.03 0.05 / rotation 0 0 1 1.5708.
+# toolSlot mounts the D455 body at translation 0 -0.03 0.10 / rotation 0 0 1 1.5708.
+# （相機沿 toolSlot +Z 由 5cm 改為 10cm;multicam world 對應 mount=0 -0.09994 -0.02989）
 # The Camera/RangeFinder/GPS children inside IntelRealsenseD455.proto sit at
 # translation 0.005 0 0 in the D455 body frame.
 R_FLANGE_TO_CAM = [
@@ -31,7 +34,7 @@ R_FLANGE_TO_CAM = [
     [1.0, 0.0, 0.0],
     [0.0, 0.0, 1.0],
 ]
-T_FLANGE_TO_D455_M = [0.0, -0.03, 0.05]
+T_FLANGE_TO_D455_M = [0.0, -0.03, 0.10]
 T_D455_TO_SENSOR_M = [0.005, 0.0, 0.0]
 
 # Local axis that should point at OBJECT_CENTER_M.
@@ -54,17 +57,18 @@ MAX_CAMERA_ROLL_ERROR_DEG = 10.0
 
 # Hemisphere sampling.
 HEMISPHERE_RADIUS_M = 0.65
-HEMISPHERE_RADII_M = [0.55, 0.6, 0.65, 0.7]  # 多半徑模式用
-ELEVATION_ANGLES_DEG = [45, 60, 75, 90]
-AZIMUTH_STEPS = 8
+HEMISPHERE_RADII_M = [0.65]  # 多半徑模式用
+ELEVATION_ANGLES_DEG = [20, 30, 45, 60, 75, 90]
+AZIMUTH_STEPS = 24  # 每個仰角的方位角數量
 EXTRA_VIEWPOINTS_DEG = [
-    (20, 150, None),
     (20, 160, None),
     (20, 170, None),
-    (20, 180, None),
     (20, 190, None),
     (20, 200, None),
-    (20, 210, None),
+    (30, 160, None),
+    (30, 170, None),
+    (30, 190, None),
+    (30, 200, None),
 ]  # 額外指定的 (仰角, 方位角, 半徑m) 視角；半徑 None 表示套用所有半徑
 
 # Joint limits and IK solution preference (degrees).
@@ -84,8 +88,4 @@ LINK_RADII_MM = [65.0, 60.0, 55.0, 40.0, 40.0, 35.0]
 
 # Existing poses kept for optional local sanity checks.
 EXISTING_POSES_DEG = {
-    1: [42.32, -45.24, 44.12, -39.5, -129.82, 9.5],
-    2: [-61.95, -42.56, 37.71, -28.34, -65.97, -15.2],
-    3: [-49.84, -150.68, 116.64, -76.38, -67.54, 38.75],
-    4: [-11.41, -63.62, 33.83, -45.49, -92.93, -2.27],
 }

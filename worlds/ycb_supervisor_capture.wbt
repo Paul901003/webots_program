@@ -35,7 +35,7 @@ DEF UR5E UR5e {
       channel 12
     }
     DEF UR5E_CAMERA IntelRealsenseD455 {
-      translation 0 -0.03 0.05
+      translation 0 -0.03 0.1
       rotation 0 0 1 1.5708
       controller "realsense_auto_capture_controller"
       resolution "HD"

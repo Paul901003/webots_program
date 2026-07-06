@@ -166,6 +166,9 @@ ARM_SETTLE_TIME_BUFFER_SEC   = 8.0
 POST_ARRIVAL_PAUSE_SEC       = 0.75
 MAX_RAY_MISS_M               = 0.005
 MAX_CAMERA_ROLL_ERROR_DEG    = planner_config.MAX_CAMERA_ROLL_ERROR_DEG
+# 天頂視角(光軸≈±世界Z)roll 在數學上退化、無實質意義(正上方俯拍轉到哪都行),
+# 仰角 ≥ 此門檻時放寬(不檢查)roll,讓天頂視角能通過驗證。
+ZENITH_ROLL_RELAX_ELEV_DEG   = 85.0
 MIN_CAMERA_Z_M               = 0.08
 HOME_POSE_RAD = [0.0, -math.pi / 2, math.pi / 2, -math.pi / 2, -math.pi / 2, 0.0]
 
@@ -428,6 +431,12 @@ def main():
             set_hemisphere_visibility(supervisor, radius_m)
             print(f"\n[Validator] ── 候選點 {idx}/{len(candidates)}  id={cid} ──")
 
+            # ① 每個視角一律從 HOME 規劃/執行,不接續上一視角的怪姿態
+            #    → 消除「順序相依」造成的假性 MoveIt 規劃失敗(99999)。
+            if idx > 1:
+                _reset_home(supervisor, timestep, emitter, status_receiver)
+            current_joints = HOME_POSE_RAD[:]
+
             travel_time = estimate_travel_time(current_joints, target_rad)
 
             # ── MoveIt 規劃 ──────────────────────────────────────────────────
@@ -437,11 +446,11 @@ def main():
 
             if bridge_proc is not None:
                 print("[Validator] 請求 MoveIt 規劃...")
+                rb = planner_config.ROBOT_BASE_M
                 # 工作球依當前視角半徑動態計算
                 if _WS_OFFSET is not None:
                     sphere_r = radius_m - _WS_OFFSET
                     oc = planner_config.OBJECT_CENTER_M
-                    rb = planner_config.ROBOT_BASE_M
                     ws_col = [{
                         "id": "ycb_workspace_sphere",
                         "shape": "sphere",
@@ -530,8 +539,14 @@ def main():
                 geo_ok = False; reasons.append("target behind camera")
             if ray["ray_miss_m"] > MAX_RAY_MISS_M:
                 geo_ok = False; reasons.append(f"ray miss {ray['ray_miss_m']*1000:.1f} mm")
+            _axis = ray["ray_axis_world"]
+            _elev_deg = math.degrees(math.asin(max(-1.0, min(1.0, -_axis[2]))))
+            _near_zenith = _elev_deg >= ZENITH_ROLL_RELAX_ELEV_DEG
             if ray["roll_err_deg"] > MAX_CAMERA_ROLL_ERROR_DEG:
-                geo_ok = False; reasons.append(f"roll {ray['roll_err_deg']:.1f} deg")
+                if _near_zenith:
+                    reasons.append(f"roll {ray['roll_err_deg']:.1f} deg (天頂放寬,不擋)")
+                else:
+                    geo_ok = False; reasons.append(f"roll {ray['roll_err_deg']:.1f} deg")
             if ray["ray_origin_m"][2] < MIN_CAMERA_Z_M:
                 geo_ok = False; reasons.append(f"camera z {ray['ray_origin_m'][2]:.3f} m")
             if contact_delta > 0 or camera_contact_delta > 0:

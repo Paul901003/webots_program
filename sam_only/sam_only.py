@@ -36,8 +36,8 @@ from segment_anything import sam_model_registry, SamAutomaticMaskGenerator  # no
 
 SAM_CHECKPOINT = str(GSA / "sam_vit_b_01ec64.pth")
 SAM_ENCODER    = "vit_b"
-CAPTURES = REPO / "data" / "captures"
-OUT_ROOT = REPO / "data" / "eval" / "sam_only"
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
+OUT_ROOT = Path(os.environ.get("SAM_OUT_ROOT", str(REPO / "data" / "eval" / "sam_only")))
 FORCE = os.environ.get("FORCE") == "1"
 
 
@@ -52,7 +52,7 @@ def resolve_views(targets):
                 print(f"[warn] 找不到場景: {d}"); continue
             views += [v for v in sorted(d.glob("view_*.png")) if "_depth" not in v.name]
         else:
-            g = f"n{a}"
+            g = f"n{a}" if a.isdigit() else a   # "3"→n3;"occ3"/"stack3"/"n3" 直接當組名
             for d in sorted((CAPTURES / f"multi_{g}").glob(f"{g}_scene*")):
                 views += [v for v in sorted(d.glob("view_*.png")) if "_depth" not in v.name]
     return views

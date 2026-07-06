@@ -3,7 +3,7 @@
 ## 流程概覽
 
 ```
-A 視角規劃：A-0（選 x_offset）→ A-1 → A-2 → A-3 → A-4 → A-5（拍攝）
+A 視角規劃：A-0（選 x_offset）→ A-1 → A-2 → A-3 →（A-4→A-5 手臂移動拍攝 ／ ★A-6 移動相機拍攝＝建資料集）
 B 場景擺位：B-1（生成多物體 plan,強制不重疊）
 C 後處理  ：C-1 GT 標籤 → C-2 產遮罩(A grounded_sam / B sam_clip) → C-3 評估 → C-4 visual hull(A foreground / B instance,皆 depth-free+label-free) → C-5 驗證
 ```
@@ -15,9 +15,11 @@ C 後處理  ：C-1 GT 標籤 → C-2 產遮罩(A grounded_sam / B sam_clip) →
 | A-2  | `ycb_viewpoint_validator_multi.wbt`      | 實際移動手臂，驗證碰撞與相機精度          |   ✓    |        —        |
 | A-3  | `select_validated_viewpoints.py`         | 從通過視角中選取分布最廣子集              |   —    |        —        |
 | A-4  | `plan_viewpoint_paths.py`                | 規劃視角間完整路徑（含時間參數化）        |   —    |        ✓        |
-| A-5  | `ycb_path_executor_multi.wbt`            | 執行路徑並拍攝                            |   ✓    |        —        |
+| A-5  | `ycb_path_executor_multi.wbt`            | 執行路徑並拍攝（手臂移動）                |   ✓    |        —        |
+| A-6  | `ycb_movingcam_capture.wbt`              | ★移動單相機拍全量 → 抽子集（建資料集用，不需手臂/bridge/A-4 路徑） |   ✓    |        —        |
 
 **x_offset 一致性：** A-1、A-2、A-3、A-4 使用的 `--x-offset` 必須相同。
+**建資料集建議走 A-1→A-2→A-3→A-6**（A-4/A-5 僅在需要「手臂實際移動拍攝」時才用）。
 
 ---
 
@@ -28,10 +30,10 @@ C 後處理  ：C-1 GT 標籤 → C-2 產遮罩(A grounded_sam / B sam_clip) →
 | 機器人底座（world frame） | `[-0.4, 0.0, 0.0]` m        |
 | 物體中心（world frame）   | `[x_offset, 0.0, 0.0]` m   |
 | 最佳 x_offset             | **0.35 m**                  |
-| 拍攝半徑                  | `[0.55, 0.60, 0.65, 0.70]` m |
-| 仰角                      | `[45°, 60°, 75°, 90°]`      |
-| 方位角步數                | 8（每 45°）                  |
-| 工作空間偏移量（ws-offset）| **0.30 m**（sphere_r = cam_r - ws_offset；cam_r=0.65 → 0.35 m） |
+| 拍攝半徑                  | `[0.65]` m（單半徑，`HEMISPHERE_RADII_M`） |
+| 仰角                      | `[20°, 30°, 45°, 60°, 75°, 90°]`（`ELEVATION_ANGLES_DEG`） |
+| 方位角步數                | 24（每 15°）+ 低仰角加密（`EXTRA_VIEWPOINTS_DEG`） |
+| 工作空間偏移量（ws-offset）| **0.30 m**（須加 `--ws-offset 0.30`；程式預設 0.2→r=0.45）；sphere_r = cam_r - ws_offset = 0.35 m |
 | 選取視角數                | 12（`NUM_OUTPUT_POSES`）     |
 
 ---
@@ -81,6 +83,50 @@ cd ~/webots_program/controllers/ycb_supervisor_capture
 | 輸入         | —                                                                  |
 | 輸出（具名） | `data/viewpoints/candidate_viewpoints_multi_x+035.json`（覆蓋）   |
 
+> **★★ 相機 mount 來源（改相機位移「必看」，否則整條白跑）★★**
+> A-1 的相機 mount **不是**讀 config 的 `T_FLANGE_TO_D455_M`（那只是解析失敗時的 fallback），而是
+> `load_wbt_mounts()` **從 `config.WORLD_FILE` 指的 world 檔解析** `DEF UR5E_CAMERA` 的 `translation`
+> （目前指向 `worlds/ycb_supervisor_four_view_capture_multi.wbt`）。
+> 相機 mount **散在多個 world 檔**，改 mount（例如 5cm→10cm）要**全部同步**，缺一個就用到舊值：
+> 1. **A-1 來源** world（`config.WORLD_FILE`）
+> 2. **A-2 驗證** `worlds/ycb_viewpoint_validator_multi.wbt`
+> 3. **拍攝** world：armmove `ycb_supervisor_four_view_capture_multi.wbt`；multicam `ycb_multicam_capture.wbt`
+>    （multicam 是 `UR5e140Teleport` frame，值不同、需用共位變換 `T_mc=C·T_arm` 換算，非直接照抄）
+> 4. **MoveIt** `ros2_ws/src/ur5e_2f140_planning/urdf/ur5e_2f140.urdf.xacro` 的 `camera_mount`
+>    （tool0 frame，另需換算）→ `colcon build --packages-select ur5e_2f140_planning` + 重啟 bridge
+> 5. `candidate_viewpoint_config.py` 的 `T_FLANGE_TO_D455_M`（fallback，一併改保持一致）
+> 改完務必**先驗證**：讀新 candidate 的 `camera_position_m`／`ray_miss_m`，或算 joint_deg 在新 mount 下是否瞄準 (0.35,0,0)，再往 A-2 走。
+
+### A-1（預設）IK 解法
+
+數值 IK（`find_best_webots_ik`，多種子優化）對每視角求**一組**最佳解，再用
+**capsule 自碰撞 + 桌面淨空**過濾。缺點：capsule 模型**看不到夾爪/相機**，會放行一些
+MoveIt 全 mesh 判定自撞的姿態 → 這些在 A-2 才被擋（MoveIt 99999 = `FAILURE` = 目標自撞）。
+
+### A-1 `--moveit-ik`：改用 MoveIt 挑無自撞解（含路徑）
+
+```bash
+# 終端 1：先開 planning bridge（同 A-2/A-4 前置）
+source /opt/ros/jazzy/setup.bash && source ~/webots_program/ros2_ws/install/setup.bash
+ros2 launch ur5e_2f140_planning planning_bridge_launch.py
+# 終端 2：MoveIt IK 模式
+source /opt/ros/jazzy/setup.bash && source ~/webots_program/ros2_ws/install/setup.bash
+cd ~/webots_program/controllers/ycb_supervisor_capture
+/usr/bin/python3 generate_candidate_viewpoints_multi.py --x-offset 0.35 --moveit-ik
+```
+
+每視角取數值 IK 的**多組解**（不同手肘分支，依殘差≈接近 HOME 排序、略過 capsule），
+逐一送 MoveIt `request_plan(Home→解)`，**第一個規劃成功**（無自撞＋從 Home 可達）即採用。
+
+- **動機**：同一相機位姿常有多組 IK 解；A-1 預設只挑一組、剛好自撞時就失敗，但換手肘分支
+  往往不撞 → 救回 A-2 的自撞失敗（相機位姿不變，拍出影像相同）。
+- **不需 colcon build**：複用既有 relay subprocess + `request_plan`；需 bridge 在執行中。
+- **輸出多出欄位**：`path_rad`（home→視角的關節軌跡）、`n_ik_solutions`、`ik_rank_used`；
+  `joint_deg` 為採用解（下游 A-2/multicam 沿用）。
+- 仍補不回的方位（如低仰角 90/270 極側）= 連多解都無 IK / 真自撞 → 手臂物理極限。
+
+> capsule 餘裕（連桿間距）對「挑最佳解」無鑑別力（不含夾爪/相機、近乎常數），故只取「第一個成功」，不排餘裕。
+
 ---
 
 ## A-2　Webots 碰撞 + 相機精度驗證
@@ -101,24 +147,61 @@ Controller 內部自動啟動 ROS2 bridge，**不需要外部 Planning Bridge**�
 
 `TAG` 格式：`el{仰角}_az{步數}_r{半徑s}`
 
+### A-2 的兩套碰撞模型（重要）
+
+驗證**混用兩個模型**，務必理解差異：
+
+| | MoveIt（路徑規劃） | Webots（實際碰撞，最終裁判） |
+|---|---|---|
+| 內容 | 手臂 + 夾爪 + **相機** + **桌面** | 手臂 + 相機 + 夾爪 + 地板 |
+| 碰撞幾何 | **全 mesh**（相機=簡化凸包；手臂/夾爪=collision STL；桌面/指墊=box） | **primitive**（圓柱/膠囊/box；mesh 算不動，故維持原樣） |
+
+- **路徑可行 = MoveIt 算**；**實際碰撞 = Webots 算**（有相機+地板）。
+- 表格「碰撞 +N」是 Webots `getContactPoints` 的**接觸點數**（`ur5e+N`含相機/夾爪子節點），**不是哪根 solid**。
+
+### MoveIt 模型含相機+桌面（已設定，需重啟 bridge 生效）
+
+MoveIt 預設只有手臂+夾爪（無相機/桌面）→ 會放行「相機撞手臂/桌面」的姿態，到 Webots 才擋。
+已把相機(mesh)+桌面(box)加進 MoveIt robot 模型，讓**路徑規劃就避開**、與 Webots 一致：
+
+| 改動檔 | 內容 |
+|---|---|
+| `ros2_ws/.../urdf/ur5e_2f140.urdf.xacro` | `camera_link`(D455 簡化 mesh，fixed 接 `tool0`，`origin xyz="0 -0.05 -0.03" rpy="1.570796 -1.570796 0"`)＋`table_link`(box 頂面 z=0，接 world) |
+| `ros2_ws/.../config/ur5e_2f140.srdf` | `base↔table` 免碰撞；`camera↔{wrist_3,wrist_2,robotiq_140_base}` 免碰撞（實測 200 姿態恆撞 100%）|
+| `ros2_ws/.../meshes/IntelRealsenseD455_collision.stl` | D455 凸包精簡(1258 面,公尺);原 STL 471k 面/23MB 太重 |
+
+- **相機掛載轉換**由已驗證的 `tool0→D455` 推導（`compute_workspace_mc.T_TOOL0_CAM`）；
+  **FK 驗證**：全 46 視角 MoveIt 相機光心誤差 ≤2.0mm、視線 ≤0.124°（對齊 Webots）。
+- 改完需 `colcon build --packages-select ur5e_2f140_planning` + **重啟 planning bridge** 才生效。
+- ⚠ 註：URDF rpy 是 fixed-axis(`sxyz`)，非 intrinsic(`rxyz`)；D455 STL 是 **mm**（需 scale 或存成 m）——兩個都踩過坑。
+
 ---
 
 ## A-3　選取分布最廣視角子集
 
+**演算法（兩個工具共用）**：① `pick_radius` 選「視角最多且含方位群組 A/B」的半徑 → ② **強制保留**：天頂(el=90) ＋ 中心(az=180，有才留) ＋ 群組 A`[90,180)` ＋ 群組 B`(180,270]`（A/B/中心各挑**仰角最小**＝最側視，並列比 roll；天頂挑 roll 最小）→ ③ `select_spread_viewpoints` **最遠點補滿**（貪婪加入與已選集視線夾角最大者）到 N。N 越大＝在強制保留的幾個之上多做幾次最遠點挑選。
+
+### 單一數量（原版，固定檔名）
 ```bash
 cd ~/webots_program/controllers/ycb_viewpoint_validator
-/usr/bin/python3 select_validated_viewpoints.py --multi --x-offset 0.35
+/usr/bin/python3 select_validated_viewpoints.py --multi --x-offset 0.35 [--count 12]
 ```
+| 項目 | 路徑 |
+| ---- | ---- |
+| 輸入 | `data/viewpoints/validated_viewpoints_multi_latest.json` |
+| 輸出 | `selected_viewpoints_multi_x+035.json` + `_latest.json`（**固定名，重跑會覆蓋**） |
+| 參數 | `--count` 選取數量（預設 12 = `NUM_OUTPUT_POSES`） |
 
-| 項目         | 路徑                                                              |
-| ------------ | ----------------------------------------------------------------- |
-| 輸入         | `data/viewpoints/validated_viewpoints_multi_latest.json`         |
-| 輸出（具名） | `data/viewpoints/selected_viewpoints_multi_x+035.json`           |
-| 輸出（最新） | `data/viewpoints/selected_viewpoints_multi_latest.json`          |
+### 多數量（`select_counts.py`，各數量具名檔）★ A-6 抽子集需要
+```bash
+/usr/bin/python3 select_counts.py --multi --x-offset 0.35 [--counts 6 8 10 12]
+```
+| 項目 | 路徑 |
+| ---- | ---- |
+| 輸入 | `validated_viewpoints_multi_latest.json` |
+| 輸出 | `selected_viewpoints_multi_n{6,8,10,12}_x+035.json`（**各數量一檔**，含 `min_pair_angle_deg` 散開度） |
 
-| 參數      | 說明                                        |
-| --------- | ------------------------------------------- |
-| `--count` | 選取數量（預設 12，來自 `NUM_OUTPUT_POSES`） |
+> `extract_subset.py n{count}` 讀的就是這些 `_n{count}_` 具名檔 → 建資料集走多數量版。
 
 ---
 
@@ -149,7 +232,7 @@ cd ~/webots_program/controllers/ycb_viewpoint_validator
 
 | 參數           | 說明                                                        |
 | -------------- | ----------------------------------------------------------- |
-| `--ws-offset`  | 工作空間偏移量（m），預設 0.30；sphere_r = cam_r - ws_offset |
+| `--ws-offset`  | 工作空間偏移量（m），**程式預設 0.2**（建資料集用 **0.30**）；sphere_r = cam_r - ws_offset |
 | `--vel-scale`  | 速度 scaling，0.0 ~ 1.0                                     |
 | `--acc-scale`  | 加速度 scaling，0.0 ~ 1.0                                   |
 
@@ -159,13 +242,69 @@ cd ~/webots_program/controllers/ycb_viewpoint_validator
 
 ```bash
 cd ~/webots_program
-webots worlds/ycb_path_executor_multi.wbt
+webots worlds/ycb_path_executor_multi.wbt                # 讀 planned_paths_multi_latest.json
 ```
+
+### 用視角數量選路徑檔（`EXEC_COUNT`）
+
+A-5 控制器可依**視角數量**讀對應的具名路徑檔（搭配 A-4 對 6/8/10/12 各存一份的 `planned_paths_multi_n{count}_x{tag}.json`）：
+
+```bash
+EXEC_COUNT=6  webots worlds/ycb_path_executor_multi.wbt   # → planned_paths_multi_n6_x+035.json
+EXEC_COUNT=8  webots worlds/ycb_path_executor_multi.wbt
+EXEC_COUNT=10 webots worlds/ycb_path_executor_multi.wbt
+EXEC_COUNT=12 webots worlds/ycb_path_executor_multi.wbt
+```
+
+- `EXEC_COUNT`（env，優先）或 argv `--count N`：設了就讀 `planned_paths_multi_n{count}_x{tag}.json`；不設 → 退回 `_latest`。
+- `EXEC_X_OFFSET`（env，預設 0.35）：決定檔名 tag（`x+035`）。
+- env 在 `webots` 前設定即可，控制器繼承（同 `VALIDATOR_ARGS` 慣例）；啟動會印實際讀的檔名，找不到會列出可用清單。
+- `worlds/ycb_path_executor_multi.wbt` 三個 controller 已接好：UR5e=`ur5e_auto_capture_controller`、D455=`realsense_auto_capture_controller`、supervisor=`ycb_path_executor`。
 
 | 項目 | 路徑                                          |
 | ---- | --------------------------------------------- |
-| 輸入 | `data/viewpoints/planned_paths_multi_latest.json` |
+| 輸入 | `planned_paths_multi_n{count}_x{tag}.json`（設 EXEC_COUNT）或 `planned_paths_multi_latest.json` |
 | 輸出 | `data/captures/a5_multi/{YYYYMMDD_HHMMSS}/`   |
+
+---
+
+## A-6　移動單相機拍攝（全量 → 按需抽子集）★ 建立資料集用
+
+**取代** A-5 手臂移動 / 40 台靜態同時（太重跑不動）：用**一台 D455 瞬移**到每個通過視角拍 RGB+depth+pose。
+不需手臂、不需 ROS2 bridge、不需路徑檔（直接讀 `validated_latest`）。
+
+### 原理（與手臂版逐張等價）
+- **位置** = `ray_origin`（驗證實測）− `R·[0.005,0,0]`（D455 感測器沿光軸 5mm 校正 → 感測器落在 ray_origin）。
+- **旋轉** = **`FK(joint_deg)`** 的完整旋轉（含真實 roll）→ 連天頂都與手臂版精確一致（驗證朝向差 0.11°、影像 MAD≈3）。
+- **檔名** = `view_el{el}_az{az}`（天頂 `view_el90`），el/az 由 ray_origin 相對物體中心算 → 同 el/az = 同視角，跨拍法/子集一一對應。
+
+### 步驟 1：拍全量（各場景組拍滿全部通過視角）
+```bash
+cd ~/webots_program
+# 單場景 / 整組（注意場景名是 4 位數 n3_scene0001）
+MULTICAM_SCENE=n3_scene0001 webots --batch --minimize worlds/ycb_movingcam_capture.wbt
+MULTICAM_GROUP=n3           webots --batch --minimize worlds/ycb_movingcam_capture.wbt
+#   MOVINGCAM_WAIT=0.8 每視角等待秒數(暖機+存);MOVE_SETTLE=0.1 瞬移後沉澱
+```
+
+### 步驟 2：按視角數抽子集（依 el/az 檔名 symlink，零重拍）
+```bash
+for c in 6 8 10 12; do
+  ./controllers/ycb_supervisor_multicam/extract_subset.py $c        # 全部場景
+done
+# 指定組別/場景：extract_subset.py 6 n3   或   extract_subset.py 8 n3_scene0001
+#   MODE=copy 改用複製;FORCE=1 重做
+```
+
+| 項目 | 路徑 |
+| ---- | ---- |
+| 輸入 | `data/viewpoints/validated_viewpoints_multi_latest.json`（視角）+ `data/scene_plans/`（場景）+ `selected_..._n{count}`（子集定義） |
+| 全量輸出 | `data/captures_multicam/multi_<grp>/<scene>/view_el{el}_az{az}.{png,_depth.npy,_pose.json}` + `scene_manifest.json` |
+| 子集輸出 | `data/captures_multicam_n{count}/multi_<grp>/<scene>/`（symlink） |
+
+- **39 個唯一視角**：validated 的 40 含 1 個重複位姿（A-1 加密與基準格在 el30/az210 重疊，已修去重；舊資料 el/az 命名也會自動合併成 1 張）。
+- **同步存檔**：移動相機(name=`movingcam`)連拍時自動同步存（避免 daemon 執行緒被 simulationQuit 殺掉漏存 depth/pose）；其他相機可用 `REALSENSE_SYNC_SAVE=1`。
+- 靜態多相機版（`gen_multicam_world.py` + `ycb_multicam_capture.wbt`）用同樣位姿算法，僅在需要同時拍時用。
 
 ---
 

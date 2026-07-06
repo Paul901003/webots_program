@@ -78,4 +78,15 @@
   <disable_collisions link1="left_outer_knuckle" link2="left_inner_finger" reason="Never"/>
   <disable_collisions link1="right_outer_knuckle" link2="right_inner_finger" reason="Never"/>
 
+  <!-- 桌面:base 坐在桌上,恆接觸 → 免碰撞 -->
+  <disable_collisions link1="table_link" link2="base_link_inertia" reason="Adjacent"/>
+  <disable_collisions link1="table_link" link2="base_link" reason="Adjacent"/>
+  <disable_collisions link1="table_link" link2="shoulder_link" reason="Never"/>
+
+  <!-- 相機:剛性鄰接連桿(實測 200 姿態恆撞 100%)→ 免碰撞;
+       與 wrist_1/forearm/upper_arm/shoulder/base/table 的碰撞隨姿態變,保留偵測 -->
+  <disable_collisions link1="camera_link" link2="wrist_3_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_link" link2="wrist_2_link" reason="Adjacent"/>
+  <disable_collisions link1="camera_link" link2="robotiq_140_base_link" reason="Adjacent"/>
+
 </robot>

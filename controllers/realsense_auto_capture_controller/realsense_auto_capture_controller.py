@@ -2,12 +2,16 @@ import cv2
 import json
 import numpy as np
 import math
+import os
 import shutil
 import threading
 from pathlib import Path
 from controller import Robot
 
 FRAME_WARMUP_STEPS = 2
+# 同步存檔:單一相機連拍(移動相機)時 daemon 執行緒搶不到 GIL、來不及存就被殺。
+# 設 REALSENSE_SYNC_SAVE=1 改成在主迴圈同步存(序列拍本來就在等,不影響)。
+SYNC_SAVE = bool(os.environ.get("REALSENSE_SYNC_SAVE"))
 
 
 def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
@@ -140,7 +144,12 @@ def main():
     timestep = int(robot.getBasicTimeStep())
     sampling_period = parse_sampling_period_ms(robot, timestep)
 
-    base_name = "IntelRealsenseD455"
+    # device 基底名取自本 robot 名稱(D455 proto 以 name 欄位命名各 device);
+    # 既有單相機世界 name 預設仍是 "IntelRealsenseD455" → 行為不變;
+    # 多相機世界給每台唯一 name(cam_00..) → device 名不衝突。
+    base_name = robot.getName() or "IntelRealsenseD455"
+    # 移動相機(name=movingcam)連拍 → 強制同步存,避免 daemon 執行緒被殺漏存 depth/pose。
+    sync_save = SYNC_SAVE or base_name.startswith("movingcam")
     camera_name = f"{base_name}_rgb"
     depth_name = f"{base_name}_depth"
     gps_name = f"{base_name}_gps"
@@ -264,12 +273,16 @@ def main():
                         print(f"[Auto Capture] 存檔失敗: {error}")
                         print(get_separator_line())
 
-                threading.Thread(
-                    target=_save_worker,
-                    args=(scene_dir, view_name, rgb_image, depth_array,
-                          snap_position, snap_rpy, snap_joint_deg),
-                    daemon=True,
-                ).start()
+                if sync_save:
+                    _save_worker(scene_dir, view_name, rgb_image, depth_array,
+                                 snap_position, snap_rpy, snap_joint_deg)
+                else:
+                    threading.Thread(
+                        target=_save_worker,
+                        args=(scene_dir, view_name, rgb_image, depth_array,
+                              snap_position, snap_rpy, snap_joint_deg),
+                        daemon=True,
+                    ).start()
 
 
 if __name__ == "__main__":

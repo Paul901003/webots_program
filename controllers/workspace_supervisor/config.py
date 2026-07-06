@@ -10,10 +10,10 @@ ROBOT_BASE_Z = 0.0
 
 # The workspace sphere center is offset upward from the tabletop.
 # 163 mm comes from the UR5e working-area drawing.
-WORKSPACE_CENTER_Z = 0.163
+WORKSPACE_CENTER_Z = 0.015
 
 # Recommended reach from the drawing: diameter 1700 mm.
-WORKSPACE_RADIUS = 0.85
+WORKSPACE_RADIUS = 0.65
 
 # Only keep the portion at or above the tabletop.
 TABLE_HEIGHT_Z = 0.0
@@ -43,7 +43,7 @@ WS_OBJECT_NAME = "ycb_object_workspace"
 WS_OBJECT_CENTER_X = 0.15
 WS_OBJECT_CENTER_Y = 0.0
 WS_OBJECT_CENTER_Z = 0.0
-WS_OBJECT_RADIUS = 0.355
+WS_OBJECT_RADIUS = 0.35
 WS_OBJECT_COLOR_RGB = (0.0, 1.0, 0.3)
 
 # Sampling density for the wireframe.

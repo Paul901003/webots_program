@@ -1,0 +1,50 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "../protos/blank_floor.proto"
+EXTERNPROTO "../protos/UR5eDef.proto"
+EXTERNPROTO "../protos/IntelRealsenseD455.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+
+WorldInfo {
+  basicTimeStep 16
+  defaultDamping Damping {
+    linear 0.5
+    angular 0.5
+  }
+  contactProperties [
+    ContactProperties {
+      coulombFriction [ 1 ]
+      bounce 0
+      bounceVelocity 0
+      softCFM 0.0001
+    }
+  ]
+}
+Viewpoint {
+  orientation 1 0 -1 3.14
+  position 0 0 5.5
+}
+TexturedBackgroundLight {
+  luminosity 1.2
+  castShadows FALSE
+}
+blank_floor {
+}
+DEF ARM UR5eDef {
+  translation -0.4 0 0
+  controller "<none>"
+  toolSlot [
+    DEF PROBE_CAM IntelRealsenseD455 {
+      translation 0 -0.03 0.1
+      rotation 0 0 1 1.5708
+      name "movingcam"
+      controller "<none>"
+      resolution "HD"
+    }
+  ]
+}
+Robot {
+  name "probe"
+  supervisor TRUE
+  controller "ur5edef_probe"
+}

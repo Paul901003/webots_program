@@ -14,6 +14,7 @@
 """
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -28,8 +29,10 @@ import camera as cam                      # noqa: E402
 import masks as M                         # noqa: E402
 from carve import carve_visual_hull       # noqa: E402
 
-CAPTURES = REPO / "data" / "captures"
-SAM_ROOT = REPO / "data" / "eval" / "sam_only"
+# 路徑可用 env 覆寫(新資料:captures_fast + sam_only_fast + srp_arm_masks)
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
+SAM_ROOT = Path(os.environ.get("SAM_ROOT", str(REPO / "data" / "eval" / "sam_only")))
+ARM_MASK_ROOT = Path(os.environ.get("ARM_MASK_ROOT", str(REPO / "data" / "eval" / "srp_arm_masks")))
 OUT_ROOT = REPO / "data" / "eval" / "srp_hull"
 
 # 工作空間 AABB(世界,公尺)+ 封底。0.7×0.7×0.35,中心 x=0.35(對齊現有拍攝資料)。
@@ -49,6 +52,15 @@ def view_foreground(view_dir):
     return fg if fg is not None and fg.any() else None
 
 
+def load_arm_mask(scene, view):
+    """FK 手臂剪影(arm_silhouette.py 產),bool;不存在回 None。前景要減掉它(排除手臂)。"""
+    p = ARM_MASK_ROOT / scene / f"{view}_arm.png"
+    if not p.is_file():
+        return None
+    a = cv2.imread(str(p), cv2.IMREAD_GRAYSCALE)
+    return (a > 127) if a is not None else None
+
+
 def load_scene(scene):
     """回傳 (masks[], Ks[], extr[])。"""
     group = scene.split("_")[0]
@@ -62,6 +74,11 @@ def load_scene(scene):
         fg = view_foreground(vdir)
         if fg is None:
             continue
+        arm = load_arm_mask(scene, vdir.name)      # 前景排除手臂(FK 剪影)
+        if arm is not None and arm.shape == fg.shape:
+            fg = fg & ~arm
+            if not fg.any():
+                continue
         H, W = fg.shape
         C, R_body = cam.load_pose(pose)
         masks.append(fg)

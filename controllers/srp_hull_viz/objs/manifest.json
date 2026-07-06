@@ -1,16 +1,67 @@
 {
-  "source": "n1_scene0024",
-  "hull": 0,
+  "source": "occ5_scene0012",
+  "hull": 5,
   "gt": 0,
-  "ycb": 1,
-  "items": [],
+  "ycb": 5,
+  "items": [
+    {
+      "file": "inst_01.obj",
+      "color": [
+        0.12,
+        0.47,
+        0.71
+      ],
+      "transparency": 0.3,
+      "name": "inst_01"
+    },
+    {
+      "file": "inst_02.obj",
+      "color": [
+        1.0,
+        0.5,
+        0.05
+      ],
+      "transparency": 0.3,
+      "name": "inst_02"
+    },
+    {
+      "file": "inst_03.obj",
+      "color": [
+        0.17,
+        0.63,
+        0.17
+      ],
+      "transparency": 0.3,
+      "name": "inst_03"
+    },
+    {
+      "file": "inst_04.obj",
+      "color": [
+        0.84,
+        0.15,
+        0.16
+      ],
+      "transparency": 0.3,
+      "name": "inst_04"
+    },
+    {
+      "file": "inst_05.obj",
+      "color": [
+        0.58,
+        0.4,
+        0.74
+      ],
+      "transparency": 0.3,
+      "name": "inst_05"
+    }
+  ],
   "ycb_items": [
     {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/028_skillet_lid/google_16k/textured.obj",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/021_bleach_cleanser/google_16k/textured.obj",
       "translation": [
-        0.34112699999999996,
-        -0.024286500000000003,
-        0.0049716033591754374
+        0.3807635,
+        -0.1034095,
+        0.0004409043789220246
       ],
       "rotation": [
         0.0,
@@ -24,7 +75,91 @@
         0.6
       ],
       "transparency": 0.55,
-      "name": "gt_028_skillet_lid"
+      "name": "gt_021_bleach_cleanser"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/065-c_cups/google_16k/textured.obj",
+      "translation": [
+        0.380307,
+        0.08941850000000001,
+        0.0005518327180197777
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_065-c_cups"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/002_master_chef_can/google_16k/textured.obj",
+      "translation": [
+        0.2430485,
+        0.009260500000000001,
+        0.00018293814706264733
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_002_master_chef_can"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/061_foam_brick/google_16k/textured.obj",
+      "translation": [
+        0.32706100000000005,
+        0.059000000000000004,
+        0.0003454501243331451
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_061_foam_brick"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/055_baseball/google_16k/textured.obj",
+      "translation": [
+        0.508481,
+        0.045145,
+        0.0004716691936899123
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_055_baseball"
     }
   ]
 }

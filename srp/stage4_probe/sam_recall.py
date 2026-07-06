@@ -33,7 +33,7 @@ def iou(a, b):
     return i / u if u else 0.0
 
 
-def process(scene, acc, g):
+def process(scene, acc, g, perobj=None):
     modal, _ = RP.load_modal_by_view(scene)
     if not modal:
         return
@@ -46,17 +46,22 @@ def process(scene, acc, g):
             acc[g][0] += 1
             acc[g][1] += int(best >= THR)
             acc[g][2] += best
+            if perobj is not None:
+                perobj[name][0] += 1
+                perobj[name][1] += int(best >= THR)
+                perobj[name][2] += best
 
 
 def main():
     groups = sys.argv[1:] or ["n1", "n3", "n4", "n5", "stack3", "stack4", "stack5",
                               "occ3", "occ4", "occ5"]
     acc = defaultdict(lambda: [0, 0, 0.0])   # group: [物視角數, 找到數, sum best IoU]
+    perobj = defaultdict(lambda: [0, 0, 0.0])
     for g in groups:
         scenes = sorted(Path(p).name for p in glob.glob(str(REPO / "data" / "eval" / "sam_only" / f"{g}_scene*")))
         for sc in scenes:
             try:
-                process(sc, acc, g)
+                process(sc, acc, g, perobj)
             except Exception as e:
                 print(f"[err] {sc}: {e}")
         print(f"  {g} 完成")
@@ -77,6 +82,12 @@ def main():
             row(label, n, f, s)
     print("-" * 41)
     row("總計", *T)
+
+    print(f"\n=== per-object SAM 找到率最低 15(物-視角數≥12)===")
+    print(f"{'物體':<28}{'物-視角':>8}{'recall@.5':>10}{'meanIoU':>9}")
+    items = [(n, v) for n, v in perobj.items() if v[0] >= 12]
+    for n, (cnt, f, s) in sorted(items, key=lambda x: x[1][1] / x[1][0])[:15]:
+        print(f"{n:<28}{cnt:>8}{f/cnt:>10.3f}{s/cnt:>9.3f}")
 
 
 if __name__ == "__main__":
