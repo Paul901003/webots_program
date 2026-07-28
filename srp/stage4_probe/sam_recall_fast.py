@@ -21,7 +21,7 @@ from pycocotools import mask as mask_utils
 
 REPO = Path(__file__).resolve().parents[2]
 SAM = Path(os.environ.get("SAM_ROOT", str(REPO / "data" / "eval" / "sam_only_fast")))
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 THR = 0.5
 GROUPS = ["n1", "n3", "n4", "n5", "occ3", "occ4", "occ5", "stack3", "stack4", "stack5"]
 

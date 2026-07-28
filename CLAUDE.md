@@ -87,7 +87,8 @@ webots_program/
 │   ├── captures/multi_n{1,3,4,5}/<scene>/  ← 階段一輸出：view_XX.png + view_XX_pose.json
 │   ├── viewpoints/                    ← 各步驟視角 JSON（詳見 PIPELINE.md）
 │   ├── scene_plans/                   ← 多物件場景配置 / manifest
-│   ├── labels/<scene>/actual/annotations.json ← GT 標註
+│   ├── labels/<類別>/<數量>/<scene>/  ← GT 標註,依 n/occ/stack + 物體數分層(如 labels/n/3/n3_scene0001/)
+│   │       {actual/annotations.json(modal), amodal/annotations.json, relations.json, scene_graph_gt/}
 │   └── eval/<method>/                 ← 階段二輸出（遮罩、hull、instances.json、eval_reproj|eval_clip/summary.json）
 │       ├── sam_only/<scene>/<view>/   ← SAM 遮罩 + clip_feats.npy（預存 CLIP 影像特徵）
 │       ├── clip_text_feats.npz        ← 物體名詞 CLIP 文字特徵（precompute_clip 產）
@@ -174,7 +175,7 @@ FORCE=1 ./grounded_sam/run_grounded_sam.py 3    # Grounded-SAM 重做
 
 # 階段二 ── 評估遮罩 vs GT
 python tools/evaluate_masks.py \
-  --labels   data/labels/n3_scene0001/actual/annotations.json \
+  --labels   data/labels/n/3/n3_scene0001/actual/annotations.json \
   --pred-dir data/eval/grounded_sam_0.25_0.25_0.8/multi_n3/n3_scene0001
 ```
 
@@ -189,4 +190,5 @@ python tools/evaluate_masks.py \
 - 階段二產遮罩腳本輸出命名統一為 `view_XX_mask_<class>.png`，方法之間可互換評估、互餵建 hull。
 - 後處理腳本參數慣例：傳 `n3_scene0001`=單場景、`3`=整組 n3、`1 3 4 5`=多組；`FORCE=1`=忽略已存在重做。
 - `data/` 不進 git；`data/eval/<method>/` 子目錄名常含閾值（如 `grounded_sam_0.25_0.25_0.8`）以區分參數。
+- **`data/labels/` 依 `<類別>/<數量>/<scene>/` 分層**（n/occ/stack + 物體數，如 `labels/n/3/n3_scene0001/`）。程式一律透過 `srp/io/labels.py`：`from labels import LABELS`（`LABELS / scene / ...` 拼接與 `LABELS.glob(...)` 會自動分層）或 `label_dir(scene)`（直接取場景目錄）；**不要**自己寫 `data/labels/<scene>` 扁平路徑。
 - **相機 mount 是「從 world 檔解析」不是讀 config**：A-1 視角生成的相機位移由 `load_wbt_mounts()` 從 `candidate_viewpoint_config.WORLD_FILE`（`worlds/ycb_supervisor_four_view_capture_multi.wbt`）的 `DEF UR5E_CAMERA translation` 讀取；`T_FLANGE_TO_D455_M` 只是 fallback。相機 mount **散在多個 world 檔**（A-1 來源／A-2 validator／armmove·multicam 拍攝 world／MoveIt URDF），改一定要**全部同步**再重跑，詳見 `PIPELINE.md` A-1 的「★★ 相機 mount 來源」。

@@ -395,7 +395,7 @@ MODE=actual KEEP=1 ./tools/run_generate_labels_multi.sh 1 3 4 5
 ```
 | 輸入 | `data/captures/multi_n{N}/<scene>/scene_manifest.json` |
 | ---- | ---- |
-| 輸出 | `data/labels/<scene>/{actual,planned}/{annotations.json, images, masks}` |
+| 輸出 | `data/labels/<類別>/<數量>/<scene>/{actual,planned}/{annotations.json, images, masks}`(依 n/occ/stack+物體數分層,如 labels/n/3/n3_scene0001/) |
 
 > 對齊關鍵：相機用 manifest 的 `rotation_rpy`,物體套 `-center`。稽核：`python tools/audit_multi_labels.py 1 3 4 5`。
 
@@ -431,7 +431,7 @@ $GS_PY sam_clip/run_sam_clip.py n3_scene0001                    # 單場景;FORC
 
 ```bash
 # 單場景:--pred-dir 指向該 pipeline 的場景遮罩夾
-$VH_PY tools/evaluate_masks.py --labels data/labels/n3_scene0001/actual/annotations.json \
+$VH_PY tools/evaluate_masks.py --labels data/labels/n/3/n3_scene0001/actual/annotations.json \
     --pred-dir data/eval/grounded_sam_0.25_0.25_0.8/multi_n3/n3_scene0001
 # 批次:--weight-dir 指定方法資料夾(名稱即 C-2 產出的資料夾)
 $VH_PY tools/run_evaluate_all.py --weight-dir grounded_sam_0.25_0.25_0.8
@@ -550,7 +550,7 @@ data/scene_plans/
 └── multi_scene_plan.json.bak    B-1 首次覆寫前的備份
 
 data/captures/multi_n{N}/<scene>/   A-5/拍攝原始輸出：view_XX.png、_depth.npy、_pose.json、scene_manifest.json
-data/labels/<scene>/{actual,planned}/   C-1 GT：annotations.json、images/、masks/
+data/labels/<類別>/<數量>/<scene>/{actual,planned}/   C-1 GT：annotations.json、images/、masks/(依 n/occ/stack+物體數分層)
 data/eval/<方法>/                    方法 = grounded_sam_<box>_<text>_<nms>(A) 或 sam_clip_<clip>_<prob>(B)
 ├── eval_summary.json                       C-3 彙總（aggregate_eval）
 └── multi_n{N}/<scene>/                      view_XX_mask_<class>.png(C-2 產)、

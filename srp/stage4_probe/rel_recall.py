@@ -10,6 +10,7 @@
 """
 import glob
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -22,8 +23,9 @@ sys.path.insert(0, str(REPO / "srp" / "stage4_probe"))
 import eval_mesh as EM          # noqa: E402
 import a1_rule as A1            # noqa: E402  (entity_geom, rule_on, rule_blocks, iou3)
 
-HULL = REPO / "data" / "eval" / "srp_hull"
-LABELS = REPO / "data" / "labels"
+# 路徑可用 env 覆寫(fast:HULL_ROOT=srp_hull_fast);a1_rule 也吃 CAPTURES_ROOT/HULL_ROOT
+HULL = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_hull")))
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 DIR_THR = 0.03   # 方向死區(m):質心差小於此不算該軸關係
 
 
@@ -98,7 +100,8 @@ def process(scene, acc):
     if rp.is_file():
         rels = json.loads(rp.read_text())["relations"]
         gt_on = {("on", r["x"], r["y"]) for r in rels if r["type"] == "on"}
-        gt_blk = {("blocks_access", r["x"], r["y"]) for r in rels if r["type"] == "blocks_access"}
+        # blocks_access 為每視角逐條 → 四元組 (type,x,y,view),與預測同鍵配對
+        gt_blk = {("blocks_access", r["x"], r["y"], r["view"]) for r in rels if r["type"] == "blocks_access"}
         pred_on = set(A1.rule_on(G)); pred_blk = set(A1.rule_blocks(G, scene))
         acc["on"][0] += len(gt_on); acc["on"][1] += len(gt_on & pred_on)
         acc["on"][2] += sum(both(t) for t in gt_on); acc["on"][3] += len(pred_on)

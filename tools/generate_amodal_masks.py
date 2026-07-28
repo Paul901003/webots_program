@@ -21,7 +21,7 @@ sys.path.insert(0, str(REPO / "tools"))
 import generate_labels as GL  # 重用 ycb_center / camera_intrinsics / webots_camera_pose / load_ycb_mesh / _axis_angle_to_mat / 常數
 
 CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 ASSETS = str(REPO / "urdfs" / "ycb_assets")
 
 

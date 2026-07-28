@@ -25,7 +25,7 @@ import eval_mesh as EM          # noqa: E402
 import geo_match as G           # noqa: E402  (visible_labels, ncut2, iou3, MIN_VOX)
 
 HULL = REPO / "data" / "eval" / "srp_hull"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 OUT = REPO / "data" / "eval" / "_diag" / "geo"
 IOU_OK = 0.25
 

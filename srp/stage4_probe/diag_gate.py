@@ -26,7 +26,7 @@ import eval_mesh as EM          # noqa: E402
 import associate as A           # noqa: E402  (view_label_image,唯讀使用)
 
 HULL = REPO / "data" / "eval" / "srp_hull"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 CAPTURES = REPO / "data" / "captures"
 OUT = REPO / "data" / "eval" / "_diag" / "gate"
 EPS = 1e-4   # z-buffer 同深容差(m)

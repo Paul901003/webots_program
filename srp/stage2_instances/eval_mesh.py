@@ -30,7 +30,7 @@ from scipy import ndimage
 from scipy.optimize import linear_sum_assignment
 
 REPO = Path(__file__).resolve().parents[2]
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 ASSETS = REPO / "urdfs" / "ycb_assets"
 EVAL = REPO / "data" / "eval"
 MESH_CACHE = EVAL / "gt_mesh_cache"

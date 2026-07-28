@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import hull_common as HC
 import eval_clip_match as E   # 重用:load_feat_cache / hull_per_view_feats / combine_feats / TXT
 
-LABELS = HC.REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 
 
 def load_gt_amodal(scene):

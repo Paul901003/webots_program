@@ -29,7 +29,7 @@ REPO = av.REPO
 CAPTURES = av.CAPTURES
 SAM_ROOT = av.SAM_ROOT
 EVAL_ROOT = REPO / "data" / "eval"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 TEXT_FEATS = EVAL_ROOT / "clip_text_feats.npz"
 
 

@@ -18,7 +18,7 @@ import mcubes
 
 REPO = Path(__file__).resolve().parents[2]
 HULL_ROOT = REPO / "data" / "eval" / "srp_hull"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 ASSETS = REPO / "urdfs" / "ycb_assets"
 GEO = json.loads((REPO / "controllers" / "ycb_supervisor" / "ycb_geometries.json").read_text())
 
@@ -117,10 +117,18 @@ def main():
                               "color": [0.6, 0.6, 0.6], "transparency": 0.55,
                               "name": f"gt_{name}"})
 
+    # 焦點(遮罩法向量收斂中心):若 srp_hull_v12/<scene>/foci.npz 存在則帶進 manifest
+    foci = []
+    fp = REPO / "data" / "eval" / "srp_hull_v12" / args.scene / "foci.npz"
+    if fp.is_file():
+        fz = np.load(fp)
+        for pt, col in zip(fz["points"], fz["colors"]):
+            foci.append({"pos": [float(x) for x in pt], "color": [int(c) for c in col]})
+
     mani = {"source": args.scene, "hull": len(items), "gt": 0, "ycb": len(ycb_items),
-            "items": items, "ycb_items": ycb_items}
+            "items": items, "ycb_items": ycb_items, "foci": foci}
     (out / "manifest.json").write_text(json.dumps(mani, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"[gen_viz] {args.scene}: hull instance {len(items)} + 真實YCB {len(ycb_items)} → {out}")
+    print(f"[gen_viz] {args.scene}: hull instance {len(items)} + 真實YCB {len(ycb_items)} + 焦點 {len(foci)} → {out}")
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ import eval_reproj2d as RP      # noqa: E402  (load_modal_by_view)
 from config import PROMPT_TABLE  # noqa: E402
 
 HULL = REPO / "data" / "eval" / "srp_hull"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 CAPTURES = REPO / "data" / "captures"
 OUT = REPO / "data" / "eval" / "_diag" / "sep"
 EPS = 1e-4

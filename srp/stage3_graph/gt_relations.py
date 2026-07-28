@@ -21,16 +21,14 @@ from pycocotools import mask as mask_utils
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "srp" / "stage2_instances"))
 import eval_mesh as EM          # noqa: E402  (ycb_center, aa_to_mat, load_mesh, gt_objects)
-import eval_reproj2d as RP      # noqa: E402  (load_modal_by_view)
 
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 
 # on 幾何門檻
 PEN, GAP, ON_XY = 0.015, 0.03, 0.30
-# blocks_access(視覺遮擋)門檻
+# blocks_access(視覺遮擋)門檻 —— 每視角各自輸出,不跨視角累計
 OCC_MIN = 0.10        # 物體 i 在某視角被遮 ≥ 此比例才算被遮
 OCCLUDER_MIN = 0.30   # 遮擋者 j 需蓋住 i 被遮區域 ≥ 此比例
-MIN_VIEWS = 2         # 需在 ≥ 此視角數出現才記 blocks_access
 
 
 def obj_geom(scene):
@@ -96,13 +94,36 @@ def load_amodal_by_view(scene):
     return out
 
 
+def load_modal_by_view(scene):
+    """actual 遮罩(含遮擋的可見輪廓);view 名用 file_name stem(與 amodal 對稱),排除 ur5e。
+    不用 eval_reproj2d 版:那以 camera_pos 對最近拍攝視角,view 命名與 amodal 的 file_name 不一致
+    (amodal 34 view / 位置映射版僅 12 unique → 交集空 → blocks 恆 0)。"""
+    ann = LABELS / scene / "actual" / "annotations.json"
+    if not ann.is_file():
+        return None
+    d = json.loads(ann.read_text())
+    cat = {c["id"]: c["name"] for c in d["categories"]}
+    view_of = {im["id"]: Path(im["file_name"]).stem for im in d["images"]}
+    out = {}
+    for a in d["annotations"]:
+        name = cat[a["category_id"]]
+        if name == "ur5e":
+            continue
+        m = mask_utils.decode(a["segmentation"]).astype(bool)
+        if m.sum() == 0:
+            continue
+        out.setdefault(view_of[a["image_id"]], {})[name] = m
+    return out
+
+
 def compute_blocks(scene):
+    """每視角各自輸出遮擋(不跨視角累計):每視角每 (遮擋者 j → 被遮者 i) 一條,帶 view。"""
     amodal = load_amodal_by_view(scene)
-    modal, _ = RP.load_modal_by_view(scene)
+    modal = load_modal_by_view(scene)
     if not amodal or not modal:
         return []
-    pair = {}   # (occluder j, occluded i) -> [n_views, max_frac]
-    for v in amodal:
+    rels = []
+    for v in sorted(amodal):
         if v not in modal:
             continue
         am, mo = amodal[v], modal[v]
@@ -121,14 +142,8 @@ def compute_blocks(scene):
                 if cov > best_cov:
                     best_cov, best_j = cov, j
             if best_j is not None and best_cov >= OCCLUDER_MIN:
-                k = (best_j, i)
-                p = pair.setdefault(k, [0, 0.0])
-                p[0] += 1; p[1] = max(p[1], hf)
-    rels = []
-    for (j, i), (nv, mf) in pair.items():
-        if nv >= MIN_VIEWS:
-            rels.append({"type": "blocks_access", "x": j, "y": i,
-                         "n_views": nv, "max_occ_frac": round(mf, 3)})
+                rels.append({"type": "blocks_access", "x": best_j, "y": i, "view": v,
+                             "occ_frac": round(hf, 3), "occluder_cov": round(best_cov, 3)})
     return rels
 
 
@@ -137,16 +152,17 @@ def process(scene):
     if not geom:
         print(f"[skip] {scene}: 無 GT 物體"); return None
     on = compute_on(geom)
-    blocks = compute_blocks(scene)
+    blocks = compute_blocks(scene)      # 每視角逐條(blocks 為 view 級,on 為全局)
     out = {"scene": scene, "objects": list(geom),
            "relations": on + blocks,
            "params": {"PEN": PEN, "GAP": GAP, "ON_XY": ON_XY,
-                      "OCC_MIN": OCC_MIN, "OCCLUDER_MIN": OCCLUDER_MIN, "MIN_VIEWS": MIN_VIEWS}}
+                      "OCC_MIN": OCC_MIN, "OCCLUDER_MIN": OCCLUDER_MIN}}
     (LABELS / scene).mkdir(parents=True, exist_ok=True)
     (LABELS / scene / "relations.json").write_text(
         json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"[{scene}] 物{len(geom)} → on {len(on)} blocks {len(blocks)}  "
-          f"{[(r['x'],'on',r['y']) for r in on] + [(r['x'],'blk',r['y']) for r in blocks]}")
+    nbv = len({(r["x"], r["y"]) for r in blocks})   # 不重複的 (遮擋者,被遮者) 對數
+    print(f"[{scene}] 物{len(geom)} → on {len(on)} blocks {len(blocks)}條/{nbv}對  "
+          f"{[(r['x'],'on',r['y']) for r in on]}")
     return len(on), len(blocks)
 
 

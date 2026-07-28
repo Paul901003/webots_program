@@ -22,7 +22,7 @@ sys.path.insert(0, str(REPO / "srp" / "stage2_instances"))
 import eval_reproj2d as RP   # noqa: E402  (load_modal_by_view)
 
 SAM = REPO / "data" / "eval" / "sam_only"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 IOU_MIN = 0.3   # 最佳匹配需 IoU≥此才算「SAM 有抓到該物」
 
 

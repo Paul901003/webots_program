@@ -34,7 +34,7 @@ from carve import carve_visual_hull   # noqa: E402
 
 # 路徑可用 env 覆寫(新資料:captures_fast + srp_hull_fast + 獨立 GT 快取避免撞舊)
 CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 HULL_ROOT = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_hull")))
 GT_CACHE = Path(os.environ.get("GT_CACHE", str(REPO / "data" / "eval" / "gt_hull_cache")))
 

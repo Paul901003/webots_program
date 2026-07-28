@@ -33,7 +33,7 @@ import camera as cam            # noqa: E402
 import eval_mesh as EM          # noqa: E402  (solid_mesh_occ, iou3)
 
 CAPTURES = REPO / "data" / "captures"
-LABELS = REPO / "data" / "labels"
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[2] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 EVAL = REPO / "data" / "eval"
 
 

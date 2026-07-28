@@ -15,7 +15,7 @@ import json, math, os, glob, sys
 from collections import defaultdict
 
 REPO   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LABELS = os.path.join(REPO, "data", "labels")
+import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "srp" / "io")); from labels import LABELS  # data/labels 分層(類別/數量/場景)
 CAPS   = os.path.join(REPO, "data", "captures")
 REDO_OUT = os.path.join(REPO, "data", "eval", "redo_scenes.txt")
 
