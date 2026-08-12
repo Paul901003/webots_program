@@ -578,3 +578,69 @@ data/eval/<方法>/                    方法 = grounded_sam_<box>_<text>_<nms>(
 | `controllers/ycb_supervisor/config.py` 的 `PROMPT_TABLE`           | 物體名 → SAM/CLIP prompt（與名稱解耦，可逐項調整） |
 | `tools/run_visual_hull_multi.py` + `webots_visual_hull/build_torchhull.py` | C-4 visual hull（torchhull，需 CUDA 12.6；空遮罩跳過 + `--masks-partial`） |
 | `worlds/ycb_visual_hull_view.wbt`（`visual_hull_viewer`）/ `project_visual_hull.py` | C-5 驗證：3D 檢視 / 2D 重投影 |
+
+---
+
+## B　srp 後處理管線（免深度 visual hull 實例分離）★ 現行主線
+
+> 上方 A（拍攝）/ C（legacy 後處理）之外，實例分離的**現行主線在 `srp/`**。資料吃 `captures_fast/` + `sam_only_fast/`（原版 SAM ViT-B）或 `mobilesamv2_fast/`（MobileSAMv2）遮罩；全走 `webots_visual_hull`（3.10）直譯器。
+>
+> **env 介面（易踩坑）**：`HULL_ROOT`／`SAM_ROOT`／`CAPTURES_ROOT` 吃**完整路徑**；`OUT_ROOT`／`--root` 吃**根目錄名**；例外 `fill_solid.py` 的 `HULL_ROOT` 吃名。`run_scene.py`／`associate.py` 是 `nargs="+"`（**不能空=全部**，要展開場景名），且 `CAPTURES_ROOT` 預設指舊 `captures`，跑 fast 資料要顯式設 `captures_fast`。視角一律用 `srp/io/viewpoints.py` 的 A-3 selected（stage2 預設 12）。
+
+以下 `PY=/home/cho/.pyenv/versions/webots_visual_hull/bin/python3`。
+
+### B-1　Stage1 visual hull（class-agnostic 全前景）
+
+每視角前景 = 保留（非地板/背景）SAM 遮罩聯集、減 FK 手臂剪影 → 輪廓交集雕殼。
+
+```bash
+# 遮罩來源二選一：mobilesamv2_fast（MobileSAM）或 sam_only_fast（原版 SAM）
+#   ★★ 一定要 --num-views 12：預設 None＝吃全 34 拍攝視角，會和 stage2/評估(12視角)基準不一致！
+#   ★★ --allow-miss 1：軟 hull 定案值（12視角容忍1漏；救回細長物 spoon/wood_blocks/windex）
+SAM_ROOT=$PWD/data/eval/mobilesamv2_fast CAPTURES_ROOT=$PWD/data/captures_fast \
+  $PY srp/stage1_hull/run_scene.py stack3_scene0001 --num-views 12 --allow-miss 1 --voxel 0.005 --root srp_hull_mv2_v12_am1
+# 補 surface（cg 表面法需要；sem 法用 occupancy 不需）
+$PY srp/stage2_instances/add_surface_mask.py stack3_scene0001 --root srp_hull_mv2_v12_am1
+```
+- 背景過濾：`srp/io/masks.py kept_object_masks`，遮罩面積 >50% 畫面、或（碰邊界且 >20% 畫面，`border_frac=0.2`）→ 視為背景排除。
+- **★ allow_miss 掃描（2026-08,mobilesamv2、12視角、全367場）(recall 分母=全放置物體,全遮擋計為漏)**：@0.6 recall am0=0.904 / **am1=0.915** / am2=0.905 / am3=0.853;@0.7 am0=0.853 最佳。**定案 allow_miss=1**（整體最佳折衷）;但 occ5/stack3 硬交集(am0)較好;stack 誠實值偏低(am1:stack3 0.57/stack4 0.71/stack5 0.76)。hull 現在寫 `build_meta`（視角/allow_miss/來源）。過去 `srp_hull_mobilesamv2`／`_bf` 是 **34 視角（漏加 --num-views）已棄用**。
+
+### B-2　Stage2 實例關聯（多方法擇一，皆 12 視角、不用深度）
+
+```bash
+HULL=$PWD/data/eval/srp_hull_mobilesamv2; SAM=$PWD/data/eval/mobilesamv2_fast
+CAP=$PWD/data/captures_fast
+# 語意投票/分群/論文法（sem*，輸出即實心）
+CAPTURES_ROOT=$CAP HULL_ROOT=$HULL SAM_ROOT=$SAM OUT_ROOT=srp_hull_semcluster_mv2 \
+  $PY srp/stage2_instances/voxel_sem_cluster.py 3   # 或 voxel_sem_vote.py / voxel_sem_paper.py
+# ConceptGraphs 式（cg，輸出表面，需再 fill_solid）
+CAPTURES_ROOT=$CAP HULL_ROOT=$HULL SAM_ROOT=$SAM OUT_ROOT=srp_hull_cg_mv2 \
+  $PY srp/stage2_instances/cg_associate.py 3
+# base=associate（voxel 投影+遮罩歸屬 agree 連通；nargs+ 要展開場景名，不能空）
+CAPTURES_ROOT=$CAP HULL_ROOT=$HULL SAM_ROOT=$SAM \
+  $PY srp/stage2_instances/associate.py stack3_scene0001 --num-views 12 --root srp_hull_mobilesamv2
+# cg 表面 labels 填實心（供 3D-IoU 公平比較；HULL_ROOT 吃名）
+HULL_ROOT=srp_hull_mobilesamv2 $PY srp/stage2_instances/fill_solid.py \
+  --in-root srp_hull_cg_mv2 --out-root srp_hull_cg_mv2_solid 3
+```
+
+### B-3　評估（3D-IoU vs GT amodal hull）
+
+```bash
+# Hungarian 配對；recall=命中/GT、precision=命中/預測。GT 用 amodal 遮罩 carve（快取 gt_hull_cache）
+$PY srp/stage2_instances/eval.py stack3_scene0001 --root srp_hull_semcluster_mv2 --iou 0.5
+```
+
+### B-4　可視化 / 報告
+
+```bash
+# 3D（Webots）：SRP_VIZ_ARGS="<scene> <showGT 0/1> <root>" webots worlds/hull_viz.wbt
+SRP_VIZ_ARGS="stack3_scene0001 1 srp_hull_semcluster_mv2" webots worlds/hull_viz.wbt
+# 每場景 HTML 報告（hull 表 + 來源遮罩縮圖 + top1/5 + 同 hull 遮罩 cos 熱圖）
+$PY srp/stage2_instances/gen_hull_report.py stack3_scene0001 --root srp_hull_semcluster_mv2
+```
+
+### B-5　關係 GT / probing（stage3 / stage4）
+
+- `srp/stage3_graph/`：物體級關係 GT（on 支撐／blocks_access 視覺遮擋／前後／左右），輸出 `data/labels/<scene>/{relations.json, scene_graph_gt/}`；皆模擬器真值，不用預測、不用深度。
+- `srp/stage4_probe/`：規則基線與診斷（`a1_rule` 復現關係、`geo_match` 純幾何 ncut 分離堆疊、`sam_recall*` SAM 找到率、`per_obj_*` 各物體端到端找到率）。

@@ -14,6 +14,8 @@
 """
 
 import argparse
+import datetime as _dt
+import json
 import os
 import sys
 from pathlib import Path
@@ -27,6 +29,7 @@ sys.path.insert(0, str(REPO / "srp" / "io"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import camera as cam                      # noqa: E402
 import masks as M                         # noqa: E402
+import viewpoints as VP                   # noqa: E402  (A-3 挑選,Stage1/2 共用)
 from carve import carve_visual_hull       # noqa: E402
 
 # 路徑可用 env 覆寫(新資料:captures_fast + sam_only_fast + srp_arm_masks)
@@ -61,13 +64,16 @@ def load_arm_mask(scene, view):
     return (a > 127) if a is not None else None
 
 
-def load_scene(scene):
-    """回傳 (masks[], Ks[], extr[])。"""
+def load_scene(scene, num_views=None):
+    """回傳 (masks[], Ks[], extr[], names[])。num_views 設了就只用 A-3 selected_n{N} 挑的視角。"""
     group = scene.split("_")[0]
     sdir = CAPTURES / f"multi_{group}" / scene
     sam = SAM_ROOT / scene
-    masks, Ks, extr = [], [], []
+    want = VP.selected_view_names(num_views) if num_views is not None else None
+    masks, Ks, extr, names = [], [], [], []
     for vdir in sorted(sam.glob("view_*")):
+        if want is not None and vdir.name not in want:
+            continue
         pose = sdir / f"{vdir.name}_pose.json"
         if not pose.is_file():
             continue
@@ -84,29 +90,45 @@ def load_scene(scene):
         masks.append(fg)
         Ks.append(cam.intrinsics(W, H))
         extr.append(cam.pose_to_w2c(C, R_body))
-    return masks, Ks, extr
+        names.append(vdir.name)
+    return masks, Ks, extr, names
 
 
 def _suf(tag):
     return f"_{tag}" if tag else ""
 
 
-def process(scene, voxel, use_table, allow_miss, out_root=OUT_ROOT, tag=""):
-    masks, Ks, extr = load_scene(scene)
+def process(scene, voxel, use_table, allow_miss, out_root=OUT_ROOT, tag="", num_views=None,
+            miss_frac=None):
+    masks, Ks, extr, names = load_scene(scene, num_views)
     if len(masks) < 2:
         print(f"[skip] {scene}: 有效視角 < 2")
         return None
+    # miss_frac 設了就按實際視角數換算容忍漏檢數(如 0.2 = 允許 20% 視角未見)
+    eff_miss = round(miss_frac * len(masks)) if miss_frac is not None else allow_miss
     hull = carve_visual_hull(masks, Ks, extr, BOX_MIN, BOX_MAX, voxel,
                              table_z=(TABLE_Z if use_table else None),
-                             allow_miss=allow_miss)
+                             allow_miss=eff_miss)
     n_comp = ndimage.label(hull.occupancy,
                            ndimage.generate_binary_structure(3, 1))[1]
     out_dir = out_root / scene
     out_dir.mkdir(parents=True, exist_ok=True)
+    # 記錄「這個 hull 怎麼來的」— 之後不用翻建置腳本就知道 build 參數
+    build_meta = {
+        "script": "run_scene.py", "built": _dt.datetime.now().isoformat(timespec="seconds"),
+        "sam_root": SAM_ROOT.name, "captures_root": CAPTURES.name, "arm_root": ARM_MASK_ROOT.name,
+        "n_views": len(masks), "views": names, "num_views_arg": num_views,
+        "voxel_size": voxel, "allow_miss": eff_miss, "miss_frac": miss_frac,
+        "use_table": use_table, "table_z": (TABLE_Z if use_table else None),
+        "outside_is_background": True, "box_min": BOX_MIN.tolist(), "box_max": BOX_MAX.tolist(),
+    }
     np.savez_compressed(out_dir / f"hull{_suf(tag)}.npz",
                         occupancy=hull.occupancy, observed=hull.observed,
-                        grid_min=hull.grid_min, voxel_size=hull.voxel_size)
-    print(f"[{scene}] 視角{len(masks)} voxel{voxel} → 佔據 {int(hull.occupancy.sum())} vox "
+                        grid_min=hull.grid_min, voxel_size=hull.voxel_size,
+                        build_meta=json.dumps(build_meta, ensure_ascii=False))
+    ftag = f" (frac {miss_frac})" if miss_frac is not None else ""
+    print(f"[{scene}] 視角{len(masks)} voxel{voxel} allow_miss={eff_miss}{ftag} → "
+          f"佔據 {int(hull.occupancy.sum())} vox "
           f"({hull.volume()*1e3:.2f} L) 連通元件 {n_comp} | "
           f"observed {int(hull.observed.sum())}/{hull.observed.size}")
     return hull
@@ -123,11 +145,16 @@ def main():
                     help="輸出根目錄名(data/eval/<root>/)")
     ap.add_argument("--tag", default="",
                     help="檔名後綴(如 am1):輸出 hull_<tag>.npz,分開儲存不同設定")
+    ap.add_argument("--num-views", type=int, default=None, dest="num_views",
+                    help="只用 A-3 selected_n{N} 挑的視角(預設 None=全用)")
+    ap.add_argument("--miss-frac", type=float, default=None, dest="miss_frac",
+                    help="容忍漏檢比例(如 0.2=允許 20%% 視角未見);設了則覆蓋 --allow-miss")
     args = ap.parse_args()
     out_root = REPO / "data" / "eval" / args.root
     for sc in args.scenes:
         try:
-            process(sc, args.voxel, not args.no_table, args.allow_miss, out_root, args.tag)
+            process(sc, args.voxel, not args.no_table, args.allow_miss, out_root, args.tag,
+                    args.num_views, args.miss_frac)
         except Exception as e:
             import traceback; traceback.print_exc(); print(f"[err] {sc}: {e}")
 

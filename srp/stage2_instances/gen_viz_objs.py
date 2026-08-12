@@ -47,9 +47,11 @@ def gt_objects(scene):
     d = json.loads(ann.read_text())
     return d["images"][0].get("objects", []) if d.get("images") else []
 
-PALETTE = [[0.12, 0.47, 0.71], [1.0, 0.50, 0.05], [0.17, 0.63, 0.17], [0.84, 0.15, 0.16],
-           [0.58, 0.40, 0.74], [0.55, 0.34, 0.29], [0.89, 0.47, 0.76], [0.74, 0.74, 0.13],
-           [0.09, 0.75, 0.81], [0.5, 0.5, 0.5]]
+# 與 gen_hull_gt_report.py 的 PALETTE 同一組顏色(0-255→0-1),hull k 兩邊同色
+PALETTE = [[0.902, 0.235, 0.235], [0.235, 0.627, 0.902], [0.235, 0.784, 0.353],
+           [0.902, 0.627, 0.157], [0.667, 0.353, 0.863], [0.157, 0.784, 0.784],
+           [0.902, 0.392, 0.667], [0.588, 0.588, 0.235], [0.392, 0.392, 0.902],
+           [0.235, 0.902, 0.588]]
 
 
 def inst_obj(occ_bool, grid_min, vs, path):
@@ -59,6 +61,39 @@ def inst_obj(occ_bool, grid_min, vs, path):
     world = grid_min + (verts + 0.5) * vs
     lines = [f"v {x:.5f} {y:.5f} {z:.5f}" for x, y, z in world]
     lines += [f"f {a+1} {b+1} {c+1}" for a, b, c in faces.astype(int)]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return True
+
+
+from scipy.ndimage import binary_erosion, generate_binary_structure
+_ST6 = generate_binary_structure(3, 1)   # 6-鄰居(面相鄰)
+
+
+def surface_of(occ):
+    """表面 voxel = occupied 且至少一個 6-鄰居是空(內部挖掉)。"""
+    occ = occ.astype(bool)
+    return occ & ~binary_erosion(occ, structure=_ST6)
+
+
+def cubes_obj(mask, grid_min, vs, path):
+    """每個 True voxel 生一個邊長 vs 的 cube,合併成 obj(看得出離散 voxel/空心)。"""
+    idx = np.argwhere(mask)
+    if len(idx) == 0:
+        return False
+    centers = grid_min + (idx + 0.5) * vs
+    h = vs / 2
+    cv = np.array([[-h, -h, -h], [h, -h, -h], [h, h, -h], [-h, h, -h],
+                   [-h, -h, h], [h, -h, h], [h, h, h], [-h, h, h]])
+    cf = [(0, 1, 2), (0, 2, 3), (4, 6, 5), (4, 7, 6), (0, 4, 5), (0, 5, 1),
+          (1, 5, 6), (1, 6, 2), (2, 6, 7), (2, 7, 3), (3, 7, 4), (3, 4, 0)]
+    lines = []
+    for c in centers:
+        for x, y, z in cv + c:
+            lines.append(f"v {x:.5f} {y:.5f} {z:.5f}")
+    for n in range(len(centers)):
+        b = n * 8
+        for a, bb, cc in cf:
+            lines.append(f"f {b+a+1} {b+bb+1} {b+cc+1}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return True
 
@@ -79,10 +114,12 @@ def main():
     ap.add_argument("--root", default="srp_hull",
                     help="讀 instances 的根目錄 data/eval/<root>/")
     ap.add_argument("--tag", default="", help="instances 檔名後綴(如 am1_cvsmall)")
+    ap.add_argument("--surface", action="store_true",
+                    help="改顯示 hull 表面 voxel(cube-per-voxel,讀 srp_hull_v12/<scene>/hull.npz 的 surface),而非 instances")
     args = ap.parse_args()
 
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
-    for old in out.glob("inst_*.obj"):
+    for old in list(out.glob("inst_*.obj")) + list(out.glob("surface.obj")):
         old.unlink()
 
     suf = f"_{args.tag}" if args.tag else ""
@@ -97,9 +134,12 @@ def main():
         if not k_ids:
             print(f"[gen_viz] {args.scene}: instances 為空(空 hull)→ 只顯示 GT")
         for idx, k in enumerate(k_ids):
+            mask = (labels == k)
+            if args.surface:                 # 每個 instance 挖空(只留表面 voxel);顏色/半透明/分instance 全同原本
+                mask = surface_of(mask)
             f = f"inst_{k:02d}.obj"
-            if inst_obj(labels == k, gm, vs, out / f):
-                items.append({"file": f, "color": PALETTE[idx % len(PALETTE)],
+            if inst_obj(mask, gm, vs, out / f):
+                items.append({"file": f, "color": PALETTE[(k - 1) % len(PALETTE)],  # 用 hull 編號 k,和報告一致
                               "transparency": 0.30, "name": f"inst_{k:02d}"})
 
     ycb_items = []
@@ -117,18 +157,10 @@ def main():
                               "color": [0.6, 0.6, 0.6], "transparency": 0.55,
                               "name": f"gt_{name}"})
 
-    # 焦點(遮罩法向量收斂中心):若 srp_hull_v12/<scene>/foci.npz 存在則帶進 manifest
-    foci = []
-    fp = REPO / "data" / "eval" / "srp_hull_v12" / args.scene / "foci.npz"
-    if fp.is_file():
-        fz = np.load(fp)
-        for pt, col in zip(fz["points"], fz["colors"]):
-            foci.append({"pos": [float(x) for x in pt], "color": [int(c) for c in col]})
-
     mani = {"source": args.scene, "hull": len(items), "gt": 0, "ycb": len(ycb_items),
-            "items": items, "ycb_items": ycb_items, "foci": foci}
+            "items": items, "ycb_items": ycb_items}
     (out / "manifest.json").write_text(json.dumps(mani, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"[gen_viz] {args.scene}: hull instance {len(items)} + 真實YCB {len(ycb_items)} + 焦點 {len(foci)} → {out}")
+    print(f"[gen_viz] {args.scene}: hull instance {len(items)} + 真實YCB {len(ycb_items)} → {out}")
 
 
 if __name__ == "__main__":
