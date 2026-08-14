@@ -1,15 +1,19 @@
 #!/bin/bash
-# run_capture_balanced.sh — 拍平衡資料集 nb / occb / stkb(12 視角,fast 主線)。
+# run_capture_balanced.sh — 拍平衡資料集 nb / occb / stkb(multicam,12 視角)。
 #
-# 與舊 run_capture_all.sh / run_capture_multi.sh 完全獨立,不動舊 n/occ/stack 資料:
-#   · 只讀新 plan:nb/occb/stkb_scene_plan.json(舊 multi/occ/stack plan 不碰)
-#   · 前綴 nb3/occb3/stkb3… → controller 自動寫 data/captures_fast/multi_{前綴}/(不撞舊 n3/occ3/stack3)
-#   · 12 視角:EXEC_COUNT=12 + EXEC_X_OFFSET=0.35 → 讀 planned_paths_multi_n12_x+035.json,
-#     視角名 view_el{el}_az{az} 與 srp 的 selected_view_names(12) 一致。
-#   · 從不刪任何目錄;已有 scene_manifest.json 的場景自動跳過(FORCE=1 才重拍)。
+# ★ 方法 = multicam(靜態手臂 mesh + 每視角更新 FK 姿態,無物理手臂移動):
+#   快(~27s/場,全量 ~1.5 天)、12 視角全到(不受手臂碰撞/限位)、物體像素/SAM遮罩與物理手臂同。
+#   (改用 multicam 的緣由:瞬移動真手臂會掉視角;手臂走慢;multicam 又快又全到。)
+#
+# 與舊 n/occ/stack 完全獨立,不覆蓋:
+#   · 只讀新 plan:nb/occb/stkb_scene_plan.json(舊 plan 不碰)
+#   · 前綴 nb3/occb3/stkb3… → 寫 captures_fast/multi_{前綴}/(不撞舊 n3/occ3/stack3)
+#   · 12 視角:MULTICAM_VIEWPOINTS=selected_viewpoints_multi_n12_x+035.json(A-3),
+#     視角名 view_el{el}_az{az} 與 srp selected_view_names(12) 一致。
+#   · 免深度:SKIP_DEPTH=1(只存 RGB+pose);已有 scene_manifest.json 的場景自動跳過。
 #
 # 用法:
-#   ./run_capture_balanced.sh                 # 拍全部 nb+occb+stkb 所有 N
+#   ./run_capture_balanced.sh                 # 全部 nb+occb+stkb
 #   ./run_capture_balanced.sh nb3 occb3       # 只拍前綴 nb3、occb3
 #   ./run_capture_balanced.sh stkb            # 拍所有 stkb*(stkb3-6)
 #   START=50 ./run_capture_balanced.sh nb4    # 從第 50 個場景續拍
@@ -18,26 +22,24 @@ set -u
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
-WORLD="$REPO_ROOT/worlds/ycb_supervisor_four_view_capture_multi_fast.wbt"
+WORLD="$REPO_ROOT/worlds/ycb_multicam_capture.wbt"      # ★ multicam world
 PLANS_DIR="$REPO_ROOT/data/scene_plans"
-CAPTURES_ROOT="$REPO_ROOT/data/captures_fast"     # controller 預設輸出根(不設 ARMMOVE_ROOT)
+CAPTURES_ROOT="$REPO_ROOT/data/captures_fast"          # 輸出根(MULTICAM_ROOT)
+VP_FILE="selected_viewpoints_multi_n12_x+035.json"     # A-3 的 12 視角
 WEBOTS="${WEBOTS:-webots}"
-# 不可用 --mode=fast(realsense 來不及寫 depth/pose);realtime + minimize 全自動批次。
+# 不可用 --mode=fast(realsense 來不及寫);realtime + minimize 全自動批次。
 WEBOTS_OPTS="--batch --minimize --stdout --stderr"
 [ -n "${WB_PORT:-}" ] && WEBOTS_OPTS="$WEBOTS_OPTS --port=$WB_PORT"
 
-# 12 視角(A-3):讀 planned_paths_multi_n12_x+035.json,命名與 srp 對齊
-export EXEC_COUNT="${EXEC_COUNT:-12}"
-export EXEC_X_OFFSET="${EXEC_X_OFFSET:-0.35}"
+export SKIP_DEPTH="${SKIP_DEPTH:-1}"                    # 免深度省空間(SKIP_DEPTH=0 保留)
 
 START="${START:-1}"
 FORCE="${FORCE:-0}"
 PLANS=(nb_scene_plan occb_scene_plan stkb_scene_plan)
-FILTERS=("$@")            # 空 = 全部;否則只收前綴符合者(nb3 / occb / stkb6 …)
+FILTERS=("$@")
 
 [ -f "$WORLD" ] || { echo "找不到 world: $WORLD"; exit 1; }
-PATHS_FILE="$REPO_ROOT/data/viewpoints/planned_paths_multi_n12_x+035.json"
-[ -f "$PATHS_FILE" ] || { echo "★缺 $PATHS_FILE(先跑 A-4 plan_viewpoint_paths.py 產 n12)"; exit 1; }
+[ -f "$REPO_ROOT/data/viewpoints/$VP_FILE" ] || { echo "★缺視角檔 $VP_FILE"; exit 1; }
 
 # 1) 依 plan 順序收集場景名
 ALL_SCENES=()
@@ -64,7 +66,7 @@ done
 
 TOTAL="${#SCENES[@]}"
 [ "$TOTAL" -eq 0 ] && { echo "沒有符合的場景(filter: ${FILTERS[*]:-<全部>})"; exit 1; }
-echo "共 $TOTAL 場景待拍  EXEC_COUNT=$EXEC_COUNT(12視角)  輸出根: $CAPTURES_ROOT"
+echo "共 $TOTAL 場景待拍  方法=multicam(12視角)  輸出根: $CAPTURES_ROOT"
 [ "${#FILTERS[@]}" -gt 0 ] && echo "  filter: ${FILTERS[*]}"
 
 # 3) 逐場景拍(scene_manifest.json 存在=已完成 → 跳過,除非 FORCE=1)
@@ -79,7 +81,8 @@ for name in "${SCENES[@]}"; do
         skip_n=$((skip_n + 1)); continue
     fi
     printf '\n--- [#%d/%d] %s ---\n' "$idx" "$TOTAL" "$name"
-    if CAPTURE_SCENE="$name" "$WEBOTS" $WEBOTS_OPTS "$WORLD"; then
+    if MULTICAM_VIEWPOINTS="$VP_FILE" MULTICAM_SCENE="$name" MULTICAM_ROOT="$CAPTURES_ROOT" \
+       "$WEBOTS" $WEBOTS_OPTS "$WORLD"; then
         done_n=$((done_n + 1))
     else
         echo "  [錯誤] $name 拍攝失敗(webots 回傳非 0)"

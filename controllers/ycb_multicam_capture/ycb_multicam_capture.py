@@ -5,6 +5,7 @@ import json
 import math
 import os
 import sys
+from datetime import datetime
 
 from controller import Supervisor
 
@@ -175,7 +176,8 @@ def update_arm(sv, jd):
 def load_all_scenes():
     scenes = {}
     for pf in [os.path.join(DATA_DIR, "scene_plans", f) for f in
-               ("multi_scene_plan.json", "occ_scene_plan.json", "stack_scene_plan.json")]:
+               ("multi_scene_plan.json", "occ_scene_plan.json", "stack_scene_plan.json",
+                "nb_scene_plan.json", "occb_scene_plan.json", "stkb_scene_plan.json")]:  # +平衡資料集
         if os.path.exists(pf):
             for sc in json.load(open(pf, encoding="utf-8")).get("scenes", []):
                 if sc.get("scene_name"):
@@ -241,6 +243,15 @@ def run_scene(sv, ts, vps, scene):
             print(f"[Multicam]   已拍 {k}/{len(vps)} 視角", flush=True)
     manifest = {
         "scene_id": scene_name, "scene_dir": scene_dir, "camera_spec": FV.CAMERA_SPEC,
+        # provenance:記錄怎麼拍的(對齊 four_view 的 capture_meta)
+        "capture_meta": {
+            "method": "multicam",   # 靜態手臂 mesh + 每視角更新 FK 姿態(無物理手臂移動)
+            "viewpoint_source": os.path.basename(
+                os.environ.get("MULTICAM_VIEWPOINTS", "validated_viewpoints_multi_latest.json")),
+            "n_views": len(vps),
+            "skip_depth": bool(os.environ.get("SKIP_DEPTH")),
+            "captured_at": datetime.now().isoformat(timespec="seconds"),
+        },
         "planned": {"objects": [{"name": n, "spawn_position_m": spawn_positions.get(n, [0, 0, 0]),
                                  "spawn_rotation_axis_angle": [0, 1, 0, 0]} for n in names],
                     "viewpoints": [{"id": v["id"], "joint_deg": v["joint_deg"]} for v in vps]},

@@ -12,6 +12,7 @@ FRAME_WARMUP_STEPS = 2
 # 同步存檔:單一相機連拍(移動相機)時 daemon 執行緒搶不到 GIL、來不及存就被殺。
 # 設 REALSENSE_SYNC_SAVE=1 改成在主迴圈同步存(序列拍本來就在等,不影響)。
 SYNC_SAVE = bool(os.environ.get("REALSENSE_SYNC_SAVE"))
+SKIP_DEPTH = bool(os.environ.get("SKIP_DEPTH"))   # opt-in:1=只存 RGB+pose,跳過 depth(免深度管線省~72%空間;預設仍寫,舊拍攝不受影響)
 
 
 def parse_sampling_period_ms(robot: Robot, default_period_ms: int) -> int:
@@ -94,19 +95,21 @@ def save_capture(scene_dir: Path, view_name: str, rgb_image, depth_array,
                  joint_deg: list | None = None):
     scene_dir.mkdir(parents=True, exist_ok=True)
     rgb_path = scene_dir / f"{view_name}.png"
-    depth_vis_path = scene_dir / f"{view_name}_depth.png"
-    depth_raw_path = scene_dir / f"{view_name}_depth.npy"
     meta_path = scene_dir / f"{view_name}_pose.json"
+    depth_vis_path = depth_raw_path = None
 
     rgb_to_save = np.ascontiguousarray(rgb_image)
     if not cv2.imwrite(str(rgb_path), rgb_to_save):
         raise RuntimeError(f"RGB image save failed: {rgb_path}")
 
-    depth_colormap = make_depth_colormap(depth_array)
-    depth_to_save = np.ascontiguousarray(depth_colormap)
-    if not cv2.imwrite(str(depth_vis_path), depth_to_save):
-        raise RuntimeError(f"Depth visualization save failed: {depth_vis_path}")
-    np.save(depth_raw_path, depth_array)
+    if not SKIP_DEPTH:                       # opt-in 跳過:免深度管線省 ~72% 空間
+        depth_vis_path = scene_dir / f"{view_name}_depth.png"
+        depth_raw_path = scene_dir / f"{view_name}_depth.npy"
+        depth_colormap = make_depth_colormap(depth_array)
+        depth_to_save = np.ascontiguousarray(depth_colormap)
+        if not cv2.imwrite(str(depth_vis_path), depth_to_save):
+            raise RuntimeError(f"Depth visualization save failed: {depth_vis_path}")
+        np.save(depth_raw_path, depth_array)
 
     roll, pitch, yaw = roll_pitch_yaw
     metadata = {
@@ -131,8 +134,8 @@ def save_capture(scene_dir: Path, view_name: str, rgb_image, depth_array,
         "joint_deg": joint_deg,
         "files": {
             "rgb": rgb_path.name,
-            "depth_visualization": depth_vis_path.name,
-            "depth_raw_npy": depth_raw_path.name,
+            "depth_visualization": depth_vis_path.name if depth_vis_path else None,
+            "depth_raw_npy": depth_raw_path.name if depth_raw_path else None,
         },
     }
     meta_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
@@ -265,8 +268,11 @@ def main():
                         print(f"位置: {format_vec3(pos)} m")
                         print(f"旋轉: {format_rpy_rad_deg(*rpy)}")
                         print(f"RGB: {rgb_path}")
-                        print(f"Depth(vis): {depth_vis_path}")
-                        print(f"Depth(raw): {depth_raw_path}")
+                        if depth_raw_path:
+                            print(f"Depth(vis): {depth_vis_path}")
+                            print(f"Depth(raw): {depth_raw_path}")
+                        else:
+                            print("Depth: (SKIP_DEPTH=1,未存)")
                         print(f"Pose: {meta_path}")
                         print(get_separator_line())
                     except Exception as error:

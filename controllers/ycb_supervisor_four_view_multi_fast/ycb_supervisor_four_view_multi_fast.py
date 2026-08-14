@@ -579,6 +579,17 @@ def run_scene(supervisor, timestep, emitter, receiver, camera_node, scene, path_
     manifest = {
         "scene_id":    scene_id,
         "scene_dir":   scene_dir,
+        # provenance:記錄「這場怎麼拍的」,以後不用翻 log 猜(對齊 hull 的 build_meta)
+        "capture_meta": {
+            "method": ("teleport" if _TELEPORT_SRC else ("arm_tour" if _EXEC_COUNT else "default_path")),
+            "exec_count": _EXEC_COUNT,
+            "teleport_src": (os.path.basename(_TELEPORT_SRC) if _TELEPORT_SRC else None),
+            "viewpoint_source": (os.path.basename(_TELEPORT_SRC) if _TELEPORT_SRC
+                                 else os.path.basename(PLANNED_PATHS_PATH)),
+            "n_views": len(viewpoints),
+            "skip_depth": bool(os.environ.get("SKIP_DEPTH")),
+            "captured_at": datetime.now().isoformat(timespec="seconds"),
+        },
         "camera_spec": CAMERA_SPEC,
         "planned": {
             "objects": [
