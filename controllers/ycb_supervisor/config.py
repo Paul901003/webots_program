@@ -187,6 +187,40 @@ TARGET_OBJECTS = [
     # "002_master_chef_can",
 ]
 
+# ── 平衡資料集(nb/occb/stkb)物體池 ───────────────────────────
+# 來源:srp/scene_gen/check_stackable_mesh.py 用視覺 mesh 幾何實算
+#   (頂/底最大單一水平平面比例 + 頂中央凹陷深度),非 SHAPE_TABLE 碰撞框。
+#   base_ok = 頂面+底面都夠平(可當底物/中間物,能站又能被疊)
+#   top_ok  = 底面夠平(可當上物,放得上去即可)
+# 全域排除(使用者指定):skillet_lid/windex/colored_wood_blocks a,b
+GLOBAL_EXCLUDE = {
+    "028_skillet_lid", "022_windex_bottle",
+    "070-a_colored_wood_blocks", "070-b_colored_wood_blocks",
+    "062_dice",   # 太小(1.7cm)分割救不了(沿用 stage2 既有決定)
+}
+
+# 底物池 base_ok − GLOBAL_EXCLUDE(19):頂+底都平
+STACK_BASE = [
+    "002_master_chef_can", "003_cracker_box", "004_sugar_box", "005_tomato_soup_can",
+    "007_tuna_fish_can", "008_pudding_box", "009_gelatin_box", "010_potted_meat_can",
+    "026_sponge", "036_wood_block", "061_foam_brick",
+    "071_nine_hole_peg_test", "077_rubiks_cube",
+]
+# 已移除薄工具(當底不穩,測試圖 cup 架剪刀歪斜):scissors/padlock/large_marker/
+# medium_clamp/extra_large_clamp;它們仍可當上物(平躺穩)或桌上散放物。
+
+# 上物池 = base_ok + 僅頂(底平但頂不平:mustard/bleach/mug/cups)− GLOBAL_EXCLUDE(32)
+STACK_TOP = [
+    "002_master_chef_can", "003_cracker_box", "004_sugar_box", "005_tomato_soup_can",
+    "006_mustard_bottle", "007_tuna_fish_can", "008_pudding_box", "009_gelatin_box",
+    "010_potted_meat_can", "021_bleach_cleanser", "025_mug", "026_sponge",
+    "036_wood_block", "037_scissors", "038_padlock", "040_large_marker",
+    "050_medium_clamp", "052_extra_large_clamp", "061_foam_brick",
+    "065-a_cups", "065-b_cups", "065-c_cups", "065-d_cups", "065-e_cups", "065-f_cups",
+    "065-g_cups", "065-h_cups", "065-i_cups", "065-j_cups", "071_nine_hole_peg_test",
+    "077_rubiks_cube",
+]
+
 # ── 碰撞形狀預設值與形狀表 ────────────────────────────────
 # SHAPE_TABLE 只保留碰撞形狀種類，實際尺寸由 ycb_geometries.json 提供。
 # 沒有填入的物件會使用預設值 DEFAULT_SHAPE。

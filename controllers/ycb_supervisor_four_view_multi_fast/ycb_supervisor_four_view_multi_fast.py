@@ -30,9 +30,14 @@ DATA_DIR            = os.path.join(REPO_ROOT, "data")
 SCENE_PLAN_PATH        = os.path.join(DATA_DIR, "scene_plans", "multi_scene_plan.json")
 SINGLE_SCENE_PLAN_PATH = os.path.join(DATA_DIR, "scene_plans", "single_scene_plan.json")
 # occ/stack 場景:CAPTURE_SCENE=<名稱> 時跨這些 plan 找(與 movingcam 同來源,可比較)
+# 平衡資料集 nb/occb/stkb 也加入:場景名前綴(nb3/occb3/stkb3)經 run_scene 的 split("_")[0]
+# 自動路由到 captures_fast/multi_{前綴}/,與舊 n3/occ3/stack3 完全分流,不覆蓋。
 EXTRA_SCENE_PLANS = [
     os.path.join(DATA_DIR, "scene_plans", "occ_scene_plan.json"),
     os.path.join(DATA_DIR, "scene_plans", "stack_scene_plan.json"),
+    os.path.join(DATA_DIR, "scene_plans", "nb_scene_plan.json"),
+    os.path.join(DATA_DIR, "scene_plans", "occb_scene_plan.json"),
+    os.path.join(DATA_DIR, "scene_plans", "stkb_scene_plan.json"),
 ]
 # 視角數量參數(EXEC_COUNT):讀 planned_paths_multi_n{count} 的 tour 當「拍哪些視角」,
 # 與多相機(同一份 validated/selected)對齊以便比較。不設則用舊的 planned_paths.json + scene_plan 視角。
