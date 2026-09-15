@@ -3,7 +3,7 @@
 - 建檔:2026-09-16。程式:`build_leak_tables.py`(復用 `stack_leak_nosep.py`,四錨點驗證過)。可復現:重跑本檔即得。
 - 分母=同前景hull表面voxel(瘦=am1+gtlabel_am1、胖=am1fp+gtlabel_am1fp,**各自對齊、不跨hull比絕對值**);GT=gtlabel;**排GEX**(skillet_lid/windex/colored_wood_blocks/dice)。
 - 量:per-object 洩漏%(無門檻)、沒分開率(主inst相同)、受污染inst純度。母體=303多物場;stack on對=29。
-- 判準(不給總冠軍):單對『乾淨』=分開 且 leak低 且 純度高,三者缺一不算好;看表B逐對。
+- ★判準(定案):**看 leak% / 純度,越低越乾淨=越是真的分開**;`separated` **不是判準**(混得嚴重也算 separated=1,只當補充)。不給總冠軍(幾何決定);判優劣看表B逐對 maxleak。
 
 ## 表A — 12 方法 × 分組概覽
 

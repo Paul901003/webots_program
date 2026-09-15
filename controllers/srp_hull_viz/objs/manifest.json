@@ -1,8 +1,8 @@
 {
-  "source": "stack4_scene0002",
+  "source": "stack3_scene0006",
   "hull": 4,
   "gt": 0,
-  "ycb": 4,
+  "ycb": 3,
   "items": [
     {
       "file": "inst_01.obj",
@@ -49,8 +49,8 @@
     {
       "mesh": "/home/cho/webots_program/urdfs/ycb_assets/007_tuna_fish_can/google_16k/textured.obj",
       "translation": [
-        0.4001485,
-        0.032531999999999985,
+        0.37154849999999995,
+        0.003632,
         0.003212898633797659
       ],
       "rotation": [
@@ -70,8 +70,8 @@
     {
       "mesh": "/home/cho/webots_program/urdfs/ycb_assets/005_tomato_soup_can/google_16k/textured.obj",
       "translation": [
-        0.3832685,
-        -0.07361750000000004,
+        0.3546685,
+        -0.10251749999999996,
         0.03345047448236296
       ],
       "rotation": [
@@ -89,11 +89,11 @@
       "name": "gt_005_tomato_soup_can"
     },
     {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/070-b_colored_wood_blocks/google_16k/textured.obj",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/021_bleach_cleanser/google_16k/textured.obj",
       "translation": [
-        0.4952405,
-        -0.026809000000000003,
-        0.00023178365867669928
+        0.3978635,
+        -0.1947095,
+        0.0004409043789220246
       ],
       "rotation": [
         0.0,
@@ -107,28 +107,7 @@
         0.6
       ],
       "transparency": 0.55,
-      "name": "gt_070-b_colored_wood_blocks"
-    },
-    {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/032_knife/google_16k/textured.obj",
-      "translation": [
-        0.233128,
-        0.1385155,
-        0.007388391262192018
-      ],
-      "rotation": [
-        0.0,
-        1.0,
-        0.0,
-        0.0
-      ],
-      "color": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "transparency": 0.55,
-      "name": "gt_032_knife"
+      "name": "gt_021_bleach_cleanser"
     }
   ]
 }
