@@ -69,10 +69,10 @@ def gt_objects(scene):
     return d["images"][0].get("objects", []) if d.get("images") else []
 
 
-def solid_mesh_occ(scene, grid_min, vs, shape):
-    """每物體真實實心佔據(同網格)。回傳 {name: occ(bool)}。快取。"""
+def solid_mesh_occ(scene, grid_min, vs, shape, use_cache=True):
+    """每物體真實實心佔據(同網格)。回傳 {name: occ(bool)}。use_cache=False 則一律從源頭重算(no-cache 原則)。"""
     cp = MESH_CACHE / scene / f"solid_v{int(round(vs*10000))}.npz"
-    if cp.is_file():
+    if use_cache and cp.is_file():
         z = np.load(cp)
         if np.allclose(z["grid_min"], grid_min) and tuple(z["shape"]) == tuple(shape):
             return {str(n): z["occ"][i] for i, n in enumerate(z["names"])}
@@ -93,7 +93,7 @@ def solid_mesh_occ(scene, grid_min, vs, shape):
         solid = ndimage.binary_fill_holes(surf)         # 強制實心(填封閉內部)
         if solid.any():
             out[name] = solid
-    if out:
+    if out and use_cache:
         cp.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(cp, names=np.array(list(out)),
                             occ=np.stack([out[n] for n in out]),

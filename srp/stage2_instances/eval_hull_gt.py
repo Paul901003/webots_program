@@ -46,12 +46,13 @@ def decide_hits(hulls, gt_eval, hit_iou):
     return hit, redundant
 
 
-def process(scene, root, hit_iou):
-    hp = EVAL / root / scene / "hull_gt.json"
+def process(scene, root, hit_iou, match="amodal"):
+    suf = ""   # amodal 為唯一正確評估,統一讀 hull_gt.*
+    hp = EVAL / root / scene / f"hull_gt{suf}.json"
     if not hp.is_file():
         return None
     hj = json.loads(hp.read_text())
-    hz = np.load(EVAL / root / scene / "hull_gt.npz")
+    hz = np.load(EVAL / root / scene / f"hull_gt{suf}.npz")
     gj = json.loads((GT_OUT / scene / "gt.json").read_text())
     gz = np.load(GT_OUT / scene / "gt.npz")
     unocc = gj["unoccluded_views"]
@@ -99,9 +100,11 @@ def main():
     ap.add_argument("targets", nargs="*")
     ap.add_argument("--root", required=True)
     ap.add_argument("--hit-iou", type=float, default=0.8, dest="hit_iou")
+    ap.add_argument("--match", default="amodal", choices=["modal", "amodal"])
     args = ap.parse_args()
     base = EVAL / args.root
     th = f"{args.hit_iou:g}"
+    msuf = ""
     if not args.targets:
         scenes = sorted(p.parent.name for p in base.glob("*_scene*/hull_gt.json"))
     else:
@@ -113,16 +116,16 @@ def main():
 
     summ = []; detail = []
     for sc in scenes:
-        r = process(sc, args.root, args.hit_iou)
+        r = process(sc, args.root, args.hit_iou, args.match)
         if r:
             summ.append(r[0]); detail.extend(r[1])
     if not summ:
         print("無結果"); return
 
     # per-scene csv
-    with open(base / f"hull_gt_scenes_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
+    with open(base / f"hull_gt{msuf}_scenes_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(summ[0].keys())); w.writeheader(); w.writerows(summ)
-    with open(base / f"hull_gt_detail_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
+    with open(base / f"hull_gt{msuf}_detail_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(detail[0].keys())); w.writeheader(); w.writerows(detail)
 
     # 分組彙總(micro)
@@ -137,9 +140,11 @@ def main():
         return dict(n_scene=len(rows), sum_gt=gg, sum_found=fg, sum_hull=hh,
                     recall=round(fg / gg, 3) if gg else 0, precision=round(nh / hh, 3) if hh else 0,
                     iou3d_hull=round(np.mean(ih), 3) if ih else 0, iou3d_mesh=round(np.mean(im), 3) if im else 0)
-    order = ["n1", "n3", "n4", "n5", "occ3", "occ4", "occ5", "stack3", "stack4", "stack5"]
+    order = ["n1", "n3", "n4", "n5", "occ3", "occ4", "occ5", "stack3", "stack4", "stack5",
+             "nb3", "nb4", "nb5", "nb6", "occb3", "occb4", "occb5", "occb6",
+             "stkb3", "stkb4", "stkb5", "stkb6"]
     grows = []
-    print(f"\n=== {args.root}  2D 重投影評估 (IoU>{th}命中; 分母=全放置物體) ===")
+    print(f"\n=== {args.root}  2D 重投影評估 (match={args.match}, IoU>{th}命中; 分母=全放置物體) ===")
     print(f"{'組':>8}{'場':>5}{'GT':>5}{'找到':>5}{'recall':>8}{'prec':>7}{'3Dhull':>8}{'3Dmesh':>8}")
     for g in order + ["全體"]:
         rows = summ if g == "全體" else by.get(g, [])
@@ -148,7 +153,7 @@ def main():
         a = agg(rows); a2 = {"group": g, **a}; grows.append(a2)
         print(f"{g:>8}{a['n_scene']:>5}{a['sum_gt']:>5}{a['sum_found']:>5}"
               f"{a['recall']:>8}{a['precision']:>7}{a['iou3d_hull']:>8}{a['iou3d_mesh']:>8}")
-    with open(base / f"hull_gt_summary_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
+    with open(base / f"hull_gt{msuf}_summary_iou{th}.csv", "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(grows[0].keys())); w.writeheader(); w.writerows(grows)
     tocc = sum(r["n_gt_occluded"] for r in summ)
     print(f"\n→ {base}/hull_gt_*_iou{th}.csv  (其中無≥90%可見視角的 GT 共 {tocc} 個(已計入分母、計為漏))")

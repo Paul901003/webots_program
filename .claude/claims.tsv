@@ -1,0 +1,9 @@
+stkb4_divB_scene_count	403	ls -d data/eval/srp_hull_divB_t50_am1/stkb4_scene* 2>/dev/null | wc -l
+d2_HULL_default_unchanged	srp_hull_mv2_v12_am1_photo	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import sys;sys.path.insert(0,'srp/stage2_instances');sys.path.insert(0,'srp/io');import d2_stack_clean as D;print(D.HULL)"
+stkb4_divB_total_inst	1556	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_divB_t50_am1/stkb4_scene*/instances.npz')))"
+stkb4_baseline_total_inst	2949	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_semcluster_surf_donut/stkb4_scene*/instances.npz')))"
+conn_guard_am1_stack_inst	284	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_divB_t50_conn_guard_am1/stack*_scene*/instances.npz')))"
+conn_guard_am1photo_stack_inst	302	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_divB_t50_conn_guard_am1photo/stack*_scene*/instances.npz')))"
+connected_am1_stack_inst	494	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_semcluster_connected_am1/stack*_scene*/instances.npz')))"
+reNN_guard_stack_inst	257	/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 -c "import numpy as np,glob; print(sum(int(np.load(p)['labels'].max()) for p in glob.glob('data/eval/srp_hull_divB_t50_reNN_guard/stack*_scene*/instances.npz')))"
+reNN_guard_scene_count	1865	ls -d data/eval/srp_hull_divB_t50_reNN_guard/*_scene* 2>/dev/null | wc -l

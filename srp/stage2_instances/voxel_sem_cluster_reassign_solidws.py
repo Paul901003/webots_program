@@ -1,0 +1,237 @@
+#!/home/cho/.pyenv/versions/webots_visual_hull/bin/python3
+"""voxel_sem_cluster_reassign_fpvote.py — reassign 版的「整顆 voxel 投票」變體(複製自 voxel_sem_cluster_reassign.py)。
+
+★ 與 reassign 唯一差別:投票不再用 voxel 中心那 1 像素查遮罩,改用 footprint zbuffer(vox_at)——
+  每個被某 voxel 認領(最前)的像素,都讓那顆 voxel 依該像素的遮罩投票。目的:救回「中心取整落遮罩外、
+  但 footprint 有碰到遮罩」的邊界 voxel,減少無標籤/散點。其餘(表面 voxel、可見性、分群、reNN、div 下游)全同。
+  不改原檔。用法/env 與 reassign 相同。
+
+--- 原 docstring ---
+= voxel_sem_cluster_surf.py(表面 voxel + z-buffer 投票) × donut(去大遮罩) 組合版。
+
+= voxel_sem_cluster_surf.py(表面 voxel + z-buffer 投票) + 去除大遮罩(挖洞/甜甜圈)+ 重算 CLIP。
+挖洞邏輯與特徵快取(clip_donut_feats.npy)沿用 voxel_sem_cluster_donut(donut 全跑已存 367 場,直接讀不重算)。
+其餘(表面 voxel、z-buffer、分群、投票 argmax、3D 連通、來源遮罩)全同 surf。
+可視化: SRP_VIZ_ARGS="<scene> 1 srp_hull_semcluster_surf_donut cubes" webots worlds/hull_viz.wbt
+用法: ./voxel_sem_cluster_surf_donut.py [scene|group|(空=全部)] [--n-views 12] [--sem-thr 0.4]
+env: SAM_ROOT HULL_ROOT CAPTURES_ROOT ARM_MASK_ROOT OUT_ROOT NEST_THR(0.8)
+"""
+import argparse, os, sys, json, glob, datetime as _dt
+_here = __import__("pathlib").Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_here / "srp" / "io"))
+sys.path.insert(0, str(_here / "srp" / "stage2_instances"))
+import numpy as np, cv2
+from pathlib import Path
+from collections import defaultdict
+from scipy import ndimage
+from scipy.cluster.hierarchy import fcluster, linkage
+from scipy.spatial.distance import pdist
+import camera as cam, masks as MK, mask_clip_cluster as MC, viewpoints as VP
+import cg_associate as CG   # 免深度 z-buffer
+from voxel_sem_cluster_donut import donut_masks, donut_feats   # 去大遮罩挖洞 + 甜甜圈特徵快取
+
+REPO = Path(__file__).resolve().parents[2]
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures_fast")))
+SAM_ROOT = Path(os.environ.get("SAM_ROOT", str(REPO / "data" / "eval" / "sam_only_fast")))
+HULL_ROOT = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_hull_v12")))
+ARM = Path(os.environ.get("ARM_MASK_ROOT", str(REPO / "data" / "eval" / "srp_arm_masks")))
+OUT_ROOT = REPO / "data" / "eval" / os.environ.get("OUT_ROOT", "srp_hull_semcluster_surf_donut")
+MIN_VOX = int(os.environ.get("MIN_VOX", "50"))
+NEST_THR = float(os.environ.get("NEST_THR", "0.8"))
+DROP_ARM = os.environ.get("DROP_ARM", "1") == "1"          # ★分群前去掉手臂+夾爪遮罩(用 srp_arm_masks,含夾爪)
+ARM_DROP_THR = float(os.environ.get("ARM_DROP_THR", "0.5"))  # 遮罩 ≥此比例落在手臂剪影內 → 視為手臂/夾爪遮罩,丟
+DEBIAS = os.environ.get("DEBIAS", "1") == "1"
+VOTE = os.environ.get("VOTE", "footprint")             # footprint|center(兩者都用實心遮擋)
+_BG = MC.F_BG.astype(np.float64) if DEBIAS else None
+
+
+def debias_feats(F):
+    F = F.astype(np.float64)
+    if DEBIAS and _BG is not None:
+        F = F - (F @ _BG)[:, None] * _BG[None, :]
+    return F / (np.linalg.norm(F, axis=1, keepdims=True) + 1e-9)
+
+
+def semantic_cluster(sc, n_views, sem_thr):
+    group = sc.split("_")[0]; sdir = CAPTURES / f"multi_{group}" / sc
+    z = np.load(HULL_ROOT / sc / "hull.npz")
+    occ = z["surface"]; gm = z["grid_min"]; vs = float(z["voxel_size"]); shape = occ.shape   # ★表面 voxel
+    vox = np.array(np.nonzero(occ)).T; P = gm + (vox + 0.5) * vs; M = len(vox)
+    # ★★ 修 zbuffer 只用薄殼遮擋的 bug:改用完整實心 occupancy 當遮擋物,被實心擋的底/背面才會正確排除
+    SOLID = z["occupancy"].astype(bool); ovox = np.array(np.nonzero(SOLID)).T; oP = gm + (ovox + 0.5) * vs
+    # ★ 分水嶺 chunk:對實心侵蝕 WS_ERODE 層切斷細頸(相連物體的橋)→ 標記種子 → 距離變換把每 occ voxel 指回最近種子塊
+    #   (切開細頸、體積全留;下游用 chunk 當「3D 塊」取代表面連通,胖 hull 也能把相觸物分開而不損 FN)
+    _WSE = int(os.environ.get("WS_ERODE", "1"))
+    _st3 = ndimage.generate_binary_structure(3, 3)
+    _er = ndimage.binary_erosion(SOLID, _st3, iterations=_WSE) if _WSE > 0 else SOLID
+    _seed, _ = ndimage.label(_er, _st3)
+    if _seed.max() > 0:
+        _idx = ndimage.distance_transform_edt(_seed == 0, return_distances=False, return_indices=True)
+        chunk = (_seed[tuple(_idx)] * SOLID).astype(np.int32)      # 每 occ voxel 的 chunk id(0=非佔據)
+    else:
+        chunk = _seed.astype(np.int32)
+    surf_grid = np.full(shape, -1, np.int64); surf_grid[tuple(vox.T)] = np.arange(M)
+    surf_of_occ = surf_grid[tuple(ovox.T)]                 # 每 occ voxel → surf index(-1=內部)
+    def zbuf_surf(C_, Rb_, W_, H_):                        # z-buffer 用實心遮擋,回每像素最前的 surf voxel index(-1=內部/無)
+        va = CG.zbuffer_visible(oP, C_, Rb_, W_, H_, vs)
+        out = np.full(len(va), -1, np.int64); m = va >= 0; out[m] = surf_of_occ[va[m]]
+        return out
+    want = set(VP.selected_view_names(n_views)) if n_views else None
+    vdata = []; allf = []; ref = []
+    for vd in sorted((SAM_ROOT / sc).glob("view_*")):
+        if want is not None and vd.name not in want: continue
+        pf = sdir / f"{vd.name}_pose.json"
+        if not pf.is_file(): continue
+        km = MK.kept_object_masks(vd); ms0 = [m for m, _ in km]; names = [nm for _, nm in km]
+        if not ms0: continue
+        ap = ARM / sc / f"{vd.name}_arm.png"
+        arm = (cv2.imread(str(ap), 0) > 127) if ap.is_file() else None
+        if DROP_ARM and arm is not None:         # ★分群前:落在手臂+夾爪剪影 ≥ARM_DROP_THR 的遮罩,丟(不進特徵/分群/投票)
+            keep = [k for k, m in enumerate(ms0)
+                    if (m & arm).sum() / max(int(m.sum()), 1) < ARM_DROP_THR]
+            ms0 = [ms0[k] for k in keep]; names = [names[k] for k in keep]
+            if not ms0: continue
+        ms = donut_masks(ms0, thr=NEST_THR)      # ★去大遮罩:含子遮罩的父遮罩挖成甜甜圈
+        C, Rb = cam.load_pose(pf); Rwc, t = cam.pose_to_w2c(C, Rb)
+        K = cam.intrinsics(ms[0].shape[1], ms[0].shape[0])
+        rgb = cv2.cvtColor(cv2.imread(str(sdir / f"{vd.name}.png")), cv2.COLOR_BGR2RGB)
+        vi = len(vdata)
+        fmap = donut_feats(vd, rgb, ms, names)   # ★甜甜圈 CLIP(讀 clip_donut_feats.npy 快取,donut 已存)
+        for mi, nm in enumerate(names):
+            f = fmap.get(nm)
+            if f is not None: allf.append(f); ref.append((vi, mi))
+        vdata.append((ms, C, Rwc, t, K, arm, names, vd.name, Rb))
+    labels = np.zeros(shape, np.int32)
+    if len(allf) < 2:
+        return labels, gm, vs, {}, {}
+    F = debias_feats(np.array(allf))
+    cl = fcluster(linkage(pdist(F, "cosine"), "average"), t=sem_thr, criterion="distance")
+    mlabel = {r: int(c) for r, c in zip(ref, cl)}
+    mask_cluster = defaultdict(dict)
+    for (vi, mi), c in mlabel.items():
+        mask_cluster[vdata[vi][7]][vdata[vi][6][mi]] = int(c)
+    if os.environ.get("OBS_CAND", "0") == "1":     # ★候選只留「≥1視角 zbuffer 最前(可觀測)」,排除從來不可見(遮擋)A
+        zf = np.zeros(M, int)
+        for (ms_, C_, Rwc_, t_, K_, arm_, names_, vname_, Rb_) in vdata:
+            H_, W_ = ms_[0].shape
+            va = zbuf_surf(C_, Rb_, W_, H_).reshape(H_, W_)
+            X_ = P @ Rwc_.T + t_; zc_ = X_[:, 2]; ok_ = zc_ > 1e-9; zz_ = np.where(ok_, zc_, 1.0)
+            u_ = np.round(K_[0, 0] * X_[:, 0] / zz_ + K_[0, 2]).astype(int)
+            v_ = np.round(K_[1, 1] * X_[:, 1] / zz_ + K_[1, 2]).astype(int)
+            inb_ = ok_ & (u_ >= 0) & (u_ < W_) & (v_ >= 0) & (v_ < H_); ii_ = np.where(inb_)[0]
+            zf[ii_[va[v_[ii_], u_[ii_]] == ii_]] += 1
+        obs = zf > 0
+        vox = vox[obs]; P = P[obs]; M = len(vox)
+    votes = defaultdict(lambda: np.zeros(M))
+    vmask = defaultdict(lambda: defaultdict(set))
+    for vi, (ms, C, Rwc, t, K, arm, names, vname, Rb) in enumerate(vdata):
+        H, W = ms[0].shape
+        vox_at = zbuf_surf(C, Rb, W, H).reshape(H, W)   # ★z-buffer(實心遮擋)
+        X = P @ Rwc.T + t; zc = X[:, 2]; ok = zc > 1e-9; zz = np.where(ok, zc, 1.0)
+        u = np.round(K[0, 0] * X[:, 0] / zz + K[0, 2]).astype(int)
+        v = np.round(K[1, 1] * X[:, 1] / zz + K[1, 2]).astype(int)
+        inb = ok & (u >= 0) & (u < W) & (v >= 0) & (v < H)
+        wt = 1.0 / np.maximum(np.linalg.norm(P - C, axis=1), 1e-3)
+        if VOTE == "center":                              # 中心點投票(實心可見:中心像素的最前 surf voxel 是自己才投)
+            for p in np.where(inb)[0]:
+                if arm is not None and arm[v[p], u[p]]: continue
+                if vox_at[v[p], u[p]] != p: continue
+                for mi, m in enumerate(ms):
+                    if (vi, mi) in mlabel and m[v[p], u[p]]:
+                        votes[mlabel[(vi, mi)]][p] += wt[p]
+                        vmask[int(p)][vname].add(names[mi]); break
+        else:                                             # footprint 投票:每個實心可見像素的最前 surf voxel 依該像素遮罩投票
+            ys, xs = np.where(vox_at >= 0); pown = vox_at[ys, xs]
+            for y, x, p in zip(ys.tolist(), xs.tolist(), pown.tolist()):
+                if arm is not None and arm[y, x]: continue
+                for mi, m in enumerate(ms):      # ms=挖洞後遮罩
+                    if (vi, mi) in mlabel and m[y, x]:
+                        votes[mlabel[(vi, mi)]][p] += wt[p]
+                        vmask[int(p)][vname].add(names[mi]); break
+    gl = list(votes.keys()); inst_masks = {}
+    if gl:
+        Vt = np.stack([votes[g] for g in gl], 1); assign = Vt.argmax(1); has = Vt.max(1) > 0
+        st = ndimage.generate_binary_structure(3, 3)
+        big = []; small = []                                       # (comp_p, gid)
+        chunk_at = chunk[tuple(vox.T)]                              # ★每 surf voxel 的分水嶺 chunk id(取代表面連通)
+        for gi in range(len(gl)):
+            sel = has & (assign == gi)
+            if not sel.any(): continue
+            sel_p = np.where(sel)[0]
+            ca = chunk_at[sel_p]                                    # 這群每 voxel 的 chunk → 同 chunk = 一個 3D 塊(細頸已切開)
+            for c in np.unique(ca):
+                if c == 0: continue
+                comp_p = sel_p[ca == c]
+                (big if len(comp_p) >= MIN_VOX else small).append((comp_p, gl[gi]))
+
+        def imask(comp_p, gid):                                    # 該群來源遮罩
+            md = defaultdict(set)
+            for p in comp_p:
+                for vw, fs in vmask.get(int(p), {}).items():
+                    for fn in fs:
+                        if mask_cluster.get(vw, {}).get(fn) == gid:
+                            md[vw].add(fn)
+            return {vw: sorted(fs) for vw, fs in sorted(md.items())}
+
+        nid = 0
+        for comp_p, gid in big:                                    # 大塊各自成實例
+            nid += 1; labels[tuple(vox[comp_p].T)] = nid; inst_masks[nid] = imask(comp_p, gid)
+        # ★ 小塊(<MIN_VOX):只有「3D 相鄰(相連)到某大實例」才併進該實例;不相連的留下、各自成一群(不亂黏)
+        big_snapshot = labels.copy()                               # 相鄰對象只看「大實例」,不受小塊處理順序影響
+        for comp_p, gid in small:
+            cm = np.zeros(shape, bool); cm[tuple(vox[comp_p].T)] = True
+            dil = ndimage.binary_dilation(cm, st)                  # 26 鄰接膨脹 1 格
+            neigh = big_snapshot[dil & (big_snapshot > 0)]         # 與此小塊相鄰的大實例 label
+            if neigh.size > 0:
+                u, c = np.unique(neigh, return_counts=True)
+                labels[tuple(vox[comp_p].T)] = int(u[c.argmax()])  # 併進「相鄰最多」的大實例
+            # else:不相連的小塊 → 直接丟(留 label 0),不留成 instance(已驗證:刪<50 碎片 0 個非排除物體消失=全冗餘)
+    return labels, gm, vs, inst_masks, {v: dict(d) for v, d in mask_cluster.items()}
+
+
+def process(sc, n_views, sem_thr):
+    if not (HULL_ROOT / sc / "hull.npz").is_file():
+        print(f"[skip] {sc}"); return
+    if os.environ.get("FORCE", "") != "1" and (OUT_ROOT / sc / "instances.npz").is_file():
+        return
+    labels, gm, vs, inst_masks, mask_cluster = semantic_cluster(sc, n_views, sem_thr)
+    out = OUT_ROOT / sc; out.mkdir(parents=True, exist_ok=True)
+    meta = {"script": "voxel_sem_cluster_reassign_solidws.py", "vote": VOTE, "occluder": "solid", "split": "watershed_erode", "reassign": "connected_or_drop", "surface": True, "zbuffer": True, "donut": True,
+            "nest_thr": NEST_THR, "feat": "recomputed_clip_donut",
+            "built": _dt.datetime.now().isoformat(timespec="seconds"),
+            "hull_root": HULL_ROOT.name, "sam_root": SAM_ROOT.name, "captures_root": CAPTURES.name,
+            "arm_root": ARM.name, "debias": DEBIAS, "sem_thr": sem_thr, "n_views": n_views, "min_vox": MIN_VOX,
+            "drop_arm": DROP_ARM, "arm_drop_thr": ARM_DROP_THR}
+    np.savez_compressed(out / "instances.npz", labels=labels, grid_min=gm, voxel_size=vs,
+                        build_meta=json.dumps(meta, ensure_ascii=False))
+    insts = [{"instance": i, "n_vox": int((labels == i).sum()), "masks": inst_masks.get(i, {})}
+             for i in range(1, int(labels.max()) + 1) if (labels == i).any()]
+    (out / "instances.json").write_text(json.dumps(
+        {"scene": sc, "voxel": vs, "n_instances": len(insts), "meta": meta,
+         "mask_clusters": mask_cluster, "instances": insts},
+        indent=2, ensure_ascii=False))
+    print(f"[{sc}] surf+去大遮罩 → {len(insts)} instance", flush=True)
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("targets", nargs="*")
+    ap.add_argument("--n-views", type=int, default=12, dest="n_views")
+    ap.add_argument("--sem-thr", type=float, default=0.4, dest="sem_thr")
+    args = ap.parse_args()
+    if not args.targets:
+        scenes = sorted(Path(p).parent.name for p in glob.glob(str(HULL_ROOT / "*_scene*/hull.npz")))
+    else:
+        scenes = []
+        for a in args.targets:
+            if "scene" in a: scenes.append(a)
+            else: scenes += [Path(p).parent.name for p in glob.glob(str(HULL_ROOT / f"{a}_scene*/hull.npz"))]
+        scenes = sorted(set(scenes))
+    for sc in scenes:
+        try: process(sc, args.n_views, args.sem_thr)
+        except Exception as e:
+            import traceback; traceback.print_exc(); print(f"[err] {sc}: {e}")
+
+
+if __name__ == "__main__":
+    main()

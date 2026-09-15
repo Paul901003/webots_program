@@ -76,7 +76,9 @@ def surface_of(occ):
 
 
 def cubes_obj(mask, grid_min, vs, path):
-    """每個 True voxel 生一個邊長 vs 的 cube,合併成 obj(看得出離散 voxel/空心)。"""
+    """每個 True voxel 生一個邊長 vs 的 cube;只畫『外表面』(相鄰為空的面),內部重疊面不畫(免 z-fighting/黑塗)。
+    三角 winding 已使法線朝外。"""
+    mask = np.asarray(mask, bool)
     idx = np.argwhere(mask)
     if len(idx) == 0:
         return False
@@ -84,16 +86,23 @@ def cubes_obj(mask, grid_min, vs, path):
     h = vs / 2
     cv = np.array([[-h, -h, -h], [h, -h, -h], [h, h, -h], [-h, h, -h],
                    [-h, -h, h], [h, -h, h], [h, h, h], [-h, h, h]])
-    cf = [(0, 1, 2), (0, 2, 3), (4, 6, 5), (4, 7, 6), (0, 4, 5), (0, 5, 1),
-          (1, 5, 6), (1, 6, 2), (2, 6, 7), (2, 7, 3), (3, 7, 4), (3, 4, 0)]
-    lines = []
+    # (鄰居方向 (x,y,z), 該面顯式法線 index(1-6), 兩三角[法線朝外]);鄰居實心 → 內部面不畫
+    FACES = [((0, 0, -1), 1, [(0, 2, 1), (0, 3, 2)]), ((0, 0, 1), 2, [(4, 5, 6), (4, 6, 7)]),
+             ((0, -1, 0), 3, [(0, 5, 4), (0, 1, 5)]), ((1, 0, 0), 4, [(1, 6, 5), (1, 2, 6)]),
+             ((0, 1, 0), 5, [(2, 7, 6), (2, 3, 7)]), ((-1, 0, 0), 6, [(3, 4, 7), (3, 0, 4)])]
+    occ = set(map(tuple, idx.tolist()))
+    # 顯式法線(6 個面方向),寫進 obj → Webots 不自己平滑 90° 硬邊(平滑會讓面算成不受光→黑)
+    lines = ["vn 0 0 -1", "vn 0 0 1", "vn 0 -1 0", "vn 1 0 0", "vn 0 1 0", "vn -1 0 0"]
     for c in centers:
         for x, y, z in cv + c:
             lines.append(f"v {x:.5f} {y:.5f} {z:.5f}")
-    for n in range(len(centers)):
+    for n, (i, j, k) in enumerate(idx.tolist()):
         b = n * 8
-        for a, bb, cc in cf:
-            lines.append(f"f {b+a+1} {b+bb+1} {b+cc+1}")
+        for (dx, dy, dz), ni, tris in FACES:
+            if (i + dx, j + dy, k + dz) in occ:
+                continue                    # 鄰居實心 → 這是內部面,不畫
+            for a, bb, cc in tris:
+                lines.append(f"f {b+a+1}//{ni} {b+bb+1}//{ni} {b+cc+1}//{ni}")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return True
 
@@ -116,6 +125,10 @@ def main():
     ap.add_argument("--tag", default="", help="instances 檔名後綴(如 am1_cvsmall)")
     ap.add_argument("--surface", action="store_true",
                     help="改顯示 hull 表面 voxel(cube-per-voxel,讀 srp_hull_v12/<scene>/hull.npz 的 surface),而非 instances")
+    ap.add_argument("--cubes", action="store_true",
+                    help="每個 instance 用逐-voxel 立方體(cubes_obj)呈現,不做 marching cubes 平滑(看真實離散 voxel)")
+    ap.add_argument("--gray-fill", action="store_true", dest="gray_fill",
+                    help="灰色定位層:occupancy 中無語意(label 0)的 voxel 用灰色顯示(內部/沒被看到=只定位不上語意)")
     args = ap.parse_args()
 
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
@@ -138,9 +151,16 @@ def main():
             if args.surface:                 # 每個 instance 挖空(只留表面 voxel);顏色/半透明/分instance 全同原本
                 mask = surface_of(mask)
             f = f"inst_{k:02d}.obj"
-            if inst_obj(mask, gm, vs, out / f):
+            render = cubes_obj if args.cubes else inst_obj   # --cubes:逐voxel立方體(不平滑)
+            if render(mask, gm, vs, out / f):
                 items.append({"file": f, "color": PALETTE[(k - 1) % len(PALETTE)],  # 用 hull 編號 k,和報告一致
-                              "transparency": 0.30, "name": f"inst_{k:02d}"})
+                              "transparency": 0.30,  # 半透明(cubes/marching 同),看得到內部結構
+                              "name": f"inst_{k:02d}"})
+        if args.gray_fill and "occupancy" in z:      # 灰色定位層:occupancy 無語意(label 0)的 voxel
+            gray = np.asarray(z["occupancy"]) & (labels == 0)
+            if gray.any() and cubes_obj(gray, gm, vs, out / "inst_gray.obj"):
+                items.append({"file": "inst_gray.obj", "color": [0.55, 0.55, 0.55],
+                              "transparency": 0.15, "name": "location_gray"})
 
     ycb_items = []
     if not args.no_gt:

@@ -1,0 +1,71 @@
+{
+  "source": "stack3_scene0001",
+  "n_points": 5907,
+  "pointcloud": "colmap_points.ply",
+  "ycb": 3,
+  "ycb_items": [
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/026_sponge/google_16k/textured.obj",
+      "translation": [
+        0.3575445,
+        -0.0607445,
+        -0.00011680493702704783
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_026_sponge"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/070-b_colored_wood_blocks/google_16k/textured.obj",
+      "translation": [
+        0.3609405,
+        -0.038109000000000004,
+        0.01923797923748661
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_070-b_colored_wood_blocks"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/065-f_cups/google_16k/textured.obj",
+      "translation": [
+        0.408953,
+        0.07401200000000001,
+        0.00047874442578459825
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_065-f_cups"
+    }
+  ]
+}

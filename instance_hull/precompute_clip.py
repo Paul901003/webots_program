@@ -27,8 +27,9 @@ from PIL import Image
 import clip
 
 REPO = Path(__file__).resolve().parents[1]
-CAPTURES = REPO / "data" / "captures"
-SAM_ROOT = REPO / "data" / "eval" / "sam_only"
+# 路徑可用 env 覆寫(fast 資料:CAPTURES_ROOT=captures_fast、SAM_ROOT=sam_only_fast)
+CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))
+SAM_ROOT = Path(os.environ.get("SAM_ROOT", str(REPO / "data" / "eval" / "sam_only")))
 TEXT_OUT = REPO / "data" / "eval" / "clip_text_feats.npz"
 CLIP_MODEL = "ViT-B/32"
 CLIP_MEAN = np.array([123, 116, 103], dtype=np.uint8)
@@ -70,7 +71,8 @@ def resolve_scenes(targets):
         if "scene" in a:
             out.append(a)
         else:
-            out += [d.name for d in sorted((CAPTURES / f"multi_n{a}").glob(f"n{a}_scene*"))]
+            g = f"n{a}" if a.isdigit() else a   # 3→n3;occ3/stack3/n3 直接當組名
+            out += [d.name for d in sorted((CAPTURES / f"multi_{g}").glob(f"{g}_scene*"))]
     return out
 
 

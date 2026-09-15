@@ -1,0 +1,28 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "../protos/blank_floor.proto"
+
+WorldInfo {
+  basicTimeStep 16
+}
+Viewpoint {
+  orientation 0 1 -0.02 0.6
+  position -3 0 2
+  followType "None"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  luminosity 1.2
+  castShadows FALSE
+}
+blank_floor {
+}
+Robot {
+  supervisor TRUE
+  controller "srp_normal_viz"
+  controllerArgs [ "stack3_scene0001" "srp_hull_semcluster_surf_am1photo" ]
+  name "srp_normal_viz"
+}

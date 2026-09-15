@@ -37,8 +37,14 @@ def in_az_b(v):
     return 180 < az_normalized(v) % 360 <= 270
 
 
-def load_validated(multi, x_offset):
-    files = S._find_validated_files(multi, x_offset)
+def load_validated(multi, x_offset, only_latest=False):
+    if only_latest:
+        # 候選池只用最新一批(= 實際拍攝的視角池),避免合併歷史具名檔混入沒拍到的視角
+        name = "validated_viewpoints_multi_latest.json" if multi else "validated_viewpoints_latest.json"
+        f = S.VIEWPOINTS_DIR / name
+        files = [f] if f.is_file() else []
+    else:
+        files = S._find_validated_files(multi, x_offset)
     if not files:
         sys.exit(f"找不到 x_offset={x_offset:+.3f} 的 A-2 輸出檔")
     validated, seen = [], set()
@@ -107,11 +113,13 @@ def main():
     ap.add_argument("--multi", action="store_true")
     ap.add_argument("--x-offset", type=float, default=0.0)
     ap.add_argument("--counts", type=int, nargs="+", default=[6, 8, 10, 12])
+    ap.add_argument("--only-latest", action="store_true",
+                    help="候選池只用 validated_latest(對齊實際拍攝視角池),不合併歷史具名檔")
     args = ap.parse_args()
 
     oc = list(S.planner_config.OBJECT_CENTER_M)
     target_m = [oc[0] + args.x_offset, oc[1], oc[2]]
-    validated, files = load_validated(args.multi, args.x_offset)
+    validated, files = load_validated(args.multi, args.x_offset, args.only_latest)
     x_tag = f"x{int(args.x_offset*100):+04d}"
     base = "selected_viewpoints_multi" if args.multi else "selected_viewpoints"
 

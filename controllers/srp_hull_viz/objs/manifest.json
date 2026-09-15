@@ -1,15 +1,15 @@
 {
-  "source": "occ5_scene0012",
-  "hull": 5,
+  "source": "stack4_scene0010",
+  "hull": 4,
   "gt": 0,
-  "ycb": 5,
+  "ycb": 4,
   "items": [
     {
       "file": "inst_01.obj",
       "color": [
-        0.12,
-        0.47,
-        0.71
+        0.902,
+        0.235,
+        0.235
       ],
       "transparency": 0.3,
       "name": "inst_01"
@@ -17,9 +17,9 @@
     {
       "file": "inst_02.obj",
       "color": [
-        1.0,
-        0.5,
-        0.05
+        0.235,
+        0.627,
+        0.902
       ],
       "transparency": 0.3,
       "name": "inst_02"
@@ -27,9 +27,9 @@
     {
       "file": "inst_03.obj",
       "color": [
-        0.17,
-        0.63,
-        0.17
+        0.235,
+        0.784,
+        0.353
       ],
       "transparency": 0.3,
       "name": "inst_03"
@@ -37,73 +37,21 @@
     {
       "file": "inst_04.obj",
       "color": [
-        0.84,
-        0.15,
-        0.16
+        0.902,
+        0.627,
+        0.157
       ],
       "transparency": 0.3,
       "name": "inst_04"
-    },
-    {
-      "file": "inst_05.obj",
-      "color": [
-        0.58,
-        0.4,
-        0.74
-      ],
-      "transparency": 0.3,
-      "name": "inst_05"
     }
   ],
   "ycb_items": [
     {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/021_bleach_cleanser/google_16k/textured.obj",
-      "translation": [
-        0.3807635,
-        -0.1034095,
-        0.0004409043789220246
-      ],
-      "rotation": [
-        0.0,
-        1.0,
-        0.0,
-        0.0
-      ],
-      "color": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "transparency": 0.55,
-      "name": "gt_021_bleach_cleanser"
-    },
-    {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/065-c_cups/google_16k/textured.obj",
-      "translation": [
-        0.380307,
-        0.08941850000000001,
-        0.0005518327180197777
-      ],
-      "rotation": [
-        0.0,
-        1.0,
-        0.0,
-        0.0
-      ],
-      "color": [
-        0.6,
-        0.6,
-        0.6
-      ],
-      "transparency": 0.55,
-      "name": "gt_065-c_cups"
-    },
-    {
       "mesh": "/home/cho/webots_program/urdfs/ycb_assets/002_master_chef_can/google_16k/textured.obj",
       "translation": [
-        0.2430485,
-        0.009260500000000001,
-        0.00018293814706264733
+        0.3275485,
+        0.011360499999999997,
+        0.00018126063758577837
       ],
       "rotation": [
         0.0,
@@ -120,11 +68,11 @@
       "name": "gt_002_master_chef_can"
     },
     {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/061_foam_brick/google_16k/textured.obj",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/007_tuna_fish_can/google_16k/textured.obj",
       "translation": [
-        0.32706100000000005,
-        0.059000000000000004,
-        0.0003454501243331451
+        0.33654850000000003,
+        0.023731999999999993,
+        0.14338758311628227
       ],
       "rotation": [
         0.0,
@@ -138,14 +86,14 @@
         0.6
       ],
       "transparency": 0.55,
-      "name": "gt_061_foam_brick"
+      "name": "gt_007_tuna_fish_can"
     },
     {
-      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/055_baseball/google_16k/textured.obj",
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/014_lemon/google_16k/textured.obj",
       "translation": [
-        0.508481,
-        0.045145,
-        0.0004716691936899123
+        0.442179,
+        0.0528465,
+        0.002541223572057917
       ],
       "rotation": [
         0.0,
@@ -159,7 +107,28 @@
         0.6
       ],
       "transparency": 0.55,
-      "name": "gt_055_baseball"
+      "name": "gt_014_lemon"
+    },
+    {
+      "mesh": "/home/cho/webots_program/urdfs/ycb_assets/022_windex_bottle/google_16k/textured.obj",
+      "translation": [
+        0.42411350000000003,
+        -0.169428,
+        0.0006309478495261922
+      ],
+      "rotation": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "color": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "transparency": 0.55,
+      "name": "gt_022_windex_bottle"
     }
   ]
 }

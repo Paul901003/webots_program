@@ -41,11 +41,21 @@ FILTERS=("$@")
 [ -f "$GEN" ] || { echo "找不到 $GEN"; exit 1; }
 [ -d "$CAPTURES_ROOT" ] || { echo "找不到 captures: $CAPTURES_ROOT"; exit 1; }
 
-is_done() {  # $1=場景名;依 MODE 檢查對應 annotations.json
+scene_label_dir() {  # 場景名 → 分層 labels 目錄(對齊 srp/io/labels.py);不可分層則回退扁平
+    local sc="$1" head cat num
+    head="${sc%%_scene*}"; cat="${head%%[0-9]*}"; num="${head#$cat}"
+    if [ -n "$cat" ] && [ -n "$num" ] && [ "$cat" != "$head" ]; then
+        echo "$LABELS/$cat/$num/$sc"
+    else
+        echo "$LABELS/$sc"
+    fi
+}
+is_done() {  # $1=場景名;依 MODE 檢查對應 annotations.json(分層路徑)
+    local d; d="$(scene_label_dir "$1")"
     case "$MODE" in
-        actual)  [ -f "$LABELS/$1/actual/annotations.json" ];;
-        planned) [ -f "$LABELS/$1/planned/annotations.json" ];;
-        both)    [ -f "$LABELS/$1/actual/annotations.json" ] && [ -f "$LABELS/$1/planned/annotations.json" ];;
+        actual)  [ -f "$d/actual/annotations.json" ];;
+        planned) [ -f "$d/planned/annotations.json" ];;
+        both)    [ -f "$d/actual/annotations.json" ] && [ -f "$d/planned/annotations.json" ];;
         *)       return 1;;
     esac
 }

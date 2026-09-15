@@ -70,7 +70,23 @@ def semantic_cluster(sc, n_views, sem_thr):
     if len(allf) < 2:
         return labels, gm, vs, {}, {}
     F = debias_feats(np.array(allf))
-    cl = fcluster(linkage(pdist(F, "cosine"), "average"), t=sem_thr, criterion="distance")
+    _pf = os.environ.get("PCA_FILE")            # opt-in:設了才降維(實驗用,不影響 baseline)
+    if _pf:
+        _pz = np.load(_pf)
+        F = (F - _pz["mean"]) @ _pz["components"].T
+        F = F / (np.linalg.norm(F, axis=1, keepdims=True) + 1e-9)   # L2 讓 cosine 有意義
+    _cm = os.environ.get("CLUSTER_METHOD", "agg")   # opt-in:dbscan(實驗);預設 agg 不變,不影響 baseline/主管線
+    if _cm == "dbscan":
+        from sklearn.cluster import DBSCAN
+        eps = float(os.environ.get("DBSCAN_EPS", "0.15")); msamp = int(os.environ.get("DBSCAN_MIN", "1"))
+        cl = DBSCAN(eps=eps, min_samples=msamp, metric="cosine").fit_predict(F)
+        nid = int(cl.max()) + 1 if (cl >= 0).any() else 0   # noise(-1)各自獨立成群,不併成一團
+        cl = cl.copy()
+        for i in range(len(cl)):
+            if cl[i] == -1:
+                cl[i] = nid; nid += 1
+    else:
+        cl = fcluster(linkage(pdist(F, "cosine"), "average"), t=sem_thr, criterion="distance")
     mlabel = {r: int(c) for r, c in zip(ref, cl)}
     # 遮罩→群 標籤(cl):報告用來區分「切 hull 的主群」vs「幾何蓋到的跨群零星」
     mask_cluster = defaultdict(dict)   # view名 → {遮罩檔: 群id}

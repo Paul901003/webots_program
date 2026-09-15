@@ -25,20 +25,30 @@ PYTHON = "/home/cho/.pyenv/versions/webots_visual_hull/bin/python3"
 def parse_args():
     _env = os.environ.get("SRP_VIZ_ARGS")
     a = _env.split() if _env else sys.argv[1:]
+    surface = "surface" in a                 # 加 "surface" token → 顯示 hull 表面 voxel
+    cubes = "cubes" in a                      # 加 "cubes" token → 逐 voxel 立方體(不 marching cubes 平滑)
+    grayfill = "grayfill" in a                # 加 "grayfill" token → occupancy 無語意 voxel 顯灰(只定位)
+    a = [x for x in a if x not in ("surface", "cubes", "grayfill")]   # 移除後其餘位置照舊
     scene = a[0] if len(a) >= 1 and a[0] else "n3_scene0030"
     show_gt = (a[1] != "0") if len(a) >= 2 else True
     root = a[2] if len(a) >= 3 and a[2] else "srp_hull"
     tag = a[3] if len(a) >= 4 and a[3] else ""
-    return scene, show_gt, root, tag
+    return scene, show_gt, root, tag, surface, cubes, grayfill
 
 
-def generate(scene, show_gt, root, tag):
+def generate(scene, show_gt, root, tag, surface, cubes, grayfill):
     OBJ_DIR.mkdir(parents=True, exist_ok=True)
     cmd = [PYTHON, str(GEN_PY), scene, "--out", str(OBJ_DIR), "--root", root]
     if tag:
         cmd += ["--tag", tag]
     if not show_gt:
         cmd.append("--no-gt")
+    if surface:
+        cmd.append("--surface")
+    if cubes:
+        cmd.append("--cubes")
+    if grayfill:
+        cmd.append("--gray-fill")
     print("[srp_viz] 產生 obj:", " ".join(cmd))
     r = subprocess.run(cmd, capture_output=True, text=True)
     print(r.stdout.strip())
@@ -73,9 +83,9 @@ def ycb_vrml(item):
 
 def main():
     sv = Supervisor()
-    scene, show_gt, root, tag = parse_args()
-    print(f"[srp_viz] scene={scene} show_gt={show_gt} root={root} tag={tag}")
-    mani = generate(scene, show_gt, root, tag)
+    scene, show_gt, root, tag, surface, cubes, grayfill = parse_args()
+    print(f"[srp_viz] scene={scene} show_gt={show_gt} root={root} tag={tag} surface={surface} cubes={cubes} grayfill={grayfill}")
+    mani = generate(scene, show_gt, root, tag, surface, cubes, grayfill)
     if mani:
         children = sv.getRoot().getField("children")
         for it in mani.get("items", []):

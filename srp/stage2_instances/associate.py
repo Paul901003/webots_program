@@ -30,8 +30,9 @@ from scipy import ndimage
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "srp" / "io"))
-import camera as cam   # noqa: E402
-import masks as MK     # noqa: E402
+import camera as cam       # noqa: E402
+import masks as MK         # noqa: E402
+import viewpoints as VP    # noqa: E402  (A-3 挑選,與 Stage 1 共用同一份)
 
 
 def _device():
@@ -94,7 +95,7 @@ def _suf(tag):
 
 
 def process(scene, agree_frac, min_vox, min_views, min_frac, hull_root=HULL_ROOT,
-            cover="large", out_root=None, hull_tag="", tag=""):
+            cover="large", out_root=None, hull_tag="", tag="", num_views=None):
     out_root = out_root or hull_root
     hp = hull_root / scene / f"hull{_suf(hull_tag)}.npz"
     if not hp.is_file():
@@ -117,6 +118,9 @@ def process(scene, agree_frac, min_vox, min_views, min_frac, hull_root=HULL_ROOT
     group = scene.split("_")[0]
     sdir = CAPTURES / f"multi_{group}" / scene
     views = sorted((SAM_ROOT / scene).glob("view_*"))
+    if num_views is not None:                       # 只用 A-3 selected_n{N} 挑的視角(與 Stage 1 同一批)
+        want = VP.selected_view_names(num_views)
+        views = [v for v in views if v.name in want]
     vnames, files_per_view, L_cols = [], {}, []
     for vdir in views:
         pose = sdir / f"{vdir.name}_pose.json"
@@ -218,7 +222,7 @@ def process(scene, agree_frac, min_vox, min_views, min_frac, hull_root=HULL_ROOT
         {"scene": scene, "voxel": vs, "n_instances": len(instances),
          "instances": instances}, indent=2, ensure_ascii=False), encoding="utf-8")
     n3d = ndimage.label(occ, ndimage.generate_binary_structure(3, 1))[1]
-    print(f"[{scene}] 佔據{nk} 純3D連通{n3d} → instance {len(instances)} "
+    print(f"[{scene}] 視角{len(vnames)} 佔據{nk} 純3D連通{n3d} → instance {len(instances)} "
           f"(voxel數: {[i['n_vox'] for i in instances]})")
     return len(instances)
 
@@ -240,13 +244,15 @@ def main():
                     help="讀 hull 的檔名後綴(如 am1 → hull_am1.npz)")
     ap.add_argument("--tag", default="",
                     help="寫 instances 的檔名後綴(如 am1_cvsmall → instances_am1_cvsmall.*)")
+    ap.add_argument("--num-views", type=int, default=None, dest="num_views",
+                    help="只用 A-3 selected_n{N} 挑的視角(須與 Stage 1 run_scene.py 同 N)")
     args = ap.parse_args()
     out_root = REPO / "data" / "eval" / args.root
     hull_root = REPO / "data" / "eval" / (args.hull_root or args.root)
     for sc in args.scenes:
         try:
             process(sc, args.agree_frac, args.min_vox, args.min_views, args.min_frac,
-                    hull_root, args.cover, out_root, args.hull_tag, args.tag)
+                    hull_root, args.cover, out_root, args.hull_tag, args.tag, args.num_views)
         except Exception as e:
             import traceback; traceback.print_exc(); print(f"[err] {sc}: {e}")
 

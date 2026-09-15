@@ -627,7 +627,16 @@ def main():
             print(f"載入 mesh: {name}")
 
     scene_id = data.get("scene_id", "scene")
-    base_out  = os.path.join(args.output, scene_id)
+    base_out  = os.path.join(args.output, scene_id)   # 預設扁平(相容舊命名/自訂 --output)
+    try:  # 標準 data/labels 根 + 可分層場景名(nb3/occ.../stack...)→ 改寫分層路徑,對齊 srp 下游
+        import sys as _s, pathlib as _pl
+        _s.path.insert(0, str(_pl.Path(__file__).resolve().parents[1] / "srp" / "io"))
+        import labels as _L
+        _ld = _L.label_dir(scene_id)
+        if os.path.realpath(str(args.output)) == os.path.realpath(str(_L._BASE)) and _ld.parent.name.isdigit():
+            base_out = str(_ld)
+    except Exception:
+        pass
 
     modes = ["actual", "planned"] if args.mode == "both" else [args.mode]
     for mode in modes:

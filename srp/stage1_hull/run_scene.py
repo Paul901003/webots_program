@@ -30,7 +30,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import camera as cam                      # noqa: E402
 import masks as M                         # noqa: E402
 import viewpoints as VP                   # noqa: E402  (A-3 挑選,Stage1/2 共用)
-from carve import carve_visual_hull       # noqa: E402
+if os.environ.get("CARVE_CHUNKED") == "1":               # opt-in:分批雕(1mm等大grid避免OOM),結果等價
+    from carve_chunked import carve_visual_hull  # noqa: E402
+else:
+    from carve import carve_visual_hull       # noqa: E402
 
 # 路徑可用 env 覆寫(新資料:captures_fast + sam_only_fast + srp_arm_masks)
 CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures")))

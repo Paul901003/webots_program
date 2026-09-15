@@ -45,26 +45,35 @@
 
 ## 2. `blocks_access(X, Y)` — X 擋住接近 Y(此版以「視覺遮擋」為證據)
 
+**blocks_access 為每視角逐條**(不跨視角累計):每個視角、每個 (遮擋者, 被遮者) 各記一條,帶 `view`。
+關係鍵為四元組 `(blocks_access, X, Y, view)`;同一 (X,Y) 可在多個 view 各出現一條。
+
 ### 2a. GT(遮罩式,`gt_relations.compute_blocks`)
+原則:**GT 遮罩只要有實質重疊就算遮擋**(不設比例門檻);用腐蝕濾邊界噪點、用取主向消同視角互遮。
 對每個拍攝視角 v(該視角 X、Y 皆有 amodal 與 modal 遮罩):
 1. 對「被遮物」i:`hidden_i = amodal_i ∧ ¬modal_i`(完整輪廓減去含遮擋的可見輪廓 = 被遮區域)。
-2. **被遮比例**:`occ_frac = |hidden_i| / |amodal_i|`;需 `≥ OCC_MIN` 才算 i 在此視角被遮。
-3. **遮擋者**:`j* = argmax_j |hidden_i ∧ modal_j| / |hidden_i|`(蓋住被遮區最多者);需該比例 `≥ OCCLUDER_MIN`。
-4. 累計 (j*, i) 出現的視角數;`blocks_access(j*, i)` 成立 ⟺ 出現於 `≥ MIN_VIEWS` 個視角。
+2. **腐蝕濾噪(取代比例門檻)**:`hidden_i ← erode(hidden_i, 1px)`;若腐蝕後為空則跳過。
+   amodal(單物渲染)與 modal(整場景渲染)在物體邊緣的抗鋸齒不一致會造出 1~2px 薄層假 hidden,腐蝕後歸零;真實遮擋是實質區塊,腐蝕後仍在(不看比例,故低仰角小面積真實遮擋也保留)。
+3. **遮擋者**:`j* = argmax_j |hidden_i ∧ modal_j| / |hidden_i|`(蓋住被遮區最多者),不設覆蓋門檻。
+4. **互遮取主向**:同視角同一對物體若雙向都判到,只留被遮較多(`|hidden|` 大)的那向——物理上同視角不可能真互遮,次向必為殘留噪點。
+5. 此視角即輸出一條 `blocks_access(j*, i, v)`,帶 `occ_frac`、`occluder_cov`。
 
 ### 2b. 預測(hull 幾何 z-buffer,`a1_rule.rule_blocks`)
 每視角把各 instance 體素中心投影(降採樣 `DS`)→ 每像素取**最小深度**(z-buffer)。
 對 (X 遮擋者, Y 被遮):`front = (Y有) ∧ (X有) ∧ (depth(X) < depth(Y))`;`occ_frac = |front| / |Y 投影像素|`;
-取 `occ_frac` 最大的 X 為遮擋者,需 `≥ OCC_MIN`;累計 `≥ MIN_VIEWS` 視角成立。
+取 `occ_frac` 最大的 X 為遮擋者,需 `≥ OCC_MIN`;此視角即輸出一條 `blocks_access(X, Y, view)`。
 
 | 參數 | 值 | 單位 | 定義 |
 |---|---|---|---|
-| OCC_MIN | 0.10 | — | 物 i 被遮比例下限(才算被遮) |
-| OCCLUDER_MIN | 0.30 | — | 遮擋者蓋住被遮區的下限(僅 GT 用) |
-| MIN_VIEWS | 2 | 視角 | 需成立的最少視角數 |
+| OCC_MIN | 0.0 | — | (已停用比例門檻;保留欄位供記錄)GT 改用腐蝕濾噪 |
+| OCCLUDER_MIN | 0.0 | — | (已停用)遮擋者取蓋最多者,不設覆蓋門檻 |
+| 腐蝕 | 1px(3×3) | — | 被遮區腐蝕,濾 amodal/modal 邊界抗鋸齒假 hidden(僅 GT 用) |
+| 互遮取主向 | — | — | 同視角同對物體雙向都判到時,只留 hidden 大的那向(僅 GT 用) |
 | DS | 4 | — | 預測 z-buffer 投影降採樣倍率(1280×720 → 320×180) |
 
-> 註:GT 用渲染遮罩(amodal/modal),預測用 hull 自身 z-buffer;兩者皆免感測深度。
+> ⚠ 2b 預測端(`a1_rule.rule_blocks`)仍用舊的 `OCC_MIN` 比例門檻(z-buffer 無邊界噪點問題),與 2a GT 端的濾法不同;評估配對時留意兩端定義已不對稱。
+
+> 註:GT 用渲染遮罩(amodal/modal),預測用 hull 自身 z-buffer;兩者皆免感測深度。評估以四元組 `(type,x,y,view)` 精確配對(見 `rel_recall`/`a1_rule`)。
 
 ---
 
@@ -90,12 +99,13 @@
   "objects": ["..."],
   "relations": [
     {"type": "on", "x": "上物", "y": "底物", "gap": 0.01, "xy_overlap": 0.5},
-    {"type": "blocks_access", "x": "遮擋者", "y": "被遮者", "n_views": 5, "max_occ_frac": 0.4}
+    {"type": "blocks_access", "x": "遮擋者", "y": "被遮者", "view": "view_el60_az180", "occ_frac": 0.4, "occluder_cov": 0.6}
   ],
-  "params": {"PEN":0.015,"GAP":0.03,"ON_XY":0.30,"OCC_MIN":0.10,"OCCLUDER_MIN":0.30,"MIN_VIEWS":2}
+  "params": {"PEN":0.015,"GAP":0.03,"ON_XY":0.30,"OCC_MIN":0.10,"OCCLUDER_MIN":0.30}
 }
 ```
-(方向關係於評估時即時計算,不寫入 relations.json。)
+- `on`、方向為**全局**關係;`blocks_access` 為**每視角逐條**(帶 `view`,同一 (x,y) 可多條)。
+- 方向關係於評估時即時計算,不寫入 relations.json。
 
 ## 5. 定位
 - `on`:幾何(GT mesh / hull 體素);GT 與預測規則參數一致。
@@ -104,3 +114,4 @@
 
 ## 6. 變更紀錄
 - 早期草稿曾將 `blocks_access` 定為「頂向接近走廊(BLK_XY/H_MIN)」,**已棄用**;實作改為視覺遮擋(amodal−modal / z-buffer)。方向關係為後加。
+- `blocks_access` 由「跨視角累計 ≥MIN_VIEWS 的全局三元組」改為**每視角逐條四元組 `(type,x,y,view)`**(GT/預測/評估三端一致);移除 `MIN_VIEWS`;每條帶 `view`+`occ_frac`+`occluder_cov`。

@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import cv2
 from pycocotools import mask as mask_utils
 
 REPO = Path(__file__).resolve().parents[2]
@@ -27,8 +28,12 @@ import sys as _s, pathlib as _pl; _s.path.insert(0, str(_pl.Path(__file__).resol
 # on 幾何門檻
 PEN, GAP, ON_XY = 0.015, 0.03, 0.30
 # blocks_access(視覺遮擋)門檻 —— 每視角各自輸出,不跨視角累計
-OCC_MIN = 0.10        # 物體 i 在某視角被遮 ≥ 此比例才算被遮
-OCCLUDER_MIN = 0.30   # 遮擋者 j 需蓋住 i 被遮區域 ≥ 此比例
+OCC_MIN = 0.0         # 保留(記錄用);實際不用比例門檻,改以腐蝕濾邊界噪點
+OCCLUDER_MIN = 0.0    # 0=蓋住被遮區最多的物體即遮擋者,不設覆蓋門檻
+# 被遮區腐蝕 1px:濾掉 amodal(單物渲染)vs modal(整場景渲染)在物體邊緣的抗鋸齒噪點
+# (那種假 hidden 是 1~2px 薄層,腐蝕後歸零);真實遮擋是實質區塊,腐蝕後仍在。
+_ERODE_K = np.ones((3, 3), np.uint8)
+_ERODE_ITERS = 1
 
 
 def obj_geom(scene):
@@ -127,23 +132,32 @@ def compute_blocks(scene):
         if v not in modal:
             continue
         am, mo = amodal[v], modal[v]
+        view_rels = {}                          # (遮擋者 j, 被遮者 i) -> {hidden, occ_frac, occluder_cov}
         for i, am_i in am.items():
             mo_i = mo.get(i, np.zeros_like(am_i))
             hidden = am_i & ~mo_i
-            hf = int(hidden.sum()) / int(am_i.sum()) if am_i.sum() else 0
-            if hf < OCC_MIN:
+            hidden = cv2.erode(np.ascontiguousarray(hidden, np.uint8), _ERODE_K, iterations=_ERODE_ITERS)  # 腐蝕1px濾邊界噪點
+            H = int(hidden.sum())
+            if H == 0:                 # 腐蝕後空=薄邊界抗鋸齒噪點,非實質遮擋
                 continue
+            hf = H / int(am_i.sum()) if am_i.sum() else 0
             # 找蓋住被遮區域最多的物體 j
             best_j, best_cov = None, 0.0
             for j, mo_j in mo.items():
                 if j == i:
                     continue
-                cov = int((hidden & mo_j).sum()) / int(hidden.sum()) if hidden.sum() else 0
+                cov = int((hidden & mo_j).sum()) / H
                 if cov > best_cov:
                     best_cov, best_j = cov, j
             if best_j is not None and best_cov >= OCCLUDER_MIN:
-                rels.append({"type": "blocks_access", "x": best_j, "y": i, "view": v,
-                             "occ_frac": round(hf, 3), "occluder_cov": round(best_cov, 3)})
+                view_rels[(best_j, i)] = {"hidden": H, "occ_frac": round(hf, 3), "occluder_cov": round(best_cov, 3)}
+        # 互遮取主向:同視角同一對物體若雙向都判到,只留被遮較多(hidden 大)的那向,消除物理上不可能的互遮
+        for (j, i), d in view_rels.items():
+            rev = view_rels.get((i, j))
+            if rev is not None and (rev["hidden"] > d["hidden"] or (rev["hidden"] == d["hidden"] and (i, j) < (j, i))):
+                continue                        # 反向被遮更多(或相等時保留字典序小者)→ 此向為次向噪點,丟
+            d2 = {k: d[k] for k in ("occ_frac", "occluder_cov")}
+            rels.append({"type": "blocks_access", "x": j, "y": i, "view": v, **d2})
     return rels
 
 

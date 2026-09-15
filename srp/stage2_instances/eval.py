@@ -39,11 +39,11 @@ HULL_ROOT = Path(os.environ.get("HULL_ROOT", str(REPO / "data" / "eval" / "srp_h
 GT_CACHE = Path(os.environ.get("GT_CACHE", str(REPO / "data" / "eval" / "gt_hull_cache")))
 
 
-def gt_object_hulls(scene, grid_min, grid_max, vs, shape):
+def gt_object_hulls(scene, grid_min, grid_max, vs, shape, use_cache=True):
     """用 amodal 遮罩 carve 每物體 GT 視覺 hull。回傳 {name: occ(bool, 同網格)}。
-    GT hull 只依 場景+網格(box/voxel),與 am/cover/agree 無關 → 快取一次,跨參數組合重用。"""
+    use_cache=False 則一律從源頭(amodal 遮罩+pose)重算(no-cache 原則,避免快取基準不一致)。"""
     cp = GT_CACHE / scene / f"gt_v{int(round(vs * 10000))}.npz"
-    if cp.is_file():
+    if use_cache and cp.is_file():
         z = np.load(cp)
         if np.allclose(z["grid_min"], grid_min) and tuple(z["shape"]) == tuple(shape):
             return {str(n): z["occ"][i] for i, n in enumerate(z["names"])}
@@ -82,7 +82,7 @@ def gt_object_hulls(scene, grid_min, grid_max, vs, shape):
                                  table_z=0.0)
         if hull.occupancy.any():
             out[name] = hull.occupancy
-    if out:                                  # 寫快取(跨參數組合重用)
+    if out and use_cache:                    # 寫快取(跨參數組合重用)
         cp.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(cp, names=np.array(list(out)),
                             occ=np.stack([out[n] for n in out]),

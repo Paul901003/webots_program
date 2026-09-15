@@ -101,10 +101,41 @@ def process_scene(scene, renderer):
     print(f"[{scene}] views {len(views)} objs {len(objs)} → {ann-1} amodal 遮罩 → {out}/annotations.json")
 
 
+_RENDERER = None   # 每工作進程各自一個 renderer(EGL context 不可跨進程共用)
+
+
+def _init_worker():
+    global _RENDERER
+    _RENDERER = pyrender.OffscreenRenderer(GL.CAM_WIDTH, GL.CAM_HEIGHT)
+
+
+def _work(sc):
+    try:
+        process_scene(sc, _RENDERER)
+        return (sc, True, "")
+    except Exception:
+        import traceback
+        return (sc, False, traceback.format_exc())
+
+
 def main():
     targets = sys.argv[1:] or ["n3_scene0030"]
     scenes = resolve_scenes(targets)
-    renderer = pyrender.OffscreenRenderer(GL.CAM_WIDTH, GL.CAM_HEIGHT)   # 共用一個,避免每次建/刪 EGL context
+    # 每場獨立可多進程併發(pyrender EGL,spawn)。★預設序列:spawn Pool 收尾偶發 EGL deadlock
+    # (occb5 卡 4h,occb3/4 卻正常),風險太高 → 預設 1;確認環境穩定可 AMODAL_JOBS=6 開併發。
+    jobs = int(os.environ.get("AMODAL_JOBS", "1"))
+    if jobs > 1 and len(scenes) > 1:
+        import multiprocessing as mp
+        ctx = mp.get_context("spawn")
+        with ctx.Pool(jobs, initializer=_init_worker) as pool:
+            for i, (sc, ok, err) in enumerate(pool.imap_unordered(_work, scenes), 1):
+                if not ok:
+                    print(f"[err] {sc}: {err.strip().splitlines()[-1]}")
+                if i % 50 == 0:
+                    print(f"...{i}/{len(scenes)}", flush=True)
+        print(f"完成 {len(scenes)} 場 amodal  [AMODAL_JOBS={jobs}]")
+        return
+    renderer = pyrender.OffscreenRenderer(GL.CAM_WIDTH, GL.CAM_HEIGHT)   # 序列:共用一個,避免每次建/刪 EGL context
     try:
         for i, sc in enumerate(scenes, 1):
             print(f"[{i}/{len(scenes)}]", end=" ")
