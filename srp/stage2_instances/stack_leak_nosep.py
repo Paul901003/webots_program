@@ -1,5 +1,5 @@
 #!/home/cho/.pyenv/versions/webots_visual_hull/bin/python3
-"""stack_leak_nosep.py — 定案指標:重投影對 GT 遮罩(3D gtlabel 版)算「混/洩漏% + 沒分開率」,分 n/occ/stack/all。無門檻。
+"""stack_leak_nosep.py — GT 表面標籤上的乾淨分離評估。
 
 ★ 為什麼是這支(2026-09-16 重建,舊 job-tmp perobj_leak.py 已失,落地存檔避免再消失):
   found@/mIoU/堆疊s@(見 RESULT_hull_vote_reassign_eval.md,已作廢)是聚合指標,看不出「相異 mesh 被歸同一 instance」的過併。
@@ -9,7 +9,10 @@
   - GT 物體 per voxel: srp_hull_gtlabel_<base>/<sc>/instances.npz labels(1..N=物體,0=過估;build_meta.labelmap 給名)。
   - pipeline instance per voxel: <inst-root>/<sc>/instances.npz labels(>0=實例)。兩者同 hull 同網格。
   - 主導物體 dom(i) = instance i 內 gtlab>0 voxel 最多的 GT 物體。
-  - 混/洩漏 leak(o) = 物體 o 的 voxel 落在「dom(i)≠o」instance 的比例(連續、無門檻;plab==0 不算洩漏,算漏標另計)。
+  - correct(o) = 物體 o 的 voxel 落在 dom(i)=o 的預測 instance 的比例。
+  - 混/洩漏 leak(o→q) = 物體 o 的 voxel 落在 dom(i)=q (q≠o) instance 的比例。
+  - unassigned(o) = 物體 o 的 voxel 預測為 label 0 的比例。這是漏標，不可被當成低 leak。
+  - fragment(o) = correct voxel 落在最大正確 instance 以外的比例，量同物體過切。
   - 主 instance main(o) = 持有 o 最多 voxel 的 instance;沒分開(u,l)= main(u)==main(l)>0(on 對)。
   - instance 純度 purity(i)= dom(i) 佔 i 內 gtlab>0 voxel 的比例。
   - 分組 n/occ/stack/all;stack 的洩漏平均只算「有參與 on 關係」的物體;排 GEX。
@@ -68,16 +71,11 @@ def load_gt(gt_root, sc):
     return lab, idx2name
 
 
-def scene_stats(inst_root, gt_root, sc):
-    gtlab, idx2name = load_gt(gt_root, sc)
-    if gtlab is None:
-        return None
-    ip = EVAL / inst_root / sc / "instances.npz"
-    if not ip.is_file():
-        return None
-    plab = np.load(ip)["labels"]
+def label_stats(gtlab, plab, idx2name=None):
+    """Compare GT and prediction labels on the same voxel grid."""
     if plab.shape != gtlab.shape:
-        return None
+        raise ValueError(f"label shape mismatch: gt={gtlab.shape}, pred={plab.shape}")
+    idx2name = idx2name or {}
     objs = [int(o) for o in np.unique(gtlab) if o > 0]
     name2idx = {idx2name.get(o, str(o)): o for o in objs}
     dom = {}
@@ -91,34 +89,69 @@ def scene_stats(inst_root, gt_root, sc):
         dom[int(i)] = int(vals[cnts.argmax()])
     per = {}
     for o in objs:
-        Vo = (gtlab == o)
-        tot = int(Vo.sum())
-        pos = plab[Vo]
-        pos = pos[pos > 0]
+        voxel_of_o = gtlab == o
+        total = int(voxel_of_o.sum())
+        assigned = plab[voxel_of_o]
+        positive = assigned[assigned > 0]
         main_i = 0
-        if len(pos):
-            iv, ic = np.unique(pos, return_counts=True)
-            main_i = int(iv[ic.argmax()])
-        leak = 0
-        for i in np.unique(pos):
-            if dom.get(int(i), -1) != o:
-                leak += int((pos == i).sum())
-        per[o] = {"name": idx2name.get(o, str(o)), "tot": tot,
-                  "main_i": main_i, "leak": leak, "leak_frac": leak / max(tot, 1)}
+        if len(positive):
+            values, counts = np.unique(positive, return_counts=True)
+            main_i = int(values[counts.argmax()])
+        correct_by_inst = {}
+        leak_by_obj = {}
+        for i in np.unique(positive):
+            count = int((positive == i).sum())
+            owner = dom.get(int(i))
+            if owner == o:
+                correct_by_inst[int(i)] = count
+            elif owner is not None:
+                leak_by_obj[owner] = leak_by_obj.get(owner, 0) + count
+        correct = sum(correct_by_inst.values())
+        leak = sum(leak_by_obj.values())
+        unassigned = int((assigned == 0).sum())
+        largest_correct = max(correct_by_inst.values(), default=0)
+        per[o] = {
+            "name": idx2name.get(o, str(o)),
+            "tot": total,
+            "main_i": main_i,
+            "correct": correct,
+            "correct_frac": correct / max(total, 1),
+            "unassigned": unassigned,
+            "unassigned_frac": unassigned / max(total, 1),
+            "leak": leak,
+            "leak_frac": leak / max(total, 1),
+            "leak_by_obj": leak_by_obj,
+            "leak_by_obj_frac": {q: count / max(total, 1) for q, count in leak_by_obj.items()},
+            "correct_instance_count": len(correct_by_inst),
+            "largest_correct": largest_correct,
+            "largest_correct_frac": largest_correct / max(total, 1),
+            "fragment": correct - largest_correct,
+            "fragment_frac": (correct - largest_correct) / max(total, 1),
+        }
 
     def purity(i):
         m = (plab == i) & (gtlab > 0)
-        n = int(m.sum())
-        if n == 0:
+        count = int(m.sum())
+        if count == 0:
             return 0.0
-        vals, cnts = np.unique(gtlab[m], return_counts=True)
-        return int(cnts.max()) / n
+        _, counts = np.unique(gtlab[m], return_counts=True)
+        return int(counts.max()) / count
     return {"objs": objs, "idx2name": idx2name, "name2idx": name2idx,
             "per": per, "dom": dom, "purity": purity}
 
 
+def scene_stats(inst_root, gt_root, sc):
+    gtlab, idx2name = load_gt(gt_root, sc)
+    if gtlab is None:
+        return None
+    path = EVAL / inst_root / sc / "instances.npz"
+    if not path.is_file():
+        return None
+    return label_stats(gtlab, np.load(path)["labels"], idx2name)
+
+
 def grp_of(sc):
-    if sc.startswith("stack"):
+    if sc.startswith(("stack", "stkb")):
         return "stack"
     if sc.startswith("occ"):
         return "occ"
@@ -157,45 +190,48 @@ def validate(gt_root_thin="srp_hull_gtlabel_am1"):
 
 
 def report(inst_root, gt_root, scenes):
-    groups = {"n": [], "occ": [], "stack": [], "all": []}
-    nosep = {"n": [0, 0], "occ": [0, 0], "stack": [0, 0], "all": [0, 0]}  # [沒分開, on對數]
+    metric_names = ("correct_frac", "leak_frac", "unassigned_frac", "fragment_frac")
+    groups = {g: {name: [] for name in metric_names} for g in ("n", "occ", "stack", "all")}
+    nosep = {g: [0, 0] for g in ("n", "occ", "stack", "all")}  # [沒分開, on對數]
     for sc in scenes:
         st = scene_stats(inst_root, gt_root, sc)
         if st is None:
             continue
         g = grp_of(sc)
+        if g not in groups:
+            continue
         pairs = on_pairs(sc)
         onobjs = set()
-        for (u, l) in pairs:
-            if u in GEX or l in GEX:
+        for upper, lower in pairs:
+            if upper in GEX or lower in GEX:
                 continue
-            iu = st["name2idx"].get(u)
-            il = st["name2idx"].get(l)
+            iu = st["name2idx"].get(upper)
+            il = st["name2idx"].get(lower)
             if iu is None or il is None:
                 continue
-            onobjs.add(iu)
-            onobjs.add(il)
+            onobjs.update((iu, il))
             same = st["per"][iu]["main_i"] == st["per"][il]["main_i"] and st["per"][iu]["main_i"] > 0
-            for k in (g, "all"):
-                nosep[k][0] += int(same)
-                nosep[k][1] += 1
-        # 洩漏:n/occ 用全物體;stack 用有參與 on 的物體
-        for o in st["objs"]:
-            if st["per"][o]["name"] in GEX:
+            for key in (g, "all"):
+                nosep[key][0] += int(same)
+                nosep[key][1] += 1
+        # n/occ take all objects; stack takes objects involved in an on relation.
+        for obj in st["objs"]:
+            info = st["per"][obj]
+            if info["name"] in GEX or (g == "stack" and obj not in onobjs):
                 continue
-            if g == "stack" and o not in onobjs:
-                continue
-            lf = st["per"][o]["leak_frac"]
-            groups[g].append(lf)
-            groups["all"].append(lf)
+            for key in (g, "all"):
+                for name in metric_names:
+                    groups[key][name].append(info[name])
     print(f"\n=== {inst_root}  vs  {gt_root} ===")
-    print(f"{'組':>6}{'物體數':>7}{'平均洩漏%':>10}{'on對':>6}{'沒分開%':>9}")
-    for g in ("n", "occ", "stack", "all"):
-        lk = groups[g]
-        avg = float(np.mean(lk)) * 100 if lk else 0.0
-        ns, tot = nosep[g]
-        nsp = ns / tot * 100 if tot else 0.0
-        print(f"{g:>6}{len(lk):>7}{avg:>9.2f}%{tot:>6}{nsp:>8.1f}%")
+    print(f"{'組':>6}{'物體':>6}{'correct%':>10}{'leak%':>9}{'未指派%':>10}{'過切%':>9}{'on對':>6}{'主群同%':>10}")
+    for group in ("n", "occ", "stack", "all"):
+        values = groups[group]
+        mean = {name: float(np.mean(values[name])) * 100 if values[name] else 0.0 for name in metric_names}
+        same, total = nosep[group]
+        same_pct = same / total * 100 if total else 0.0
+        print(f"{group:>6}{len(values['leak_frac']):>6}{mean['correct_frac']:>9.2f}%"
+              f"{mean['leak_frac']:>8.2f}%{mean['unassigned_frac']:>9.2f}%"
+              f"{mean['fragment_frac']:>8.2f}%{total:>6}{same_pct:>9.1f}%")
 
 
 def main():
