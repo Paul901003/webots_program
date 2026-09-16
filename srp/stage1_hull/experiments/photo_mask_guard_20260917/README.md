@@ -36,3 +36,13 @@ Run all legacy scenes by omitting the scene argument.
 This removes background and mask-boundary comparisons from negative photo evidence.
 It cannot distinguish two different objects inside the same foreground union. That
 requires a separate semantic/instance compatibility experiment.
+
+## Current Candidate
+
+The runner defaults to `ncc_reduce=second` and writes
+`srp_hull_mv2_v12_am1_photo_fgpatch_second`. This keeps a voxel when two source
+views support a shared candidate normal, so one occluded source cannot lower a
+mean NCC into the deletion range.
+
+`RESULT.md` records the fixed-scene comparison. The candidate has not been
+promoted; it still needs representative-scene and downstream Stage 2 evaluation.
