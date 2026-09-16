@@ -75,6 +75,17 @@ def ncc_rows(A, B):
     return ncc, tex
 
 
+def mask_samples(mask, u, v):
+    """Return whether nearest image samples are in a binary mask."""
+    H, W = mask.shape
+    valid = (u >= 0) & (u < W) & (v >= 0) & (v < H)
+    ui = np.clip(np.rint(u).astype(int), 0, W - 1)
+    vi = np.clip(np.rint(v).astype(int), 0, H - 1)
+    out = np.zeros(valid.shape, bool)
+    out[valid] = mask[vi[valid], ui[valid]]
+    return out
+
+
 def candidate_normals(n0, tilt_deg):
     """對每個法向 n0 (m,3),在切平面內傾斜生成候選法向 (Nc,m,3)。tilt_deg<=0 → 只回 n0 本身(不搜)。"""
     m = len(n0)
@@ -95,7 +106,8 @@ def candidate_normals(n0, tilt_deg):
     return np.stack(cands, 0)                          # (Nc,m,3)
 
 
-def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r, max_iter, tilt_deg=20.0):
+def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r,
+               max_iter, tilt_deg=20.0, fg_patch_guard=False, ncc_reduce="mean"):
     occ = occ.copy()
     off = np.arange(-patch_r, patch_r + 1)
     dv_, du_ = np.meshgrid(off, off, indexing="ij")
@@ -142,6 +154,8 @@ def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r
         n0_all = nrm                                        # (Ns,3) hull 法向
         Nc = len(candidate_normals(n0_all[:1], tilt_deg))   # 候選數
         ncc_sum = np.zeros((Nc, Ns)); ncc_cnt = np.zeros((Nc, Ns))
+        ncc_max = np.full((Nc, Ns), -np.inf)
+        ncc_second = np.full((Nc, Ns), -np.inf)
         for r in range(V):
             sel = has_ref & (ref == r)
             if not sel.any():
@@ -161,6 +175,7 @@ def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r
             gr = views[r]["gray"]
             okp = (refpixu >= 0) & (refpixu < views[r]["W"]) & (refpixv >= 0) & (refpixv < views[r]["H"])
             refpixu = np.clip(refpixu, 0, views[r]["W"] - 1); refpixv = np.clip(refpixv, 0, views[r]["H"] - 1)
+            ref_fg = okp & views[r]["fg"][refpixv, refpixu]
             ref_patch = gr[refpixv, refpixu]                # (m,P)
             R_r = views[r]["Rwc"]; t_r = views[r]["t"]; Kinv_r = views[r]["Kinv"]
             X0r = X0[vsel] @ R_r.T + t_r                     # voxel → ref cam (m,3)
@@ -190,6 +205,8 @@ def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r
                         su = wp[:, :, 0] / wp[:, :, 2]; sv = wp[:, :, 1] / wp[:, :, 2]
                         src_val, sok = bilinear(vw["gray"], su, sv)
                         good = sok & okp[mm]
+                        if fg_patch_guard:
+                            good &= ref_fg[mm] & mask_samples(vw["fg"], su, sv)
                         allok = good.all(1)
                         if not allok.any():
                             continue
@@ -197,8 +214,17 @@ def carve_warp(occ, gm, vs, views, ncc_min, k_src, min_src, min_cluster, patch_r
                         valid = tex & ~np.isnan(nc)
                         gg = gi[allok][valid]
                         ncc_sum[c, gg] += nc[valid]; ncc_cnt[c, gg] += 1
+                        prior = ncc_max[c, gg].copy()
+                        ncc_second[c, gg] = np.where(nc[valid] > prior, prior, np.maximum(ncc_second[c, gg], nc[valid]))
+                        ncc_max[c, gg] = np.maximum(prior, nc[valid])
 
-        agg_c = np.where(ncc_cnt >= min_src, ncc_sum / np.maximum(ncc_cnt, 1), np.nan)
+        if ncc_reduce == "mean":
+            agg_c = ncc_sum / np.maximum(ncc_cnt, 1)
+        elif ncc_reduce in ("max", "second"):
+            agg_c = ncc_max if ncc_reduce == "max" else ncc_second
+        else:
+            raise ValueError(f"unknown ncc_reduce: {ncc_reduce}")
+        agg_c = np.where(ncc_cnt >= min_src, agg_c, np.nan)
         with np.errstate(all="ignore"):
             best_agg = np.nanmax(agg_c, axis=0)              # 每 voxel 最佳法向的 NCC
         has_ev = (ncc_cnt >= min_src).any(0)                 # 至少一個候選有足夠證據
