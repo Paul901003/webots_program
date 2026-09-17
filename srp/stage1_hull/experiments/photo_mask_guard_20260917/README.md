@@ -44,8 +44,9 @@ The runner defaults to `ncc_reduce=second` and writes
 views support a shared candidate normal, so one occluded source cannot lower a
 mean NCC into the deletion range.
 
-`RESULT.md` records the fixed-scene comparison. The candidate has not been
-promoted; it still needs representative-scene and downstream Stage 2 evaluation.
+`RESULT.md` records both the fixed scene and the completed 60-scene stack cohort.
+The guarded-second candidate is not promoted: its downstream clean leak and
+correct-assignment scores are worse than the no-photo controls.
 
 ## Input Hulls
 
