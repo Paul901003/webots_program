@@ -49,10 +49,14 @@ directly comparable by raw voxel count with the center-point hull above.
 | Variant | Remaining voxels | Removed voxels | Sugar visible-surface removed | GT coverage | Ghost ratio |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Footprint no photo | 15211 | 0 | 0 / 1304 | 0.9844 | 0.2178 |
+| Footprint guarded mean | 14288 | 923 | 374 / 1304 | 0.9729 | 0.1770 |
 | Footprint original mean | 14206 | 1005 | 409 / 1304 | 0.9650 | 0.1789 |
 | Footprint guarded second | 14920 | 291 | 176 / 1304 | 0.9760 | 0.2093 |
 
 The footprint variant begins with more true coverage and more ghost volume. Its
 guarded second-best photo pass has much less sugar loss than its original mean
 pass, but the Stage 2 leak evaluation must decide whether its extra volume makes
+Under the same foreground-patch guard, mean removes 28.7 percent of the sugar
+surface while second removes 13.5 percent. The improvement is therefore from the
+source-evidence aggregation rule rather than the footprint input alone.
 object separation worse.
