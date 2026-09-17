@@ -43,6 +43,22 @@ def drop_small_components(occupancy, minimum=20):
 def default_out_root(input_root, ncc_reduce):
     return f"{input_root}_photo_fgpatch_{ncc_reduce}"
 
+def write_viz_instances(out_dir, occupancy, grid_min, voxel_size, input_root, overwrite=False):
+    """Match legacy photo-hull roots: zero labels plus occupancy for grayfill."""
+    target = out_dir / "instances.npz"
+    if target.is_file() and not overwrite:
+        return False
+    np.savez_compressed(
+        target,
+        labels=np.zeros_like(occupancy, dtype=np.int32),
+        occupancy=occupancy,
+        grid_min=grid_min,
+        voxel_size=np.float64(voxel_size),
+        build_meta=json.dumps({
+            "src": f"{input_root} pure hull without semantic labels; use grayfill",
+        }),
+    )
+    return True
 
 def available_scenes(source_root):
     return sorted(
@@ -72,7 +88,13 @@ def main():
             raise FileNotFoundError(source)
         target = out_root / scene / "hull.npz"
         if target.is_file() and not args.force:
-            print(f"[skip] {scene}: {target} exists")
+            saved = np.load(target)
+            made_viz = write_viz_instances(
+                target.parent, saved["occupancy"], saved["grid_min"],
+                float(saved["voxel_size"]), args.in_root,
+            )
+            suffix = " + viz instances" if made_viz else ""
+            print(f"[skip] {scene}: {target} exists{suffix}")
             continue
 
         data = np.load(source)
@@ -108,6 +130,8 @@ def main():
             voxel_size=np.float64(voxel_size),
             build_meta=json.dumps(metadata),
         )
+        write_viz_instances(target.parent, carved, grid_min, voxel_size,
+                            args.in_root, overwrite=True)
         print(
             f"[{number}/{len(scenes)}] {scene}: "
             f"{int(occupancy.sum())}->{int(carved.sum())} vox"
