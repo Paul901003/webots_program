@@ -104,6 +104,16 @@ on the same 60-scene cohort. The inputs remain the guarded-second photo hulls.
 | `am1_fp` photo before div | 77.47% | 4.91% | 17.62% | 16.34% | 3.4% |
 | `am1_fp` photo plus divB | 72.50% | 9.88% | 17.62% | 1.25% | 20.7% |
 
-`divB` repairs semantic over-fragmentation, but it does so by merging contact
-regions and makes clean object separation worse for both photo hulls. It therefore
-does not change the non-promotion decision.
+Footprint photo plus divB is rejected. Center-photo divB has a lower aggregate
+leak than mainline divB and is assessed by the direct shared-voxel flow below.
+It remains an investigation candidate, not promoted: it retains four merged main
+pairs and creates one newly merged pair.
+
+## Direct Center-Div Flow
+
+See [DIVB_PAIR_FLOW.md](DIVB_PAIR_FLOW.md) for all 29 on relations. It follows
+only mainline-div leak voxels at common world coordinates. Of 2,405 such voxels,
+13.9 percent become correct under center-photo div, only 0.3 percent become
+unassigned, 75.1 percent remain leak, and 10.6 percent are no longer the same
+GT-labelled surface after photo carving. Main-pair merging remains 4/29, with one
+newly merged and one newly separated relation.
