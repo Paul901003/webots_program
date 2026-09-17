@@ -91,3 +91,19 @@ and Stage 2 baseline: `srp_hull_mv2_v12_am1` followed by
 The guarded photo code remains opt-in on this experiment branch. A future photo
 experiment must improve clean leak without reducing correct assignment, rather
 than relying on the Stage 1 mesh volume metrics alone.
+
+## DivB Follow-up
+
+`merge_div_guard.py` was run with the existing `divB` span rule and `theta=0.5`
+on the same 60-scene cohort. The inputs remain the guarded-second photo hulls.
+
+| Hull and merge variant | Correct | Leak | Unassigned | Fragment | Main pair merged |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `am1` photo before div | 76.43% | 4.98% | 18.59% | 15.76% | 0.0% |
+| `am1` photo plus divB | 74.03% | 7.38% | 18.59% | 2.19% | 13.8% |
+| `am1_fp` photo before div | 77.47% | 4.91% | 17.62% | 16.34% | 3.4% |
+| `am1_fp` photo plus divB | 72.50% | 9.88% | 17.62% | 1.25% | 20.7% |
+
+`divB` repairs semantic over-fragmentation, but it does so by merging contact
+regions and makes clean object separation worse for both photo hulls. It therefore
+does not change the non-promotion decision.
