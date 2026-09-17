@@ -7,9 +7,11 @@ import numpy as np
 
 REPO = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(REPO / "srp" / "stage1_hull"))
+sys.path.insert(0, str(REPO / "srp" / "stage1_hull" / "experiments" / "photo_mask_guard_20260917"))
 
 from photo_carve_warp import mask_samples
 
+from run_fgpatch import default_out_root
 
 class MaskSamplesTest(unittest.TestCase):
     def test_rejects_background_and_out_of_bounds_samples(self):
@@ -20,6 +22,12 @@ class MaskSamplesTest(unittest.TestCase):
             np.array([0.1, 0.1, 1.0, 1.0]),
         )
         np.testing.assert_array_equal(actual, [True, False, False, False])
+
+    def test_output_root_tracks_input_hull_and_reduction(self):
+        self.assertEqual(
+            default_out_root("srp_hull_mv2_v12_am1_fp", "second"),
+            "srp_hull_mv2_v12_am1_fp_photo_fgpatch_second",
+        )
 
 
 if __name__ == "__main__":

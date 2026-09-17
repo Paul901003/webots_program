@@ -16,8 +16,8 @@ import photo_carve_warp as warp
 from photo_carve_b import load_views
 
 
-SRC_ROOT = REPO / "data" / "eval" / "srp_hull_mv2_v12_am1"
-DEFAULT_OUT = "srp_hull_mv2_v12_am1_photo_fgpatch_second"
+EVAL = REPO / "data" / "eval"
+DEFAULT_INPUT = "srp_hull_mv2_v12_am1"
 GROUPS = ("n1", "n3", "n4", "n5", "occ3", "occ4", "occ5", "stack3", "stack4", "stack5")
 
 
@@ -40,11 +40,15 @@ def drop_small_components(occupancy, minimum=20):
     return np.isin(labels, keep)
 
 
-def available_scenes():
+def default_out_root(input_root, ncc_reduce):
+    return f"{input_root}_photo_fgpatch_{ncc_reduce}"
+
+
+def available_scenes(source_root):
     return sorted(
         path.name
         for group in GROUPS
-        for path in SRC_ROOT.glob(f"{group}_scene*")
+        for path in source_root.glob(f"{group}_scene*")
         if (path / "hull.npz").is_file()
     )
 
@@ -52,15 +56,18 @@ def available_scenes():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("scenes", nargs="*", help="Exact scene names.")
-    parser.add_argument("--out-root", default=DEFAULT_OUT)
+    parser.add_argument("--in-root", default=DEFAULT_INPUT)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--out-root")
     parser.add_argument("--ncc-reduce", choices=("mean", "max", "second"), default="second")
     args = parser.parse_args()
 
-    scenes = args.scenes or available_scenes()
-    out_root = REPO / "data" / "eval" / args.out_root
+    source_root = EVAL / args.in_root
+    output_name = args.out_root or default_out_root(args.in_root, args.ncc_reduce)
+    scenes = args.scenes or available_scenes(source_root)
+    out_root = EVAL / output_name
     for number, scene in enumerate(scenes, start=1):
-        source = SRC_ROOT / scene / "hull.npz"
+        source = source_root / scene / "hull.npz"
         if not source.is_file():
             raise FileNotFoundError(source)
         target = out_root / scene / "hull.npz"
@@ -85,7 +92,7 @@ def main():
         carved = drop_small_components(carved)
         target.parent.mkdir(parents=True, exist_ok=True)
         metadata = {
-            "src": "srp_hull_mv2_v12_am1",
+            "src": args.in_root,
             "sam": "mobilesamv2_fast",
             "num_views": 12,
             "allow_miss": 1,
