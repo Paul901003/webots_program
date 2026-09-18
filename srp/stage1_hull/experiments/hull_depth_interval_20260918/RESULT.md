@@ -92,3 +92,35 @@ beat the existing photo result.  Do **not** run semantic clustering or div on
 these outputs.  The missing evidence is source-view depth consistency: a
 candidate needs to be selected as a depth optimum in the source view after
 reprojection, not merely obtain a good pairwise NCC there.
+
+## Stage 3: Sparse Independent Depth Maps on `stack4_scene0007`
+
+`multi_ref_candidates.py` gives every front-facing, foreground-supported hull
+surface pixel its own reference-ray candidates. It keeps only the nearest
+current hull surface for a reference pixel. `depth_consistency.py` then holds
+that reference fixed during NCC, creates sparse per-view depth maps, and
+requires a deeper proposal to reproject within a 3-D tolerance of independently
+selected points in other source depth maps.
+
+The input produced 18,686 reference rays, 79,996 candidates, 72,176 points
+with a two-source NCC score, and 16,902 sparse depth-map entries. NCC took
+about 8 seconds. The following are mesh-occupancy measurements:
+
+| Method | Source support / tolerance | Coverage | Ghost |
+| --- | --- | ---: | ---: |
+| Raw am1 | - | 89.79% | 14.20% |
+| Existing `fgpatch_second` | - | 89.01% | 13.78% |
+| Depth consistency | 2 / 2 voxels | 82.32% | 10.30% |
+| Depth consistency | 2 / 1 voxel | 85.66% | 11.79% |
+| Depth consistency | 3 / 1 voxel | 87.50% | 12.83% |
+
+The geometric check does reduce ghost, but even its conservative version
+removes too much true surface for this project. This is a self-consistent
+wrong-depth failure: multiple sparse NCC maps can select a similar incorrect
+interior point when a real surface has weak or view-dependent appearance.
+Do **not** feed these hulls to semantic clustering or div.
+
+To approach COLMAP quality, a later method needs more than pointwise NCC plus
+depth agreement: it needs spatially regularized, view-visibility-aware depth
+optimization with robust multi-scale matching. The interval maps remain a
+valid search-domain restriction for that future method.
