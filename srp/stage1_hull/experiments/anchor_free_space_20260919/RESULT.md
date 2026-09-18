@@ -74,3 +74,36 @@ agreed-anchor depth map and accept support only when it selects the same 3-D
 anchor at the projected pixel. An anchor without enough such source support
 stays unknown, not free space. Its proposed removal mask must again be
 measured against GT before any hull is written.
+
+## Correction: visible outer voxel only
+
+The earlier free-space proposal was too broad: it marked every occupied voxel
+between a camera and a deeper anchor. That is not the intended operation and
+it cuts through real solid volume. The corrected proposal considers only `V0`,
+the current z-buffer-frontmost hull surface voxel for the reference pixel.
+
+`V0` receives a vote only when 7x7 and 11x11 choose the same *deeper* candidate
+on that reference ray. No voxel behind `V0` is proposed. A voxel that is also
+a high-confidence anchor from any view remains protected.
+
+```bash
+/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 \
+  srp/stage1_hull/experiments/anchor_free_space_20260919/visible_outer_votes.py \
+  stack3_scene0007 stack4_scene0007 stack5_scene0007 \
+  --device cuda --batch-size 512 --vote-levels 1 2 3 4 5 6 7 8 9
+```
+
+| Minimum cameras | stack3 ghost / real | stack4 ghost / real | stack5 ghost / real |
+| --- | ---: | ---: | ---: |
+| 3 | 111 / 31 | 286 / 21 | 325 / 27 |
+| 4 | 66 / 14 | 218 / 3 | 254 / 9 |
+| 5 | 39 / 3 | 165 / 1 | 182 / 1 |
+| 6 | 16 / 1 | 100 / 0 | 109 / 0 |
+| 7 | 7 / 0 | 55 / 0 | 46 / 0 |
+
+Here `ghost / real` means the proposed visible-outer voxels classified after
+the fact by GT solid mesh occupancy. `>=7` is the first common threshold with
+zero GT-real removals in all three test scenes. It is deliberately conservative:
+it removes only 0.19%, 3.06%, and 1.61% of each scene's baseline ghost voxels
+for stack3/4/5. It is suitable for a separate Stage-2 leak test, not yet a
+replacement for the main hull method.
