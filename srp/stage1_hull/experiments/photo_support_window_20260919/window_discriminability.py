@@ -80,7 +80,7 @@ def summarize_rows(scores, truth):
     }
 
 
-def process(scene, candidate_root, out_dir, radii, total_samples, surface_tol_mm, batch_size):
+def process(scene, candidate_root, out_dir, radii, total_samples, surface_tol_mm, batch_size, device):
     candidate_path = EVAL / candidate_root / scene / "multi_ref_candidates.npz"
     source_path = EVAL / "srp_hull_mv2_v12_am1" / scene / "hull.npz"
     candidates = np.load(candidate_path, allow_pickle=False)
@@ -115,7 +115,7 @@ def process(scene, candidate_root, out_dir, radii, total_samples, surface_tol_mm
     for radius in radii:
         t0 = time.time()
         flat_scores = forced_reference_scores(points, normals, refs[rows], views,
-                                              patch_radius=radius, batch_size=batch_size)
+                                              patch_radius=radius, batch_size=batch_size, device=device)
         scores = np.full(valid.shape, np.nan, np.float32)
         scores[rows, columns] = flat_scores
         scores_by_radius[radius] = scores
@@ -168,11 +168,13 @@ def main():
     parser.add_argument("--surface-tol-mm", type=float, default=12.0)
     parser.add_argument("--batch-size", type=int, default=256,
                         help="smaller batches keep large NCC windows within memory")
+    parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu",
+                        help="device for projection, warp, and NCC scoring")
     args = parser.parse_args()
     out_dir = EVAL / args.out_root
     for scene in args.scenes:
         process(scene, args.candidate_root, out_dir, args.radii, args.gt_samples,
-                args.surface_tol_mm, args.batch_size)
+                args.surface_tol_mm, args.batch_size, args.device)
 
 
 if __name__ == "__main__":

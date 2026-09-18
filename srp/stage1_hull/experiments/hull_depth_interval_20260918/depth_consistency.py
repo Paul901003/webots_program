@@ -18,6 +18,7 @@ import time
 from pathlib import Path
 
 import numpy as np
+import torch
 
 REPO = Path(__file__).resolve().parents[4]
 os.environ.setdefault("SAM_ROOT", str(REPO / "data" / "eval" / "mobilesamv2_fast"))
@@ -34,8 +35,8 @@ from run_interval_ray_search import connected_keep, load_views, removal_rays  # 
 EVAL = REPO / "data" / "eval"
 
 
-def forced_reference_scores(points, normals, refs, views, patch_radius=2, tilt_deg=20.0,
-                            k_src=4, min_src=2, batch_size=768):
+def _forced_reference_scores_cpu(points, normals, refs, views, patch_radius=2, tilt_deg=20.0,
+                                 k_src=4, min_src=2, batch_size=768):
     """Best second-source NCC while keeping `refs[i]` fixed for every point."""
     result = np.full(len(points), np.nan, np.float32)
     offsets = np.arange(-patch_radius, patch_radius + 1)
@@ -151,6 +152,199 @@ def forced_reference_scores(points, normals, refs, views, patch_radius=2, tilt_d
     return result
 
 
+
+def _torch_bilinear(gray, u, v):
+    height, width = gray.shape
+    u0 = torch.floor(u).to(torch.long)
+    v0 = torch.floor(v).to(torch.long)
+    du = u - u0
+    dv = v - v0
+    valid = (u0 >= 0) & (v0 >= 0) & (u0 + 1 < width) & (v0 + 1 < height)
+    u0 = u0.clamp(0, width - 2)
+    v0 = v0.clamp(0, height - 2)
+    value = (gray[v0, u0] * (1 - du) * (1 - dv) +
+             gray[v0, u0 + 1] * du * (1 - dv) +
+             gray[v0 + 1, u0] * (1 - du) * dv +
+             gray[v0 + 1, u0 + 1] * du * dv)
+    return value, valid
+
+
+def _torch_mask_samples(mask, u, v):
+    height, width = mask.shape
+    valid = (u >= 0) & (u < width) & (v >= 0) & (v < height)
+    ui = torch.round(u).to(torch.long).clamp(0, width - 1)
+    vi = torch.round(v).to(torch.long).clamp(0, height - 1)
+    return valid & mask[vi, ui]
+
+
+def _torch_candidate_normals(n0, tilt_deg):
+    if tilt_deg <= 0:
+        return n0.unsqueeze(0)
+    e = torch.zeros_like(n0)
+    e[:, 2] = 1.0
+    e[n0[:, 2].abs() > 0.9] = torch.tensor([1.0, 0.0, 0.0], device=n0.device, dtype=n0.dtype)
+    t1 = torch.linalg.cross(n0, e)
+    t1 = t1 / (torch.linalg.vector_norm(t1, dim=1, keepdim=True) + 1e-9)
+    t2 = torch.linalg.cross(n0, t1)
+    t2 = t2 / (torch.linalg.vector_norm(t2, dim=1, keepdim=True) + 1e-9)
+    delta = np.tan(np.deg2rad(tilt_deg))
+    offsets = [(0.0, 0.0)] + [(a, b) for a in (-delta, 0.0, delta)
+                              for b in (-delta, 0.0, delta) if (a, b) != (0.0, 0.0)]
+    candidates = []
+    for a, b in offsets:
+        normal = n0 + a * t1 + b * t2
+        candidates.append(normal / (torch.linalg.vector_norm(normal, dim=1, keepdim=True) + 1e-9))
+    return torch.stack(candidates, 0)
+
+
+def _torch_ncc_rows(first, second):
+    first = first - first.mean(1, keepdim=True)
+    second = second - second.mean(1, keepdim=True)
+    first_norm = torch.sqrt((first ** 2).sum(1))
+    second_norm = torch.sqrt((second ** 2).sum(1))
+    textured = (first_norm > 1e-2) & (second_norm > 1e-2)
+    ncc = (first * second).sum(1) / (first_norm * second_norm + 1e-9)
+    return ncc, textured
+
+
+def _forced_reference_scores_cuda(points, normals, refs, views, patch_radius=2, tilt_deg=20.0,
+                                  k_src=4, min_src=2, batch_size=768):
+    """Same score as the CPU path, with projection, warp, and NCC on CUDA."""
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA scoring requested but torch.cuda.is_available() is false")
+    device = torch.device("cuda")
+    dtype = torch.float64
+    gpu_views = [{
+        "Rwc": torch.as_tensor(view["Rwc"], device=device, dtype=dtype),
+        "t": torch.as_tensor(view["t"], device=device, dtype=dtype),
+        "Cw": torch.as_tensor(view["Cw"], device=device, dtype=dtype),
+        "K": torch.as_tensor(view["K"], device=device, dtype=dtype),
+        "Kinv": torch.as_tensor(view["Kinv"], device=device, dtype=dtype),
+        "gray": torch.as_tensor(view["gray"], device=device, dtype=dtype),
+        "fg": torch.as_tensor(view["fg"], device=device, dtype=torch.bool),
+        "W": view["W"], "H": view["H"],
+    } for view in views]
+    result = np.full(len(points), np.nan, np.float32)
+    offsets = torch.arange(-patch_radius, patch_radius + 1, device=device, dtype=dtype)
+    dv, du = torch.meshgrid(offsets, offsets, indexing="ij")
+    du = du.reshape(-1)
+    dv = dv.reshape(-1)
+    pixels = len(du)
+    view_count = len(gpu_views)
+
+    for start in range(0, len(points), batch_size):
+        stop = min(start + batch_size, len(points))
+        X0 = torch.as_tensor(points[start:stop], device=device, dtype=dtype)
+        n0 = torch.as_tensor(normals[start:stop], device=device, dtype=dtype)
+        ref_ids = torch.as_tensor(refs[start:stop], device=device, dtype=torch.long)
+        size = len(X0)
+        pu = torch.empty((view_count, size), device=device, dtype=dtype)
+        pv = torch.empty((view_count, size), device=device, dtype=dtype)
+        valid = torch.zeros((view_count, size), device=device, dtype=torch.bool)
+        directions = torch.empty((view_count, size, 3), device=device, dtype=dtype)
+        for vi, view in enumerate(gpu_views):
+            X = X0 @ view["Rwc"].T + view["t"]
+            z = X[:, 2]
+            front = z > 1e-6
+            zz = torch.where(front, z, torch.ones_like(z))
+            u = view["K"][0, 0] * X[:, 0] / zz + view["K"][0, 2]
+            v = view["K"][1, 1] * X[:, 1] / zz + view["K"][1, 2]
+            to_camera = view["Cw"].unsqueeze(0) - X0
+            to_camera = to_camera / (torch.linalg.vector_norm(to_camera, dim=1, keepdim=True) + 1e-9)
+            pu[vi], pv[vi] = u, v
+            directions[vi] = to_camera
+            facing = (n0 * to_camera).sum(1)
+            valid[vi] = front & (u >= 0) & (u < view["W"]) & (v >= 0) & (v < view["H"]) & (facing > 0.1)
+
+        normal_candidates = _torch_candidate_normals(n0, tilt_deg)
+        normal_count = len(normal_candidates)
+        count = torch.zeros((normal_count, size), device=device, dtype=torch.int16)
+        maximum = torch.full((normal_count, size), -torch.inf, device=device, dtype=dtype)
+        second = torch.full((normal_count, size), -torch.inf, device=device, dtype=dtype)
+        for ref in range(view_count):
+            selected = torch.nonzero((ref_ids == ref) & valid[ref], as_tuple=False).flatten()
+            if not len(selected):
+                continue
+            ref_view = gpu_views[ref]
+            dref = directions[ref, selected]
+            alignment = torch.full((view_count, len(selected)), -9.0, device=device, dtype=dtype)
+            for source in range(view_count):
+                if source == ref:
+                    continue
+                good = valid[source, selected]
+                alignment[source, good] = (directions[source, selected][good] * dref[good]).sum(1)
+            order = torch.argsort(-alignment, dim=0)[:k_src]
+            ur, vr = pu[ref, selected], pv[ref, selected]
+            ref_u = torch.round(ur[:, None] + du[None]).to(torch.long)
+            ref_v = torch.round(vr[:, None] + dv[None]).to(torch.long)
+            in_patch = ((ref_u >= 0) & (ref_u < ref_view["W"]) &
+                        (ref_v >= 0) & (ref_v < ref_view["H"]))
+            ref_u = ref_u.clamp(0, ref_view["W"] - 1)
+            ref_v = ref_v.clamp(0, ref_view["H"] - 1)
+            ref_fg = in_patch & ref_view["fg"][ref_v, ref_u]
+            ref_patch = ref_view["gray"][ref_v, ref_u]
+            Xref = X0[selected] @ ref_view["Rwc"].T + ref_view["t"]
+            normals_ref = torch.einsum("cmj,jk->cmk", normal_candidates[:, selected], ref_view["Rwc"].T)
+            plane_d = (normals_ref * Xref.unsqueeze(0)).sum(-1)
+            ref_hom = torch.stack([ur[:, None] + du[None], vr[:, None] + dv[None],
+                                   torch.ones((len(selected), pixels), device=device, dtype=dtype)], dim=-1)
+
+            for rank in range(k_src):
+                choices = order[rank]
+                for source in torch.unique(choices).tolist():
+                    if source == ref:
+                        continue
+                    local = torch.nonzero((choices == source) & (alignment[source] > -1), as_tuple=False).flatten()
+                    if not len(local):
+                        continue
+                    source_view = gpu_views[source]
+                    Rsr = source_view["Rwc"] @ ref_view["Rwc"].T
+                    tsr = source_view["t"] - source_view["Rwc"] @ ref_view["Rwc"].T @ ref_view["t"]
+                    hom = ref_hom[local]
+                    candidate_rows = selected[local]
+                    for ci in range(normal_count):
+                        nr = normals_ref[ci, local]
+                        depth = plane_d[ci, local]
+                        good_plane = depth.abs() > 1e-6
+                        matrix = Rsr.unsqueeze(0) + (tsr[None, :, None] * nr[:, None, :]) / depth[:, None, None]
+                        homography = torch.einsum("ij,njk,kl->nil", source_view["K"], matrix, ref_view["Kinv"])
+                        warped = torch.einsum("nij,npj->npi", homography, hom)
+                        su = warped[:, :, 0] / warped[:, :, 2]
+                        sv = warped[:, :, 1] / warped[:, :, 2]
+                        source_patch, source_ok = _torch_bilinear(source_view["gray"], su, sv)
+                        patch_ok = source_ok & in_patch[local] & ref_fg[local]
+                        patch_ok = patch_ok.all(1) & good_plane & _torch_mask_samples(source_view["fg"], su, sv).all(1)
+                        passing = torch.nonzero(patch_ok, as_tuple=False).flatten()
+                        if not len(passing):
+                            continue
+                        ncc, textured = _torch_ncc_rows(ref_patch[local][passing], source_patch[passing])
+                        accepted = torch.nonzero(textured & ~torch.isnan(ncc), as_tuple=False).flatten()
+                        if not len(accepted):
+                            continue
+                        target = candidate_rows[passing[accepted]]
+                        value = ncc[accepted]
+                        count[ci, target] += 1
+                        previous = maximum[ci, target]
+                        second[ci, target] = torch.where(value > previous, previous, torch.maximum(second[ci, target], value))
+                        maximum[ci, target] = torch.maximum(previous, value)
+
+        values = torch.where(count >= min_src, second, torch.full_like(second, torch.nan))
+        has_value = torch.isfinite(values).any(0)
+        best = torch.full((size,), torch.nan, device=device, dtype=dtype)
+        best[has_value] = torch.max(torch.nan_to_num(values[:, has_value], nan=-torch.inf), dim=0).values
+        result[start:stop] = best.to(torch.float32).cpu().numpy()
+    return result
+
+
+def forced_reference_scores(points, normals, refs, views, patch_radius=2, tilt_deg=20.0,
+                            k_src=4, min_src=2, batch_size=768, device="cpu"):
+    if device == "cpu":
+        return _forced_reference_scores_cpu(points, normals, refs, views, patch_radius, tilt_deg,
+                                            k_src, min_src, batch_size)
+    if device == "cuda":
+        return _forced_reference_scores_cuda(points, normals, refs, views, patch_radius, tilt_deg,
+                                             k_src, min_src, batch_size)
+    raise ValueError(f"unknown scoring device: {device}")
 def original_pixels(surface_indices, source_rows, refs, grid_min, voxel_size, views):
     points = grid_min + (surface_indices[source_rows] + 0.5) * voxel_size
     pixels = np.full(len(points), -1, np.int64)

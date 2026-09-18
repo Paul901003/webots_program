@@ -62,3 +62,31 @@ to turn same-depth winners into 3-D surface anchors, compute free-space votes
 in front of those anchors, and evaluate the proposed removal mask against GT
 before changing any hull. Anchor voxels must be globally protected; a ray from
 another view must not be allowed to delete them.
+
+## CUDA scorer validation
+
+The window scorer now has an explicit `--device cuda` path. It preserves the
+CPU scorer's projection, 9 normal hypotheses, up-to-4 source views, complete
+foreground-patch test, bilinear sampling, and NCC formula. Only the array
+operations run on the GPU.
+
+On a fixed sample of 256 `stack4_scene0007` candidates at 11x11, CPU and CUDA
+had exactly the same 213 scoreable candidates. Their maximum NCC difference
+was `1.19e-7` (mean `1.02e-8`).
+
+Full-scene 21x21 validation on `stack4_scene0007` gave exactly the same
+ranking statistics as the CPU result: 9,484 scoreable rows, 5,350 rows with a
+surface-like and ghost candidate, and `surface_beats_ghost_rate = 95.8505%`.
+The CUDA NCC section took 19.0 s with batch size 512; the previous CPU run
+with batch size 64 took 102.1 s. A same-sample CPU batch-size-512 check did
+not materially change CPU time, so this is a genuine GPU speedup rather than
+only a batching effect.
+
+```bash
+/home/cho/.pyenv/versions/webots_visual_hull/bin/python3 \
+  srp/stage1_hull/experiments/photo_support_window_20260919/window_discriminability.py \
+  stack4_scene0007 --radii 10 --batch-size 512 --device cuda \
+  --out-root photo_support_window_cuda_mv2_v12_am1
+```
+
+This acceleration changes neither the hull nor any carving decision.
