@@ -107,3 +107,19 @@ zero GT-real removals in all three test scenes. It is deliberately conservative:
 it removes only 0.19%, 3.06%, and 1.61% of each scene's baseline ghost voxels
 for stack3/4/5. It is suitable for a separate Stage-2 leak test, not yet a
 replacement for the main hull method.
+
+## Fixed ratio hull: rejected
+
+A separate hull root was built without GT guidance using the requested fixed
+rule: at least 3 assessable visible views and support ratio `S/N = 1.0`.
+
+| Scene | Removed | Ghost | Real | Ghost precision |
+| --- | ---: | ---: | ---: | ---: |
+| stack3_scene0007 | 12 | 10 | 2 | 83.3% |
+| stack4_scene0007 | 25 | 21 | 4 | 84.0% |
+| stack5_scene0007 | 17 | 14 | 3 | 82.4% |
+
+This rule is rejected. A ratio of 100% is not sufficient when the denominator
+is only 3--4 assessable views: all of them can still select the same deeper,
+real surface. The hulls remain isolated at
+`srp_hull_mv2_v12_am1_visibleouter_ratio100_n3` and must not enter Stage 2.
