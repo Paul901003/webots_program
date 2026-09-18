@@ -54,3 +54,41 @@ It reduced ghost slightly but was not suitable as the main result.  The next
 experiment should use this full ray interval, sample it coarsely then refine
 near a supported NCC maximum, and carve only camera-to-selected-depth space
 with two-source evidence.
+
+## Stage 2: Interval-Ray NCC on `stack4_scene0007`
+
+`interval_candidates.py` expands each outer surface voxel only along the ray
+of its most front-facing camera.  It retains an inward candidate only when it
+is both inside that pixel's interval and still occupied by the source hull.
+For `stride=3` voxels (15 mm) and `max-step=60` (300 mm), the candidate set is
+small enough to score directly:
+
+| Quantity | Value |
+| --- | ---: |
+| Surface voxels | 3,710 |
+| Referenceable surface voxels | 3,139 |
+| With a deeper interval | 2,856 |
+| Coarse candidate points | 15,735 |
+| Candidate count p50 / p95 per surface voxel | 4 / 11 |
+| NCC time | 1.7 s |
+
+`run_interval_ray_search.py` uses the exact Stage-1 foreground contract
+(`mobilesamv2_fast`, FK arm subtraction, `captures_fast`) and exactly the old
+ray-search NCC thresholds: two sources, foreground patch guard, reject outer
+NCC `<0.10`, accept deeper NCC `>=0.25`, and require a `>=0.10` improvement.
+
+| Method | Removed | Coverage | Ghost |
+| --- | ---: | ---: | ---: |
+| Raw am1 | 0 | 89.79% | 14.20% |
+| Existing `fgpatch_second` | 171 | 89.01% | 13.78% |
+| Previous 0--3 voxel ray search | 275 | 88.46% | 13.59% |
+| Full interval, one reference | 1,163 | 81.99% | 13.72% |
+| Full interval, two reference agreement | 365 | 87.36% | 14.04% |
+| Full interval, three reference agreement | 55 | 89.50% | 14.10% |
+
+The one-reference result over-carves.  Requiring two or three distinct
+reference rays to choose nearby endpoints reduces that error, but does not
+beat the existing photo result.  Do **not** run semantic clustering or div on
+these outputs.  The missing evidence is source-view depth consistency: a
+candidate needs to be selected as a depth optimum in the source view after
+reprojection, not merely obtain a good pairwise NCC there.
