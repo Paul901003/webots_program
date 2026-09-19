@@ -90,6 +90,9 @@ def process(scene, candidate_root, source_root, out_root, min_views, ratio, batc
     np.savez_compressed(out / "hull.npz", **payload)
     np.savez_compressed(out / "proposal.npz", assessable_views=assessable, support_views=support,
                         support_ratio=support_ratio, removed=proposed, protected_anchors=anchors)
+    # Visualization-only labels let hull_viz gray-fill this pure hull; no Stage 2 ran.
+    np.savez_compressed(out / "instances.npz", labels=np.zeros_like(result_occupancy, np.int32),
+                        occupancy=result_occupancy, grid_min=grid_min, voxel_size=np.float64(voxel_size))
     summary = {"scene": scene, "source_hull": source_root, "device": device, "min_assessable_views": min_views,
                "support_ratio": ratio, "removed_voxels": int(proposed.sum()),
                "remaining_voxels": int(result_occupancy.sum()), "max_assessable_views": int(assessable.max()),
