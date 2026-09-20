@@ -47,6 +47,16 @@ def center_visible(points, Rwc, t, K, width, height):
     return ids[order][first]
 
 
+
+def uncapped_footprint_radius(points, Rwc, t, K, voxel_size):
+    """Largest radius needed by this view; avoids CG's generic rmax=8 cap."""
+    z = (points @ Rwc.T + t)[:, 2]
+    positive = z > 1e-9
+    if not positive.any():
+        return 0
+    return int(np.rint(K[0, 0] * (voxel_size * 0.5) / z[positive]).max())
+
+
 def save_view(out, tag, occupancy, surface_indices, visible_ids, grid_min, voxel_size, meta):
     labels = np.zeros(occupancy.shape, np.int16)
     selected = surface_indices[visible_ids]
@@ -72,7 +82,8 @@ def build(scene, hull_root, out_root):
         height, width = foreground.shape
         c_ids = center_visible(points, Rwc, t, K, width, height)
         C, Rb = CAM.load_pose(capture_dir / f"{name}_pose.json")
-        fp_ids = np.unique(CG.zbuffer_visible(points, C, Rb, width, height, voxel_size))
+        rmax = uncapped_footprint_radius(points, Rwc, t, K, voxel_size)
+        fp_ids = np.unique(CG.zbuffer_visible(points, C, Rb, width, height, voxel_size, rmax=rmax))
         fp_ids = fp_ids[fp_ids >= 0]
         common = {
             "source_hull": hull_root,
@@ -85,8 +96,10 @@ def build(scene, hull_root, out_root):
         save_view(out, f"c_{name}", occupancy, indices, c_ids, grid_min, voxel_size,
                   {**common, "rule": "one center pixel wins z-buffer", "red_voxels": int(len(c_ids))})
         save_view(out, f"fp_{name}", occupancy, indices, fp_ids, grid_min, voxel_size,
-                  {**common, "rule": "one projected voxel-footprint pixel wins z-buffer", "red_voxels": int(len(fp_ids))})
-        print(f"[{name}] c red={len(c_ids)} fp red={len(fp_ids)}")
+                  {**common, "rule": "one projected voxel-footprint pixel wins z-buffer",
+                   "footprint_radius_cap": None, "footprint_radius_max_pixels": rmax,
+                   "red_voxels": int(len(fp_ids))})
+        print(f"[{name}] c red={len(c_ids)} fp red={len(fp_ids)} rmax={rmax}")
 
 
 def main():
