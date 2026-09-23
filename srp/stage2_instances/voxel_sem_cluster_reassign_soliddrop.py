@@ -29,6 +29,7 @@ from scipy.spatial.distance import pdist
 import camera as cam, masks as MK, mask_clip_cluster as MC, viewpoints as VP
 import cg_associate as CG   # 免深度 z-buffer
 from voxel_sem_cluster_donut import donut_masks, donut_feats   # 去大遮罩挖洞 + 甜甜圈特徵快取
+import dino_mask_feats as DF                                   # FEAT=dino 用;lazy-load,import 不載模型
 
 REPO = Path(__file__).resolve().parents[2]
 CAPTURES = Path(os.environ.get("CAPTURES_ROOT", str(REPO / "data" / "captures_fast")))
@@ -40,6 +41,7 @@ MIN_VOX = int(os.environ.get("MIN_VOX", "50"))
 NEST_THR = float(os.environ.get("NEST_THR", "0.8"))
 DROP_ARM = os.environ.get("DROP_ARM", "1") == "1"          # ★分群前去掉手臂+夾爪遮罩(用 srp_arm_masks,含夾爪)
 DONUT = os.environ.get("DONUT", "1") == "1"                 # ★1=去大遮罩挖洞(預設);0=用原始 mv2 遮罩+原始 clip 特徵(對照用)
+FEAT = os.environ.get("FEAT", "clip")                       # ★語意特徵來源:clip(預設,原行為)|dino(DINOv2 vitb14,cov>0面積加權;需 DEBIAS=0)
 ARM_DROP_THR = float(os.environ.get("ARM_DROP_THR", "0.5"))  # 遮罩 ≥此比例落在手臂剪影內 → 視為手臂/夾爪遮罩,丟
 DEBIAS = os.environ.get("DEBIAS", "1") == "1"
 VOTE = os.environ.get("VOTE", "footprint")             # footprint|center(兩者都用實心遮擋)
@@ -87,10 +89,12 @@ def semantic_cluster(sc, n_views, sem_thr):
         vi = len(vdata)
         if DONUT:
             ms = donut_masks(ms0, thr=NEST_THR)      # ★去大遮罩:含子遮罩的父遮罩挖成甜甜圈
-            fmap = donut_feats(vd, rgb, ms, names)   # 甜甜圈 CLIP(讀 clip_donut_feats.npy 快取)
+            fmap = (donut_feats(vd, rgb, ms, names) if FEAT == "clip"
+                    else DF.dino_donut_feats(vd, rgb, ms, names))   # 甜甜圈特徵(各自快取)
         else:
             ms = ms0                                 # ★原始 mv2 遮罩(不挖洞)
-            fmap = MK.mask_feats(vd)                 # 原始 clip_mean 特徵({檔名:feat})
+            fmap = (MK.mask_feats(vd) if FEAT == "clip"
+                    else DF.dino_raw_feats(vd, rgb, ms, names))     # 原始遮罩特徵
         for mi, nm in enumerate(names):
             f = fmap.get(nm)
             if f is not None: allf.append(f); ref.append((vi, mi))
@@ -191,7 +195,9 @@ def process(sc, n_views, sem_thr):
     labels, gm, vs, inst_masks, mask_cluster = semantic_cluster(sc, n_views, sem_thr)
     out = OUT_ROOT / sc; out.mkdir(parents=True, exist_ok=True)
     meta = {"script": "voxel_sem_cluster_reassign_soliddrop.py", "vote": VOTE, "occluder": "solid", "reassign": "connected_or_drop", "surface": True, "zbuffer": True, "donut": DONUT,
-            "nest_thr": NEST_THR, "feat": "recomputed_clip_donut" if DONUT else "raw_clip_mv2",
+            "nest_thr": NEST_THR, "feat_src": FEAT,
+            "feat": (("recomputed_clip_donut" if DONUT else "raw_clip_mv2") if FEAT == "clip"
+                     else ("dinov2_vitb14_covweighted_donut" if DONUT else "dinov2_vitb14_covweighted_raw")),
             "built": _dt.datetime.now().isoformat(timespec="seconds"),
             "hull_root": HULL_ROOT.name, "sam_root": SAM_ROOT.name, "captures_root": CAPTURES.name,
             "arm_root": ARM.name, "debias": DEBIAS, "sem_thr": sem_thr, "n_views": n_views, "min_vox": MIN_VOX,
