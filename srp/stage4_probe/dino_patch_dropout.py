@@ -114,6 +114,23 @@ def main():
     md += blk(isgex, "只看 GEX")
     md.append("")
 
+    # 逐組(n/occ/stack)分解:看小物體多的組丟棄率是否更高
+    grp = np.array([("stack" if r[0].startswith("stack") else
+                     "occ" if r[0].startswith("occ") else "n") for r in rows])
+    md.append("## 逐組(排除 GEX)\n")
+    md.append("| 組 | 場數 | 對數 | 丟棄數 | 丟棄率 | patch數中位 | ≤3 patch | 遮罩面積中位(px) |")
+    md.append("|---|---|---|---|---|---|---|---|")
+    for g in ("n", "occ", "stack"):
+        sel = (grp == g) & ~isgex
+        ns = len({r[0] for r, s in zip(rows, sel) if s})
+        if sel.sum() == 0:
+            md.append(f"| {g} | 0 | 0 | – | – | – | – | – |"); continue
+        d = npa[sel] == 0
+        md.append(f"| {g} | {ns} | {int(sel.sum())} | {int(d.sum())} | {d.mean()*100:.2f}% | "
+                  f"{int(np.median(npa[sel]))} | {int((npa[sel]<=3).sum())} "
+                  f"({(npa[sel]<=3).mean()*100:.2f}%) | {int(np.median(px[sel]))} |")
+    md.append("")
+
     # 被丟棄者與極小者的物體分布
     drop = defaultdict(int); tot = defaultdict(int); tiny = defaultdict(int)
     for (sc, vn, o, p, q) in rows:
@@ -146,7 +163,8 @@ def main():
         md.append("\n⚠ 差值 >0 屬正常:`process()` 行 118–119 會跳過缺 RGB 的視角"
                   "(該次跑的 `CAPTURES_ROOT` 預設是 `data/captures` 而非 `captures_fast`),"
                   "那些視角不在 npz 裡但算在本統計分母內。")
-    out = HERE / "RESULT_dino_patch_dropout.md"
+    tag = f"_{len(scenes)}scenes" if len(targets) > 3 else ""    # 範圍標籤,避免覆蓋既有結果
+    out = HERE / f"RESULT_dino_patch_dropout{tag}.md"
     out.write_text("\n".join(md), encoding="utf-8")
     print(f"[存檔] {out}\n\n" + "\n".join(md))
 
