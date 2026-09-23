@@ -190,8 +190,8 @@ def process(sc, n_views, sem_thr):
         return
     labels, gm, vs, inst_masks, mask_cluster = semantic_cluster(sc, n_views, sem_thr)
     out = OUT_ROOT / sc; out.mkdir(parents=True, exist_ok=True)
-    meta = {"script": "voxel_sem_cluster_reassign_soliddrop.py", "vote": VOTE, "occluder": "solid", "reassign": "connected_or_drop", "surface": True, "zbuffer": True, "donut": True,
-            "nest_thr": NEST_THR, "feat": "recomputed_clip_donut",
+    meta = {"script": "voxel_sem_cluster_reassign_soliddrop.py", "vote": VOTE, "occluder": "solid", "reassign": "connected_or_drop", "surface": True, "zbuffer": True, "donut": DONUT,
+            "nest_thr": NEST_THR, "feat": "recomputed_clip_donut" if DONUT else "raw_clip_mv2",
             "built": _dt.datetime.now().isoformat(timespec="seconds"),
             "hull_root": HULL_ROOT.name, "sam_root": SAM_ROOT.name, "captures_root": CAPTURES.name,
             "arm_root": ARM.name, "debias": DEBIAS, "sem_thr": sem_thr, "n_views": n_views, "min_vox": MIN_VOX,
