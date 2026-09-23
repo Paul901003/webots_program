@@ -90,39 +90,57 @@ def scene_iou(inst_root, hull_root, sc, mode="zbuffer"):
     fn2img = {Path(im["file_name"]).stem: im["id"] for im in ann["images"]}
     seg = {(a2["image_id"], a2["category_id"]): a2["segmentation"] for a2 in ann["annotations"]}
     g = sc.split("_")[0]
-    view_scores = []
+    V = {"iou": [], "prec": [], "other": [], "bg": []}       # 逐視角平均
+
+    def instance_metrics(pm, gts, gexs):
+        """回 (iou, precision, 溢別物, 溢背景)。gts=非GEX GT遮罩;gexs=GEX遮罩(當中性)。"""
+        if not pm.any() or not gts:
+            return None
+        ious = [iou2d(pm, gt) for gt in gts]
+        bi = int(np.argmax(ious)); gtb = gts[bi]
+        npm = int(pm.sum())
+        allnon = np.zeros_like(pm)
+        for gt in gts:
+            allnon |= gt
+        allobj = allnon.copy()
+        for gt in gexs:
+            allobj |= gt
+        prec = int((pm & gtb).sum()) / npm
+        other = int((pm & allnon & ~gtb).sum()) / npm        # 溢到別的非GEX物體
+        bg = int((pm & ~allobj).sum()) / npm                 # 溢到「所有物體(含GEX)之外」=背景/鬼影
+        return ious[bi], prec, other, bg
+
     for vn in sorted(VP.selected_view_names(12)):
         img = fn2img.get(vn); pf = CAP / f"multi_{g}" / sc / f"{vn}_pose.json"
         if img is None or not pf.is_file():
             continue
         C, Rb = cam.load_pose(pf)
-        gts = []
+        gts, gexs = [], []
         for cid, nm in id2n.items():
-            if nm in GEX or (img, cid) not in seg:
+            if (img, cid) not in seg:
                 continue
-            gts.append(RLE.decode(seg[(img, cid)]).astype(bool))
+            mm = RLE.decode(seg[(img, cid)]).astype(bool)
+            (gexs if nm in GEX else gts).append(mm)
         if not gts:
             continue
-        ious = []
+        pms = []
         if mode == "zbuffer":
-            va = CG.zbuffer_visible(oP, C, Rb, 1280, 720, vs)   # 每像素:最前 occ voxel 的 local idx
+            va = CG.zbuffer_visible(oP, C, Rb, 1280, 720, vs)
             pred = np.full(720 * 1280, 0, np.int32); m = va >= 0
             pred[m] = lab_of_o[va[m]]; pred = pred.reshape(720, 1280)
-            for i in np.unique(pred):
-                if i <= 0:
-                    continue
-                ious.append(max((iou2d(pred == i, gm2) for gm2 in gts), default=0.0))
-        else:                                                # direct:整群 footprint 聯集,不做遮擋
+            pms = [(pred == i) for i in np.unique(pred) if i > 0]
+        else:
             Rwc, t = cam.pose_to_w2c(C, Rb); K = cam.intrinsics(1280, 720)
-            for k in kids:
-                pm = footprint_mask(surf_Pw[k], K, Rwc, t, 1280, 720, vs)
-                if pm.any():
-                    ious.append(max((iou2d(pm, gm2) for gm2 in gts), default=0.0))
-        if ious:
-            view_scores.append(float(np.mean(ious)))
-    if not view_scores:
+            pms = [footprint_mask(surf_Pw[k], K, Rwc, t, 1280, 720, vs) for k in kids]
+        rows = [instance_metrics(pm, gts, gexs) for pm in pms]
+        rows = [r for r in rows if r is not None]
+        if rows:
+            arr = np.array(rows)
+            for j, key in enumerate(("iou", "prec", "other", "bg")):
+                V[key].append(float(arr[:, j].mean()))
+    if not V["iou"]:
         return None
-    return float(np.mean(view_scores))
+    return {key: float(np.mean(vals)) for key, vals in V.items()}
 
 
 def grp_of(sc):
@@ -138,28 +156,34 @@ def main():
     a = ap.parse_args()
     scenes = sorted(Path(p).parent.name for p in glob.glob(str(EVAL / a.inst_root / "*_scene*" / "instances.npz")))
     scenes = [s for s in scenes if not s.startswith("n1_")]
-    rows = []; G = {"n": [], "occ": [], "stack": [], "all": []}
+    KEYS = ("iou", "prec", "other", "bg")
+    rows = []; G = {gn: {k: [] for k in KEYS} for gn in ("n", "occ", "stack", "all")}
     for sc in scenes:
-        iou = scene_iou(a.inst_root, a.hull_root, sc, a.mode)
-        if iou is None:
+        r = scene_iou(a.inst_root, a.hull_root, sc, a.mode)
+        if r is None:
             continue
-        rows.append((sc, iou)); G[grp_of(sc)].append(iou); G["all"].append(iou)
+        rows.append((sc, r)); gn = grp_of(sc)
+        for k in KEYS:
+            G[gn][k].append(r[k]); G["all"][k].append(r[k])
     proj = "zbuffer(modal)" if a.mode == "zbuffer" else "direct(整群footprint直接投影,不遮擋)"
-    md = [f"# 重投影 2D IoU(mode={a.mode}):{a.inst_root}\n",
+    md = [f"# 重投影 2D IoU + 溢出(mode={a.mode}):{a.inst_root}\n",
           f"- 建檔 2026-09-23;程式 `reproj_iou.py --mode {a.mode}`;hull=`{a.hull_root}`;排 GEX;303 多物;可復現。",
-          f"- 投影={proj};每 instance 取對 GT modal 遮罩最佳 IoU;視角=instance 平均;每場=視角平均。\n",
-          "## 分組平均 IoU\n", "| 組 | 場數 | 平均每場 IoU |", "|---|---|---|"]
-    for gname in ("n", "occ", "stack", "all"):
-        if G[gname]:
-            md.append(f"| {gname} | {len(G[gname])} | {np.mean(G[gname]):.3f} |")
+          f"- 投影={proj};每 instance 對 GT modal 遮罩:IoU(最佳)、precision=|pm∩gt*|/|pm|、",
+          "  溢別物=溢到其他非GEX物體、溢背景=溢到所有物體(含GEX)之外。視角=instance 平均、每場=視角平均。\n",
+          "## 分組平均\n", "| 組 | 場數 | IoU | precision | 溢別物% | 溢背景% |", "|---|---|---|---|---|---|"]
+    for gn in ("n", "occ", "stack", "all"):
+        if G[gn]["iou"]:
+            md.append(f"| {gn} | {len(G[gn]['iou'])} | {np.mean(G[gn]['iou']):.3f} | "
+                      f"{np.mean(G[gn]['prec'])*100:.1f} | {np.mean(G[gn]['other'])*100:.1f} | "
+                      f"{np.mean(G[gn]['bg'])*100:.1f} |")
     tag = f"_{a.mode}" if a.mode != "zbuffer" else ""
     out_md = HERE / f"RESULT_reproj_iou_{a.inst_root}{tag}.md"
     out_md.write_text("\n".join(md), encoding="utf-8")
     out_csv = HERE / f"reproj_iou_{a.inst_root}{tag}_perscene.csv"
     with open(out_csv, "w", newline="") as f:
-        w = csv.writer(f); w.writerow(["scene", "mean_iou"])
-        for sc, iou in rows:
-            w.writerow([sc, f"{iou:.4f}"])
+        w = csv.writer(f); w.writerow(["scene"] + list(KEYS))
+        for sc, r in rows:
+            w.writerow([sc] + [f"{r[k]:.4f}" for k in KEYS])
     print(f"[存檔] {out_md}\n[存檔] {out_csv}\n場數={len(rows)}")
     print("\n" + "\n".join(md))
 
