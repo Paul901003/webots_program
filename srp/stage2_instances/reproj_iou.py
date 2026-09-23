@@ -38,7 +38,33 @@ def iou2d(a, b):
     return inter / uni if uni else 0.0
 
 
-def scene_iou(inst_root, hull_root, sc):
+def surface_of(m):
+    from scipy import ndimage
+    return m & ~ndimage.binary_erosion(m, ndimage.generate_binary_structure(3, 1))
+
+
+def footprint_mask(Pw, K, Rwc, t, W, H, vs, rmax=8):
+    """整群直接投影:把 voxel(世界座標 Pw)的 footprint 聯集成 2D 遮罩(不做 z-buffer 遮擋)。"""
+    X = Pw @ Rwc.T + t; z = X[:, 2]; ok = z > 1e-9
+    zz = np.where(ok, z, 1.0)
+    u = np.round(K[0, 0] * X[:, 0] / zz + K[0, 2]).astype(np.int64)
+    v = np.round(K[1, 1] * X[:, 1] / zz + K[1, 2]).astype(np.int64)
+    r = np.zeros(len(Pw), np.int64)
+    r[ok] = np.clip(np.round(K[0, 0] * (vs * 0.5) / zz[ok]).astype(np.int64), 0, rmax)
+    R = int(r.max()) if len(r) else 0
+    mask = np.zeros((H, W), bool)
+    for dy in range(-R, R + 1):
+        for dx in range(-R, R + 1):
+            sel = ok & (np.abs(dx) <= r) & (np.abs(dy) <= r)
+            if not sel.any():
+                continue
+            uu = u[sel] + dx; vv = v[sel] + dy
+            inb = (uu >= 0) & (uu < W) & (vv >= 0) & (vv < H)
+            mask[vv[inb], uu[inb]] = True
+    return mask
+
+
+def scene_iou(inst_root, hull_root, sc, mode="zbuffer"):
     hp = EVAL / hull_root / sc / "hull.npz"
     ip = EVAL / inst_root / sc / "instances.npz"
     if not (hp.is_file() and ip.is_file()):
@@ -49,6 +75,12 @@ def scene_iou(inst_root, hull_root, sc):
         return None
     ovox = np.argwhere(occ); oP = gm + (ovox + 0.5) * vs
     lab_of_o = labels[ovox[:, 0], ovox[:, 1], ovox[:, 2]]     # 每 occ voxel 的群 label
+    kids = [int(k) for k in np.unique(labels) if k > 0]
+    surf_Pw = {}                                             # direct 模式:每群表面 voxel 世界座標
+    if mode == "direct":
+        for k in kids:
+            sv = np.argwhere(surface_of(labels == k))
+            surf_Pw[k] = gm + (sv + 0.5) * vs
     d = label_dir(sc); af = d / "actual" / "annotations.json"
     if not af.is_file():
         return None
@@ -64,11 +96,6 @@ def scene_iou(inst_root, hull_root, sc):
         if img is None or not pf.is_file():
             continue
         C, Rb = cam.load_pose(pf)
-        va = CG.zbuffer_visible(oP, C, Rb, 1280, 720, vs)     # 每像素:最前 occ voxel 的 local idx(-1=無)
-        pred = np.full(720 * 1280, 0, np.int32)
-        m = va >= 0
-        pred[m] = lab_of_o[va[m]]
-        pred = pred.reshape(720, 1280)
         gts = []
         for cid, nm in id2n.items():
             if nm in GEX or (img, cid) not in seg:
@@ -77,12 +104,20 @@ def scene_iou(inst_root, hull_root, sc):
         if not gts:
             continue
         ious = []
-        for i in np.unique(pred):
-            if i <= 0:
-                continue
-            pm = (pred == i)
-            best = max((iou2d(pm, gm2) for gm2 in gts), default=0.0)
-            ious.append(best)
+        if mode == "zbuffer":
+            va = CG.zbuffer_visible(oP, C, Rb, 1280, 720, vs)   # 每像素:最前 occ voxel 的 local idx
+            pred = np.full(720 * 1280, 0, np.int32); m = va >= 0
+            pred[m] = lab_of_o[va[m]]; pred = pred.reshape(720, 1280)
+            for i in np.unique(pred):
+                if i <= 0:
+                    continue
+                ious.append(max((iou2d(pred == i, gm2) for gm2 in gts), default=0.0))
+        else:                                                # direct:整群 footprint 聯集,不做遮擋
+            Rwc, t = cam.pose_to_w2c(C, Rb); K = cam.intrinsics(1280, 720)
+            for k in kids:
+                pm = footprint_mask(surf_Pw[k], K, Rwc, t, 1280, 720, vs)
+                if pm.any():
+                    ious.append(max((iou2d(pm, gm2) for gm2 in gts), default=0.0))
         if ious:
             view_scores.append(float(np.mean(ious)))
     if not view_scores:
@@ -98,25 +133,29 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--inst-root", required=True)
     ap.add_argument("--hull-root", default="srp_hull_mv2_v12_am1")
+    ap.add_argument("--mode", default="zbuffer", choices=["zbuffer", "direct"],
+                    help="zbuffer=遮擋後可見(modal);direct=整群footprint直接投影(不遮擋)")
     a = ap.parse_args()
     scenes = sorted(Path(p).parent.name for p in glob.glob(str(EVAL / a.inst_root / "*_scene*" / "instances.npz")))
     scenes = [s for s in scenes if not s.startswith("n1_")]
     rows = []; G = {"n": [], "occ": [], "stack": [], "all": []}
     for sc in scenes:
-        iou = scene_iou(a.inst_root, a.hull_root, sc)
+        iou = scene_iou(a.inst_root, a.hull_root, sc, a.mode)
         if iou is None:
             continue
         rows.append((sc, iou)); G[grp_of(sc)].append(iou); G["all"].append(iou)
-    md = [f"# 重投影 2D IoU(每 instance vs GT modal 遮罩,每場平均):{a.inst_root}\n",
-          f"- 建檔 2026-09-23;程式 `reproj_iou.py`;hull=`{a.hull_root}`;排 GEX;303 多物;可復現。",
-          "- 每視角 zbuffer→pred群影像;每 instance 取對 GT 遮罩最佳 IoU;視角=instance 平均;每場=視角平均。\n",
+    proj = "zbuffer(modal)" if a.mode == "zbuffer" else "direct(整群footprint直接投影,不遮擋)"
+    md = [f"# 重投影 2D IoU(mode={a.mode}):{a.inst_root}\n",
+          f"- 建檔 2026-09-23;程式 `reproj_iou.py --mode {a.mode}`;hull=`{a.hull_root}`;排 GEX;303 多物;可復現。",
+          f"- 投影={proj};每 instance 取對 GT modal 遮罩最佳 IoU;視角=instance 平均;每場=視角平均。\n",
           "## 分組平均 IoU\n", "| 組 | 場數 | 平均每場 IoU |", "|---|---|---|"]
     for gname in ("n", "occ", "stack", "all"):
         if G[gname]:
             md.append(f"| {gname} | {len(G[gname])} | {np.mean(G[gname]):.3f} |")
-    out_md = HERE / f"RESULT_reproj_iou_{a.inst_root}.md"
+    tag = f"_{a.mode}" if a.mode != "zbuffer" else ""
+    out_md = HERE / f"RESULT_reproj_iou_{a.inst_root}{tag}.md"
     out_md.write_text("\n".join(md), encoding="utf-8")
-    out_csv = HERE / f"reproj_iou_{a.inst_root}_perscene.csv"
+    out_csv = HERE / f"reproj_iou_{a.inst_root}{tag}_perscene.csv"
     with open(out_csv, "w", newline="") as f:
         w = csv.writer(f); w.writerow(["scene", "mean_iou"])
         for sc, iou in rows:
