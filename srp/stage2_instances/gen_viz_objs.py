@@ -143,6 +143,8 @@ def main():
     else:
         z = np.load(ip)
         labels = z["labels"]; gm = z["grid_min"]; vs = float(z["voxel_size"])
+        # ★ 可選:instances.npz 帶 label_colors(label→真實RGB,如 photo_confirm 的 COLMAP 式上色)→ 用它取代 PALETTE
+        label_colors = z["label_colors"] if "label_colors" in z.files else None
         k_ids = [k for k in range(1, int(labels.max()) + 1) if (labels == k).any()]
         if not k_ids:
             print(f"[gen_viz] {args.scene}: instances 為空(空 hull)→ 只顯示 GT")
@@ -153,7 +155,11 @@ def main():
             f = f"inst_{k:02d}.obj"
             render = cubes_obj if args.cubes else inst_obj   # --cubes:逐voxel立方體(不平滑)
             if render(mask, gm, vs, out / f):
-                items.append({"file": f, "color": PALETTE[(k - 1) % len(PALETTE)],  # 用 hull 編號 k,和報告一致
+                if label_colors is not None and (k - 1) < len(label_colors):
+                    color = [float(c) for c in label_colors[k - 1]]   # ★ 真實 RGB(COLMAP 式)
+                else:
+                    color = PALETTE[(k - 1) % len(PALETTE)]           # 照舊 PALETTE
+                items.append({"file": f, "color": color,
                               "transparency": 0.30,  # 半透明(cubes/marching 同),看得到內部結構
                               "name": f"inst_{k:02d}"})
         if args.gray_fill and "occupancy" in z:      # 灰色定位層:occupancy 無語意(label 0)的 voxel
