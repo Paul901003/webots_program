@@ -39,6 +39,7 @@ OUT_ROOT = REPO / "data" / "eval" / os.environ.get("OUT_ROOT", "srp_hull_semclus
 MIN_VOX = int(os.environ.get("MIN_VOX", "50"))
 NEST_THR = float(os.environ.get("NEST_THR", "0.8"))
 DROP_ARM = os.environ.get("DROP_ARM", "1") == "1"          # ★分群前去掉手臂+夾爪遮罩(用 srp_arm_masks,含夾爪)
+DONUT = os.environ.get("DONUT", "1") == "1"                 # ★1=去大遮罩挖洞(預設);0=用原始 mv2 遮罩+原始 clip 特徵(對照用)
 ARM_DROP_THR = float(os.environ.get("ARM_DROP_THR", "0.5"))  # 遮罩 ≥此比例落在手臂剪影內 → 視為手臂/夾爪遮罩,丟
 DEBIAS = os.environ.get("DEBIAS", "1") == "1"
 VOTE = os.environ.get("VOTE", "footprint")             # footprint|center(兩者都用實心遮擋)
@@ -80,12 +81,16 @@ def semantic_cluster(sc, n_views, sem_thr):
                     if (m & arm).sum() / max(int(m.sum()), 1) < ARM_DROP_THR]
             ms0 = [ms0[k] for k in keep]; names = [names[k] for k in keep]
             if not ms0: continue
-        ms = donut_masks(ms0, thr=NEST_THR)      # ★去大遮罩:含子遮罩的父遮罩挖成甜甜圈
         C, Rb = cam.load_pose(pf); Rwc, t = cam.pose_to_w2c(C, Rb)
-        K = cam.intrinsics(ms[0].shape[1], ms[0].shape[0])
+        K = cam.intrinsics(ms0[0].shape[1], ms0[0].shape[0])
         rgb = cv2.cvtColor(cv2.imread(str(sdir / f"{vd.name}.png")), cv2.COLOR_BGR2RGB)
         vi = len(vdata)
-        fmap = donut_feats(vd, rgb, ms, names)   # ★甜甜圈 CLIP(讀 clip_donut_feats.npy 快取,donut 已存)
+        if DONUT:
+            ms = donut_masks(ms0, thr=NEST_THR)      # ★去大遮罩:含子遮罩的父遮罩挖成甜甜圈
+            fmap = donut_feats(vd, rgb, ms, names)   # 甜甜圈 CLIP(讀 clip_donut_feats.npy 快取)
+        else:
+            ms = ms0                                 # ★原始 mv2 遮罩(不挖洞)
+            fmap = MK.mask_feats(vd)                 # 原始 clip_mean 特徵({檔名:feat})
         for mi, nm in enumerate(names):
             f = fmap.get(nm)
             if f is not None: allf.append(f); ref.append((vi, mi))
