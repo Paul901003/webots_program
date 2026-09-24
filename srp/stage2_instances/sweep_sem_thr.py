@@ -24,6 +24,7 @@ env: FEAT(clip|dino) DEBIAS SAM_ROOT HULL_ROOT CAPTURES_ROOT ARM_MASK_ROOT OUT_P
 """
 import argparse
 import os
+import re
 import sys
 import json
 import glob
@@ -259,8 +260,10 @@ def main():
         else:
             scenes += [Path(p).parent.name for p in glob.glob(str(HULL_ROOT / f"{x}_scene*/hull.npz"))]
     if not scenes:
+        # 預設母體 = 舊 303 多物場(n3/n4/n5 + occ3-5 + stack3-5);排除 n1 與平衡資料集 b 組(nb/occb/stkb)
         scenes = sorted(Path(p).parent.name for p in glob.glob(str(HULL_ROOT / "*_scene*/hull.npz")))
-        scenes = [s for s in scenes if not s.startswith("n1_")]
+        scenes = [s for s in scenes
+                  if re.match(r"^(n3|n4|n5|occ3|occ4|occ5|stack3|stack4|stack5)_scene", s)]
     scenes = sorted(set(scenes))
     tags = {t: f"{OUT_PREFIX}_t{int(round(t*100)):02d}" for t in THRS}
     print(f"場景={len(scenes)}  FEAT={FEAT} DEBIAS={DEBIAS} DONUT={DONUT}  門檻={THRS}", flush=True)
