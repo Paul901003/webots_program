@@ -69,6 +69,7 @@ def main():
     ap.add_argument("--min-area", type=int, default=300, dest="min_area")
     ap.add_argument("--margin", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--el", default="", help="只用指定仰角的視角(如 30);空=全部 12 視角")
     ap.add_argument("--min-side", type=int, default=0, dest="min_side",
                     help="裁切後短邊至少多少 px;不足則【向外擴取更多脈絡】(非放大)。0=不保護")
     ap.add_argument("--out-dir", default="pair_crops", dest="out_dir")
@@ -93,6 +94,8 @@ def main():
                 # ★ 視角選擇:兩物同時可見,取 min(面積) 最大者(論文口徑的無深度版)
                 cands = []
                 for vn, dd in per.items():
+                    if a.el and f"el{a.el}" not in vn:     # ★ 仰角過濾
+                        continue
                     if A in dd and B in dd and dd[A][1] >= a.min_area and dd[B][1] >= a.min_area:
                         cands.append((min(dd[A][1], dd[B][1]), vn))
                 if not cands:

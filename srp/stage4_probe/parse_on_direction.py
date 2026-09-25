@@ -128,9 +128,9 @@ def main():
     md = [f"# 關係評分({a.csv}):偵測 + 方向\n",
           "## 偵測(有沒有 on;逐視角關鍵詞 + 投票)\n",
           "| 需幾票 | 召回率 | 假陽性率 | 精確率 | 平衡準確率 |", "|---|---|---|---|---|"] + [
-          (lambda TP, FN, FP, TN: f"| ≥{t}/3 | {TP/max(TP+FN,1)*100:.1f}% | {FP/max(FP+TN,1)*100:.1f}% | "
+          (lambda TP, FN, FP, TN: f"| ≥{t}/{max(d[chr(34)+chr(110)+chr(34)] for d in det)} |"[:-1] + " |" if False else f"| ≥{t}票 | {TP/max(TP+FN,1)*100:.1f}% | {FP/max(FP+TN,1)*100:.1f}% | "
            f"{TP/max(TP+FP,1)*100:.1f}% | **{(TP/max(TP+FN,1)+TN/max(FP+TN,1))/2*100:.1f}%** |")(*cm(t))
-          for t in (1, 2, 3)] + ["",
+          for t in range(1, max(d["n"] for d in det) + 1)] + ["",
           "# on 關係的【方向】驗證:誰在上?\n",
           "- 建檔 2026-09-25;程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。",
           "- 資料:`llava_pair_relation.csv`(89 對 × 3 視角完整回答,Open3DSG 成對裁切 + 原句 prompt)。",
