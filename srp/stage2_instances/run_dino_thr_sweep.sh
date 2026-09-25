@@ -18,6 +18,8 @@ HERE=$REPO/srp/stage2_instances
 PY=/home/cho/.pyenv/versions/webots_visual_hull/bin/python3
 LOG=${LOG:-$HERE/run_dino_thr_sweep.log}
 PREFIX=srp_hull_semcluster_reNNcSd_am1_dino_sw
+THRS=${THRS:-0.20,0.25,0.30,0.35,0.40}          # 可由 env 指定要掃的門檻
+TAGS=$(echo "$THRS" | tr ',' '\n' | awk '{printf "%02d ", $1*100}')   # 0.45 -> 45
 
 export SAM_ROOT=$REPO/data/eval/mobilesamv2_fast
 export HULL_ROOT=$REPO/data/eval/srp_hull_mv2_v12_am1
@@ -26,11 +28,11 @@ export CAPTURES_ROOT=$REPO/data/captures_fast
 { echo "=== 開始 $(date '+%F %T') ==="; } >> "$LOG"
 
 echo "--- 步驟1 sweep semcluster(5 門檻)$(date '+%T') ---" >> "$LOG"
-FEAT=dino DEBIAS=0 THRS=0.20,0.25,0.30,0.35,0.40 OUT_PREFIX=$PREFIX \
+FEAT=dino DEBIAS=0 THRS=$THRS OUT_PREFIX=$PREFIX \
   $PY "$HERE/sweep_sem_thr.py" --verify-root srp_hull_semcluster_reNNcSd_am1_dino --verify-thr 0.40 \
   >> "$LOG" 2>&1
 
-for T in 20 25 30 35 40; do
+for T in $TAGS; do
   SEM=${PREFIX}_t${T}
   echo "--- 步驟2 div t=0.${T} $(date '+%T')  src=$SEM ---" >> "$LOG"
   BASE_ROOT=$SEM THETAS=0.5 OUT_SUFFIX=_reNNcSd_am1_dino_t${T} \
