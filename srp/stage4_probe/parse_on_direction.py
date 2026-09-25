@@ -18,13 +18,14 @@
 輸出: RESULT_on_direction.md + on_direction.csv
 用法: ./parse_on_direction.py
 """
+import argparse
 import csv
 import re
 from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CSV = HERE / "llava_pair_relation.csv"
+
 
 # 物體 → 在回答文字中可能的關鍵詞(小寫)
 KW = {
@@ -78,8 +79,29 @@ def parse(ans, A, B):
     return None
 
 
+ONKW = re.compile(r"on top of|stacked on|stacked upon|placed on|resting on|sits on|sitting on|"
+                  r"lying on|underneath|beneath|supporting|balanced on", re.I)
+
+
 def main():
-    rows = list(csv.DictReader(open(CSV)))
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--csv", default="llava_pair_relation.csv")
+    ap.add_argument("--tag", default="", help="輸出檔名後綴")
+    ap.add_argument("--vote", type=int, default=2, help="偵測:3視角需幾票")
+    a = ap.parse_args()
+    rows = list(csv.DictReader(open(HERE / a.csv)))
+    # --- 偵測(有沒有 on):逐視角關鍵詞 + 投票;與各 runner 同一套規則,確保三版可比
+    det = []
+    for r in rows:
+        segs = [s2.split("] ", 1)[-1] for s2 in r["answer"].split(" || ")]
+        k = sum(1 for s2 in segs if ONKW.search(s2))
+        det.append({"is_on": r["is_on"] == "True", "n": len(segs), "k": k})
+    def cm(t):
+        TP = sum(1 for d in det if d["is_on"] and d["k"] >= t)
+        FN = sum(1 for d in det if d["is_on"] and d["k"] < t)
+        FP = sum(1 for d in det if not d["is_on"] and d["k"] >= t)
+        TN = sum(1 for d in det if not d["is_on"] and d["k"] < t)
+        return TP, FN, FP, TN
     out = []
     for r in rows:
         if r["is_on"] != "True":
@@ -103,7 +125,13 @@ def main():
     # 逐視角層級
     vs = [(r[f"v{i}"], r["gt_upper"]) for r in out for i in (1, 2, 3) if r[f"v{i}"]]
     vok = sum(1 for p, g in vs if p == g)
-    md = ["# on 關係的【方向】驗證:誰在上?\n",
+    md = [f"# 關係評分({a.csv}):偵測 + 方向\n",
+          "## 偵測(有沒有 on;逐視角關鍵詞 + 投票)\n",
+          "| 需幾票 | 召回率 | 假陽性率 | 精確率 | 平衡準確率 |", "|---|---|---|---|---|"] + [
+          (lambda TP, FN, FP, TN: f"| ≥{t}/3 | {TP/max(TP+FN,1)*100:.1f}% | {FP/max(FP+TN,1)*100:.1f}% | "
+           f"{TP/max(TP+FP,1)*100:.1f}% | **{(TP/max(TP+FN,1)+TN/max(FP+TN,1))/2*100:.1f}%** |")(*cm(t))
+          for t in (1, 2, 3)] + ["",
+          "# on 關係的【方向】驗證:誰在上?\n",
           "- 建檔 2026-09-25;程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。",
           "- 資料:`llava_pair_relation.csv`(89 對 × 3 視角完整回答,Open3DSG 成對裁切 + 原句 prompt)。",
           "- ⚠ 先前 `RESULT_llava_pair_relation.md` 只判「有沒有 on 字眼」,**未驗證方向**;本檔補上。",
@@ -129,11 +157,11 @@ def main():
         md.append(f"| {r['scene']} | {r['objA']} | {r['objB']} | **{r['gt_upper']}** | "
                   f"{f(r['v1'])} | {f(r['v2'])} | {f(r['v3'])} | {f(r['pred_upper'])} | "
                   f"{'✅' if r['correct'] else ('❌' if r['pred_upper'] else '—')} |")
-    (HERE / "RESULT_on_direction.md").write_text("\n".join(md), encoding="utf-8")
-    with open(HERE / "on_direction.csv", "w", newline="") as fh:
+    (HERE / f"RESULT_on_direction{a.tag}.md").write_text("\n".join(md), encoding="utf-8")
+    with open(HERE / f"on_direction{a.tag}.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(out[0].keys())); w.writeheader(); w.writerows(out)
     print("\n".join(md[:28]))
-    print(f"\n[存檔] {HERE/'RESULT_on_direction.md'}")
+    print(f"\n[存檔] {HERE}/RESULT_on_direction{a.tag}.md")
 
 
 if __name__ == "__main__":
