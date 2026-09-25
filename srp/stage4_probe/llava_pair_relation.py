@@ -27,7 +27,8 @@ from PIL import Image
 from transformers import LlavaNextForConditionalGeneration, LlavaNextProcessor, BitsAndBytesConfig
 
 HERE = Path(__file__).resolve().parent
-IMG = HERE / "pair_crops"
+import os
+IMG = HERE / os.environ.get("PAIR_DIR", "pair_crops")
 MODEL = "llava-hf/llama3-llava-next-8b-hf"
 NICE = {"gelatin_box": "gelatin box", "sponge": "sponge", "tuna_fish_can": "tuna fish can",
         "master_chef_can": "coffee can", "sugar_box": "sugar box", "foam_brick": "foam brick",
@@ -122,9 +123,9 @@ def main():
            "| 場景 | A | B | 回答(截斷) |", "|---|---|---|---|"]
     for r in [x for x in rows if not x["is_on"] and x["pred_on"]][:15]:
         md.append(f"| {r['scene']} | {r['objA']} | {r['objB']} | {r['answer'][:100]} |")
-    out = HERE / "RESULT_llava_pair_relation.md"
+    out = HERE / f"RESULT_llava_pair_relation{os.environ.get('OUT_TAG','')}.md"
     out.write_text("\n".join(md), encoding="utf-8")
-    with open(HERE / "llava_pair_relation.csv", "w", newline="") as f:
+    with open(HERE / f"llava_pair_relation{os.environ.get('OUT_TAG','')}.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["scene", "objA", "objB", "is_on", "upper", "views",
                                           "n_view", "n_on", "pred_on", "answer"])
         w.writeheader()

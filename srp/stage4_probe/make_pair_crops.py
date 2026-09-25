@@ -69,10 +69,15 @@ def main():
     ap.add_argument("--min-area", type=int, default=300, dest="min_area")
     ap.add_argument("--margin", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--min-side", type=int, default=0, dest="min_side",
+                    help="裁切後短邊至少多少 px;不足則【向外擴取更多脈絡】(非放大)。0=不保護")
+    ap.add_argument("--out-dir", default="pair_crops", dest="out_dir")
     ap.add_argument("--topk", type=int, default=1,
                     help="每對取前 k 個「兩物同時可見」的視角(Open3DSG Sec.3.2 用 top-k frames)")
     a = ap.parse_args()
     random.seed(a.seed)
+    global OUT
+    OUT = HERE / a.out_dir
     OUT.mkdir(parents=True, exist_ok=True)
     scenes = sorted(Path(p).parent.name for p in glob.glob(str(HULL / "stack*_scene*/hull.npz")))
     on_recs, non_recs = [], []
@@ -114,6 +119,15 @@ def main():
             xa0, ya0, xa1, ya1 = bbox(per[r["objA"]][0]); xb0, yb0, xb1, yb1 = bbox(per[r["objB"]][0])
             x0 = max(min(xa0, xb0) - a.margin, 0); y0 = max(min(ya0, yb0) - a.margin, 0)
             x1 = min(max(xa1, xb1) + a.margin, W); y1 = min(max(ya1, yb1) + a.margin, H)
+            if a.min_side > 0:      # ★ 短邊不足 → 向外擴取【更多真實脈絡】,不是放大插值
+                for _ in range(2):  # 兩軸各調一次(擴一軸可能讓另一軸的裁切比例改變)
+                    need_w = max(a.min_side - (x1 - x0), 0); need_h = max(a.min_side - (y1 - y0), 0)
+                    if need_w:
+                        x0 = max(x0 - need_w // 2, 0); x1 = min(x0 + max(x1 - x0, a.min_side), W)
+                        x0 = max(x1 - a.min_side, 0) if x1 - x0 < a.min_side else x0
+                    if need_h:
+                        y0 = max(y0 - need_h // 2, 0); y1 = min(y0 + max(y1 - y0, a.min_side), H)
+                        y0 = max(y1 - a.min_side, 0) if y1 - y0 < a.min_side else y0
             fn = f"{r['scene']}__{r['objA']}__{r['objB']}__v{rank}.png"
             cv2.imwrite(str(OUT / fn), img[y0:y1, x0:x1])
             files.append({"view": vn, "file": fn, "crop_wh": [x1 - x0, y1 - y0]})
