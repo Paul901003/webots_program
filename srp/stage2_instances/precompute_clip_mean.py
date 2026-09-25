@@ -1,6 +1,6 @@
 #!/home/cho/.pyenv/versions/webots_visual_hull/bin/python3
 """precompute_clip_mean.py — 預存每場景 12 視角每遮罩的 CLIP 填均值特徵。
-存 SAM_ROOT/<scene>/<view>/clip_mean_feats.npy (N×512,對應 sorted(masks/*.png) **全部遮罩**,無效遮罩=nan)。
+存 SAM_ROOT/<scene>/<view>/clip_mean_feats.npy (N×512,對應 sorted(masks/*.png); 被前景篩選排除者=nan)。
 與 border_frac 背景過濾解耦:後續一律用 masks.mask_feats(view_dir) 以「遮罩檔名」查特徵,不靠 kept 順序。
 cg/三方法(voxel_sem_vote/cluster/paper)讀這份 cache、不重算 CLIP。
 用法: ./precompute_clip_mean.py [scene|group|(空=全部)] [--n-views 12] [FORCE=1 重算]
@@ -29,12 +29,18 @@ def process(sc, n_views):
         if out.is_file() and not FORCE: done += 1; continue
         img = sdir / f"{vd.name}.png"
         if not img.is_file(): continue
-        mpaths = sorted((vd / "masks").glob("mask_*.png"))   # 全部遮罩(不濾背景),與 masks.mask_feats 對齊
-        ms = [(cv2.imread(str(p), 0) > 127) for p in mpaths]
-        if not ms: continue
-        rgb = cv2.cvtColor(cv2.imread(str(img)), cv2.COLOR_BGR2RGB)
-        feats = MC.clip_feats(rgb, ms, "mean")
-        arr = np.stack([f if f is not None else np.full(512, np.nan, np.float32) for f in feats]).astype(np.float32)
+        mpaths = sorted((vd / "masks").glob("mask_*.png"))
+        if not mpaths: continue
+        kept_masks = {name: mask for mask, name in MK.kept_object_masks(vd)}
+        valid = [i for i, path in enumerate(mpaths) if path.name in kept_masks]
+        arr = np.full((len(mpaths), 512), np.nan, np.float32)
+        if valid:
+            rgb = cv2.cvtColor(cv2.imread(str(img)), cv2.COLOR_BGR2RGB)
+            ms = [kept_masks[mpaths[i].name] for i in valid]
+            feats = MC.clip_feats(rgb, ms, "mean")
+            for i, feat in zip(valid, feats):
+                if feat is not None:
+                    arr[i] = feat
         np.save(out, arr); done += 1
     print(f"[{sc}] 預存 {done} 視角 clip_mean_feats", flush=True)
 

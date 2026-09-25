@@ -23,6 +23,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "srp" / "io"))
 sys.path.insert(0, str(REPO / "srp" / "stage4_probe" / "siglip_probe"))
 import viewpoints as VP          # noqa: E402
+import masks as MK               # noqa: E402
 from crop_util import sqcrop_geom   # noqa: E402
 from feat_siglip import build, embed, MODELS, RES, FILL   # noqa: E402  復用載入/前處理
 
@@ -70,9 +71,12 @@ def run_one(tag, scenes):
                 continue
             rgb = cv2.cvtColor(cv2.imread(str(rp)), cv2.COLOR_BGR2RGB)
             mpaths = sorted((vd / "masks").glob("mask_*.png"))
+            kept_masks = {name: mask for mask, name in MK.kept_object_masks(vd)}
             crops, valid = [], []
             for i, mp in enumerate(mpaths):
-                seg = cv2.imread(str(mp), 0) > 127
+                if mp.name not in kept_masks:
+                    continue
+                seg = kept_masks[mp.name]
                 c = sqcrop_geom(rgb, seg, FILL)
                 if c is not None:
                     crops.append(cv2.resize(c, (RES, RES))); valid.append(i)
