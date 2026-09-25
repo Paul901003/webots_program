@@ -1,1337 +1,3384 @@
 [
  {
   "scene": "stack3_scene0005",
-  "view": "view_el30_az135",
   "objA": "foam_brick",
   "objB": "gelatin_box",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 8313,
-  "areaB": 4583,
-  "file": "stack3_scene0005__foam_brick__gelatin_box.png",
-  "crop_wh": [
-   184,
-   200
+  "views": [
+   "view_el30_az135",
+   "view_el30_az210",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack3_scene0005__foam_brick__gelatin_box__v0.png",
+    "crop_wh": [
+     184,
+     200
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0005__foam_brick__gelatin_box__v1.png",
+    "crop_wh": [
+     179,
+     184
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack3_scene0005__foam_brick__gelatin_box__v2.png",
+    "crop_wh": [
+     168,
+     179
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0006",
-  "view": "view_el30_az240",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 10561,
-  "areaB": 3930,
-  "file": "stack3_scene0006__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   156,
-   239
+  "views": [
+   "view_el30_az240",
+   "view_el30_az210",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0006__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     156,
+     239
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0006__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     155,
+     237
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack3_scene0006__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     154,
+     237
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0011",
-  "view": "view_el30_az135",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 10613,
-  "areaB": 3964,
-  "file": "stack3_scene0011__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   156,
-   239
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack3_scene0011__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     156,
+     239
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack3_scene0011__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     159,
+     238
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack3_scene0011__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     150,
+     228
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0013",
-  "view": "view_el60_az180",
   "objA": "foam_brick",
   "objB": "sponge",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 6952,
-  "areaB": 4121,
-  "file": "stack3_scene0013__foam_brick__sponge.png",
-  "crop_wh": [
-   183,
-   161
+  "views": [
+   "view_el60_az180",
+   "view_el90",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack3_scene0013__foam_brick__sponge__v0.png",
+    "crop_wh": [
+     183,
+     161
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack3_scene0013__foam_brick__sponge__v1.png",
+    "crop_wh": [
+     183,
+     147
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack3_scene0013__foam_brick__sponge__v2.png",
+    "crop_wh": [
+     195,
+     178
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0014",
-  "view": "view_el45_az225",
   "objA": "master_chef_can",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 19248,
-  "areaB": 16595,
-  "file": "stack3_scene0014__master_chef_can__tomato_soup_can.png",
-  "crop_wh": [
-   199,
-   383
+  "views": [
+   "view_el45_az225",
+   "view_el45_az135",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0014__master_chef_can__tomato_soup_can__v0.png",
+    "crop_wh": [
+     199,
+     383
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack3_scene0014__master_chef_can__tomato_soup_can__v1.png",
+    "crop_wh": [
+     191,
+     371
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0014__master_chef_can__tomato_soup_can__v2.png",
+    "crop_wh": [
+     194,
+     397
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0015",
-  "view": "view_el30_az240",
   "objA": "foam_brick",
   "objB": "gelatin_box",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 6598,
-  "areaB": 4087,
-  "file": "stack3_scene0015__foam_brick__gelatin_box.png",
-  "crop_wh": [
-   182,
-   187
+  "views": [
+   "view_el30_az240",
+   "view_el45_az225",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0015__foam_brick__gelatin_box__v0.png",
+    "crop_wh": [
+     182,
+     187
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0015__foam_brick__gelatin_box__v1.png",
+    "crop_wh": [
+     179,
+     195
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0015__foam_brick__gelatin_box__v2.png",
+    "crop_wh": [
+     168,
+     177
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0016",
-  "view": "view_el30_az240",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 10512,
-  "areaB": 3912,
-  "file": "stack3_scene0016__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   155,
-   238
+  "views": [
+   "view_el30_az240",
+   "view_el30_az210",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0016__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     155,
+     238
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0016__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     154,
+     234
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack3_scene0016__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     152,
+     233
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0017",
-  "view": "view_el45_az225",
   "objA": "master_chef_can",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 18948,
-  "areaB": 16176,
-  "file": "stack3_scene0017__master_chef_can__tomato_soup_can.png",
-  "crop_wh": [
-   197,
-   381
+  "views": [
+   "view_el45_az225",
+   "view_el45_az135",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0017__master_chef_can__tomato_soup_can__v0.png",
+    "crop_wh": [
+     197,
+     381
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack3_scene0017__master_chef_can__tomato_soup_can__v1.png",
+    "crop_wh": [
+     191,
+     372
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack3_scene0017__master_chef_can__tomato_soup_can__v2.png",
+    "crop_wh": [
+     199,
+     333
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0019",
-  "view": "view_el60_az195",
   "objA": "foam_brick",
   "objB": "wood_block",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 14466,
-  "areaB": 23054,
-  "file": "stack3_scene0019__foam_brick__wood_block.png",
-  "crop_wh": [
-   233,
-   357
+  "views": [
+   "view_el60_az195",
+   "view_el60_az180",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az195",
+    "file": "stack3_scene0019__foam_brick__wood_block__v0.png",
+    "crop_wh": [
+     233,
+     357
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack3_scene0019__foam_brick__wood_block__v1.png",
+    "crop_wh": [
+     213,
+     341
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0019__foam_brick__wood_block__v2.png",
+    "crop_wh": [
+     229,
+     411
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0002",
-  "view": "view_el30_az135",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 9776,
-  "areaB": 3644,
-  "file": "stack4_scene0002__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   152,
-   231
+  "views": [
+   "view_el30_az135",
+   "view_el30_az240",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0002__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     152,
+     231
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0002__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     150,
+     229
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0002__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     150,
+     228
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0003",
-  "view": "view_el30_az240",
   "objA": "master_chef_can",
   "objB": "pudding_box",
   "is_on": true,
   "upper": "master_chef_can",
-  "areaA": 24094,
-  "areaB": 5731,
-  "file": "stack4_scene0003__master_chef_can__pudding_box.png",
-  "crop_wh": [
-   211,
-   315
+  "views": [
+   "view_el30_az240",
+   "view_el30_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0003__master_chef_can__pudding_box__v0.png",
+    "crop_wh": [
+     211,
+     315
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0003__master_chef_can__pudding_box__v1.png",
+    "crop_wh": [
+     192,
+     281
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0003__master_chef_can__pudding_box__v2.png",
+    "crop_wh": [
+     188,
+     296
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0006",
-  "view": "view_el30_az210",
   "objA": "gelatin_box",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 4719,
-  "areaB": 10924,
-  "file": "stack4_scene0006__gelatin_box__tomato_soup_can.png",
-  "crop_wh": [
-   182,
-   242
+  "views": [
+   "view_el30_az210",
+   "view_el30_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0006__gelatin_box__tomato_soup_can__v0.png",
+    "crop_wh": [
+     182,
+     242
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0006__gelatin_box__tomato_soup_can__v1.png",
+    "crop_wh": [
+     182,
+     251
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0006__gelatin_box__tomato_soup_can__v2.png",
+    "crop_wh": [
+     168,
+     239
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0007",
-  "view": "view_el45_az225",
   "objA": "sponge",
   "objB": "sugar_box",
   "is_on": true,
   "upper": "sugar_box",
-  "areaA": 4412,
-  "areaB": 23170,
-  "file": "stack4_scene0007__sponge__sugar_box.png",
-  "crop_wh": [
-   209,
-   337
+  "views": [
+   "view_el45_az225",
+   "view_el30_az210",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0007__sponge__sugar_box__v0.png",
+    "crop_wh": [
+     209,
+     337
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0007__sponge__sugar_box__v1.png",
+    "crop_wh": [
+     214,
+     334
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0007__sponge__sugar_box__v2.png",
+    "crop_wh": [
+     204,
+     323
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0009",
-  "view": "view_el30_az135",
   "objA": "master_chef_can",
   "objB": "pudding_box",
   "is_on": true,
   "upper": "master_chef_can",
-  "areaA": 25014,
-  "areaB": 6186,
-  "file": "stack4_scene0009__master_chef_can__pudding_box.png",
-  "crop_wh": [
-   212,
-   313
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az240"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0009__master_chef_can__pudding_box__v0.png",
+    "crop_wh": [
+     212,
+     313
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0009__master_chef_can__pudding_box__v1.png",
+    "crop_wh": [
+     212,
+     316
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0009__master_chef_can__pudding_box__v2.png",
+    "crop_wh": [
+     198,
+     300
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0010",
-  "view": "view_el60_az180",
   "objA": "master_chef_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tuna_fish_can",
-  "areaA": 11707,
-  "areaB": 12174,
-  "file": "stack4_scene0010__master_chef_can__tuna_fish_can.png",
-  "crop_wh": [
-   199,
-   273
+  "views": [
+   "view_el60_az180",
+   "view_el60_az195",
+   "view_el60_az255"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0010__master_chef_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     199,
+     273
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0010__master_chef_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     199,
+     273
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0010__master_chef_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     195,
+     273
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0011",
-  "view": "view_el60_az180",
   "objA": "master_chef_can",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 14249,
-  "areaB": 14239,
-  "file": "stack4_scene0011__master_chef_can__tomato_soup_can.png",
-  "crop_wh": [
-   190,
-   337
+  "views": [
+   "view_el60_az180",
+   "view_el60_az255",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0011__master_chef_can__tomato_soup_can__v0.png",
+    "crop_wh": [
+     190,
+     337
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0011__master_chef_can__tomato_soup_can__v1.png",
+    "crop_wh": [
+     191,
+     338
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0011__master_chef_can__tomato_soup_can__v2.png",
+    "crop_wh": [
+     190,
+     337
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0012",
-  "view": "view_el30_az240",
   "objA": "gelatin_box",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 4479,
-  "areaB": 10222,
-  "file": "stack4_scene0012__gelatin_box__tomato_soup_can.png",
-  "crop_wh": [
-   183,
-   242
+  "views": [
+   "view_el30_az240",
+   "view_el30_az210",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0012__gelatin_box__tomato_soup_can__v0.png",
+    "crop_wh": [
+     183,
+     242
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0012__gelatin_box__tomato_soup_can__v1.png",
+    "crop_wh": [
+     175,
+     235
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0012__gelatin_box__tomato_soup_can__v2.png",
+    "crop_wh": [
+     184,
+     243
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0014",
-  "view": "view_el45_az135",
   "objA": "sponge",
   "objB": "sugar_box",
   "is_on": true,
   "upper": "sugar_box",
-  "areaA": 3815,
-  "areaB": 21205,
-  "file": "stack4_scene0014__sponge__sugar_box.png",
-  "crop_wh": [
-   198,
-   317
+  "views": [
+   "view_el45_az135",
+   "view_el60_az180",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0014__sponge__sugar_box__v0.png",
+    "crop_wh": [
+     198,
+     317
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0014__sponge__sugar_box__v1.png",
+    "crop_wh": [
+     188,
+     257
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0014__sponge__sugar_box__v2.png",
+    "crop_wh": [
+     178,
+     261
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0017",
-  "view": "view_el60_az195",
   "objA": "foam_brick",
   "objB": "master_chef_can",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 10870,
-  "areaB": 13076,
-  "file": "stack4_scene0017__foam_brick__master_chef_can.png",
-  "crop_wh": [
-   196,
-   279
+  "views": [
+   "view_el60_az195",
+   "view_el60_az180",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0017__foam_brick__master_chef_can__v0.png",
+    "crop_wh": [
+     196,
+     279
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0017__foam_brick__master_chef_can__v1.png",
+    "crop_wh": [
+     197,
+     272
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0017__foam_brick__master_chef_can__v2.png",
+    "crop_wh": [
+     192,
+     314
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0018",
-  "view": "view_el30_az135",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 10293,
-  "areaB": 3829,
-  "file": "stack4_scene0018__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   154,
-   236
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0018__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     154,
+     236
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0018__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     155,
+     236
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0018__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     150,
+     229
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0005",
-  "view": "view_el45_az135",
   "objA": "pudding_box",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tuna_fish_can",
-  "areaA": 6662,
-  "areaB": 7781,
-  "file": "stack5_scene0005__pudding_box__tuna_fish_can.png",
-  "crop_wh": [
-   208,
-   197
+  "views": [
+   "view_el45_az135",
+   "view_el30_az135",
+   "view_el30_az240"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0005__pudding_box__tuna_fish_can__v0.png",
+    "crop_wh": [
+     208,
+     197
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0005__pudding_box__tuna_fish_can__v1.png",
+    "crop_wh": [
+     208,
+     184
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0005__pudding_box__tuna_fish_can__v2.png",
+    "crop_wh": [
+     204,
+     184
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0008",
-  "view": "view_el30_az195",
   "objA": "tomato_soup_can",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 10722,
-  "areaB": 4072,
-  "file": "stack5_scene0008__tomato_soup_can__tuna_fish_can.png",
-  "crop_wh": [
-   158,
-   242
+  "views": [
+   "view_el30_az195",
+   "view_el30_az135",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az195",
+    "file": "stack5_scene0008__tomato_soup_can__tuna_fish_can__v0.png",
+    "crop_wh": [
+     158,
+     242
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0008__tomato_soup_can__tuna_fish_can__v1.png",
+    "crop_wh": [
+     159,
+     242
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack5_scene0008__tomato_soup_can__tuna_fish_can__v2.png",
+    "crop_wh": [
+     157,
+     239
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0011",
-  "view": "view_el90",
   "objA": "foam_brick",
   "objB": "sponge",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 5639,
-  "areaB": 4062,
-  "file": "stack5_scene0011__foam_brick__sponge.png",
-  "crop_wh": [
-   183,
-   147
+  "views": [
+   "view_el90",
+   "view_el45_az135",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0011__foam_brick__sponge__v0.png",
+    "crop_wh": [
+     183,
+     147
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0011__foam_brick__sponge__v1.png",
+    "crop_wh": [
+     199,
+     195
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0011__foam_brick__sponge__v2.png",
+    "crop_wh": [
+     198,
+     195
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0013",
-  "view": "view_el90",
   "objA": "foam_brick",
   "objB": "sponge",
   "is_on": true,
   "upper": "foam_brick",
-  "areaA": 5578,
-  "areaB": 4109,
-  "file": "stack5_scene0013__foam_brick__sponge.png",
-  "crop_wh": [
-   183,
-   147
+  "views": [
+   "view_el90",
+   "view_el60_az180",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0013__foam_brick__sponge__v0.png",
+    "crop_wh": [
+     183,
+     147
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0013__foam_brick__sponge__v1.png",
+    "crop_wh": [
+     179,
+     161
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0013__foam_brick__sponge__v2.png",
+    "crop_wh": [
+     201,
+     197
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0014",
-  "view": "view_el60_az255",
   "objA": "cracker_box",
   "objB": "sugar_box",
   "is_on": true,
   "upper": "sugar_box",
-  "areaA": 28721,
-  "areaB": 30292,
-  "file": "stack5_scene0014__cracker_box__sugar_box.png",
-  "crop_wh": [
-   238,
-   491
+  "views": [
+   "view_el60_az255",
+   "view_el60_az195",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0014__cracker_box__sugar_box__v0.png",
+    "crop_wh": [
+     238,
+     491
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0014__cracker_box__sugar_box__v1.png",
+    "crop_wh": [
+     303,
+     405
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0014__cracker_box__sugar_box__v2.png",
+    "crop_wh": [
+     298,
+     378
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0016",
-  "view": "view_el60_az255",
   "objA": "tomato_soup_can",
   "objB": "wood_block",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 21667,
-  "areaB": 22383,
-  "file": "stack5_scene0016__tomato_soup_can__wood_block.png",
-  "crop_wh": [
-   212,
-   415
+  "views": [
+   "view_el60_az255",
+   "view_el60_az195",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0016__tomato_soup_can__wood_block__v0.png",
+    "crop_wh": [
+     212,
+     415
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0016__tomato_soup_can__wood_block__v1.png",
+    "crop_wh": [
+     221,
+     419
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0016__tomato_soup_can__wood_block__v2.png",
+    "crop_wh": [
+     204,
+     400
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el30_az135",
   "objA": "gelatin_box",
   "objB": "tomato_soup_can",
   "is_on": true,
   "upper": "tomato_soup_can",
-  "areaA": 4383,
-  "areaB": 10272,
-  "file": "stack5_scene0018__gelatin_box__tomato_soup_can.png",
-  "crop_wh": [
-   180,
-   240
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0018__gelatin_box__tomato_soup_can__v0.png",
+    "crop_wh": [
+     180,
+     240
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0018__gelatin_box__tomato_soup_can__v1.png",
+    "crop_wh": [
+     180,
+     243
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0018__gelatin_box__tomato_soup_can__v2.png",
+    "crop_wh": [
+     175,
+     231
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0019",
-  "view": "view_el60_az180",
   "objA": "cracker_box",
   "objB": "sugar_box",
   "is_on": true,
   "upper": "sugar_box",
-  "areaA": 41467,
-  "areaB": 51958,
-  "file": "stack5_scene0019__cracker_box__sugar_box.png",
-  "crop_wh": [
-   323,
-   468
+  "views": [
+   "view_el60_az180",
+   "view_el60_az195",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0019__cracker_box__sugar_box__v0.png",
+    "crop_wh": [
+     323,
+     468
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0019__cracker_box__sugar_box__v1.png",
+    "crop_wh": [
+     336,
+     480
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0019__cracker_box__sugar_box__v2.png",
+    "crop_wh": [
+     291,
+     502
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0020",
-  "view": "view_el30_az135",
   "objA": "pudding_box",
   "objB": "tuna_fish_can",
   "is_on": true,
   "upper": "tuna_fish_can",
-  "areaA": 7582,
-  "areaB": 7045,
-  "file": "stack5_scene0020__pudding_box__tuna_fish_can.png",
-  "crop_wh": [
-   214,
-   191
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0020__pudding_box__tuna_fish_can__v0.png",
+    "crop_wh": [
+     214,
+     191
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0020__pudding_box__tuna_fish_can__v1.png",
+    "crop_wh": [
+     214,
+     202
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0020__pudding_box__tuna_fish_can__v2.png",
+    "crop_wh": [
+     191,
+     196
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0019",
-  "view": "view_el30_az135",
   "objA": "orange",
   "objB": "sugar_box",
   "is_on": false,
   "upper": null,
-  "areaA": 8980,
-  "areaB": 18302,
-  "file": "stack5_scene0019__orange__sugar_box.png",
-  "crop_wh": [
-   342,
-   523
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0019__orange__sugar_box__v0.png",
+    "crop_wh": [
+     342,
+     523
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0019__orange__sugar_box__v1.png",
+    "crop_wh": [
+     354,
+     574
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0019__orange__sugar_box__v2.png",
+    "crop_wh": [
+     318,
+     484
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0011",
-  "view": "view_el75_az105",
   "objA": "tennis_ball",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 4896,
-  "areaB": 28138,
-  "file": "stack5_scene0011__tennis_ball__wood_block.png",
-  "crop_wh": [
-   640,
-   287
+  "views": [
+   "view_el75_az105",
+   "view_el90",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0011__tennis_ball__wood_block__v0.png",
+    "crop_wh": [
+     640,
+     287
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0011__tennis_ball__wood_block__v1.png",
+    "crop_wh": [
+     356,
+     595
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0011__tennis_ball__wood_block__v2.png",
+    "crop_wh": [
+     385,
+     516
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0004",
-  "view": "view_el60_az255",
   "objA": "apple",
   "objB": "large_clamp",
   "is_on": false,
   "upper": null,
-  "areaA": 7709,
-  "areaB": 10133,
-  "file": "stack5_scene0004__apple__large_clamp.png",
-  "crop_wh": [
-   608,
-   302
+  "views": [
+   "view_el60_az255",
+   "view_el45_az225",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0004__apple__large_clamp__v0.png",
+    "crop_wh": [
+     608,
+     302
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0004__apple__large_clamp__v1.png",
+    "crop_wh": [
+     496,
+     395
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0004__apple__large_clamp__v2.png",
+    "crop_wh": [
+     489,
+     515
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0004",
-  "view": "view_el30_az135",
   "objA": "large_clamp",
   "objB": "strawberry",
   "is_on": false,
   "upper": null,
-  "areaA": 3732,
-  "areaB": 3318,
-  "file": "stack5_scene0004__large_clamp__strawberry.png",
-  "crop_wh": [
-   355,
-   280
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0004__large_clamp__strawberry__v0.png",
+    "crop_wh": [
+     355,
+     280
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0004__large_clamp__strawberry__v1.png",
+    "crop_wh": [
+     359,
+     370
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack5_scene0004__large_clamp__strawberry__v2.png",
+    "crop_wh": [
+     375,
+     257
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0020",
-  "view": "view_el75_az105",
   "objA": "softball",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 9578,
-  "areaB": 8749,
-  "file": "stack5_scene0020__softball__tuna_fish_can.png",
-  "crop_wh": [
-   360,
-   306
+  "views": [
+   "view_el75_az105",
+   "view_el60_az180",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0020__softball__tuna_fish_can__v0.png",
+    "crop_wh": [
+     360,
+     306
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0020__softball__tuna_fish_can__v1.png",
+    "crop_wh": [
+     394,
+     330
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0020__softball__tuna_fish_can__v2.png",
+    "crop_wh": [
+     343,
+     380
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0019",
-  "view": "view_el60_az255",
   "objA": "mug",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 13163,
-  "areaB": 21607,
-  "file": "stack3_scene0019__mug__wood_block.png",
-  "crop_wh": [
-   434,
-   336
+  "views": [
+   "view_el60_az255",
+   "view_el30_az240",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack3_scene0019__mug__wood_block__v0.png",
+    "crop_wh": [
+     434,
+     336
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0019__mug__wood_block__v1.png",
+    "crop_wh": [
+     406,
+     336
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack3_scene0019__mug__wood_block__v2.png",
+    "crop_wh": [
+     420,
+     274
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0019",
-  "view": "view_el60_az255",
   "objA": "medium_clamp",
   "objB": "strawberry",
   "is_on": false,
   "upper": null,
-  "areaA": 2943,
-  "areaB": 2447,
-  "file": "stack4_scene0019__medium_clamp__strawberry.png",
-  "crop_wh": [
-   515,
-   183
+  "views": [
+   "view_el60_az255",
+   "view_el75_az225",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0019__medium_clamp__strawberry__v0.png",
+    "crop_wh": [
+     515,
+     183
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack4_scene0019__medium_clamp__strawberry__v1.png",
+    "crop_wh": [
+     425,
+     369
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0019__medium_clamp__strawberry__v2.png",
+    "crop_wh": [
+     427,
+     297
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0011",
-  "view": "view_el90",
   "objA": "sponge",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 4062,
-  "areaB": 25400,
-  "file": "stack5_scene0011__sponge__wood_block.png",
-  "crop_wh": [
-   288,
-   443
+  "views": [
+   "view_el90",
+   "view_el45_az135",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0011__sponge__wood_block__v0.png",
+    "crop_wh": [
+     288,
+     443
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0011__sponge__wood_block__v1.png",
+    "crop_wh": [
+     464,
+     367
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0011__sponge__wood_block__v2.png",
+    "crop_wh": [
+     370,
+     390
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0010",
-  "view": "view_el75_az105",
   "objA": "lemon",
   "objB": "master_chef_can",
   "is_on": false,
   "upper": null,
-  "areaA": 3674,
-  "areaB": 6247,
-  "file": "stack4_scene0010__lemon__master_chef_can.png",
-  "crop_wh": [
-   329,
-   216
+  "views": [
+   "view_el75_az105",
+   "view_el45_az135",
+   "view_el30_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0010__lemon__master_chef_can__v0.png",
+    "crop_wh": [
+     329,
+     216
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0010__lemon__master_chef_can__v1.png",
+    "crop_wh": [
+     318,
+     248
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0010__lemon__master_chef_can__v2.png",
+    "crop_wh": [
+     313,
+     251
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0013",
-  "view": "view_el90",
   "objA": "sponge",
   "objB": "sugar_box",
   "is_on": false,
   "upper": null,
-  "areaA": 4109,
-  "areaB": 14304,
-  "file": "stack5_scene0013__sponge__sugar_box.png",
-  "crop_wh": [
-   265,
-   370
+  "views": [
+   "view_el90",
+   "view_el60_az180",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0013__sponge__sugar_box__v0.png",
+    "crop_wh": [
+     265,
+     370
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0013__sponge__sugar_box__v1.png",
+    "crop_wh": [
+     220,
+     376
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0013__sponge__sugar_box__v2.png",
+    "crop_wh": [
+     354,
+     349
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0019",
-  "view": "view_el75_az105",
   "objA": "bowl",
   "objB": "cracker_box",
   "is_on": false,
   "upper": null,
-  "areaA": 22878,
-  "areaB": 28785,
-  "file": "stack5_scene0019__bowl__cracker_box.png",
-  "crop_wh": [
-   525,
-   344
+  "views": [
+   "view_el75_az105",
+   "view_el75_az225",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0019__bowl__cracker_box__v0.png",
+    "crop_wh": [
+     525,
+     344
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0019__bowl__cracker_box__v1.png",
+    "crop_wh": [
+     460,
+     412
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0019__bowl__cracker_box__v2.png",
+    "crop_wh": [
+     438,
+     388
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0006",
-  "view": "view_el90",
   "objA": "extra_large_clamp",
   "objB": "tennis_ball",
   "is_on": false,
   "upper": null,
-  "areaA": 13733,
-  "areaB": 4693,
-  "file": "stack5_scene0006__extra_large_clamp__tennis_ball.png",
-  "crop_wh": [
-   371,
-   541
+  "views": [
+   "view_el90",
+   "view_el60_az255",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0006__extra_large_clamp__tennis_ball__v0.png",
+    "crop_wh": [
+     371,
+     541
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0006__extra_large_clamp__tennis_ball__v1.png",
+    "crop_wh": [
+     540,
+     249
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0006__extra_large_clamp__tennis_ball__v2.png",
+    "crop_wh": [
+     482,
+     451
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0012",
-  "view": "view_el60_az180",
   "objA": "gelatin_box",
   "objB": "phillips_screwdriver",
   "is_on": false,
   "upper": null,
-  "areaA": 6546,
-  "areaB": 6229,
-  "file": "stack5_scene0012__gelatin_box__phillips_screwdriver.png",
-  "crop_wh": [
-   230,
-   458
+  "views": [
+   "view_el60_az180",
+   "view_el60_az195",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0012__gelatin_box__phillips_screwdriver__v0.png",
+    "crop_wh": [
+     230,
+     458
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0012__gelatin_box__phillips_screwdriver__v1.png",
+    "crop_wh": [
+     258,
+     441
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0012__gelatin_box__phillips_screwdriver__v2.png",
+    "crop_wh": [
+     417,
+     346
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0013",
-  "view": "view_el75_az105",
   "objA": "cracker_box",
   "objB": "cups",
   "is_on": false,
   "upper": null,
-  "areaA": 25029,
-  "areaB": 12055,
-  "file": "stack4_scene0013__cracker_box__cups.png",
-  "crop_wh": [
-   457,
-   402
+  "views": [
+   "view_el75_az105",
+   "view_el45_az135",
+   "view_el90"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0013__cracker_box__cups__v0.png",
+    "crop_wh": [
+     457,
+     402
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0013__cracker_box__cups__v1.png",
+    "crop_wh": [
+     482,
+     387
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack4_scene0013__cracker_box__cups__v2.png",
+    "crop_wh": [
+     420,
+     383
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el60_az255",
   "objA": "cups",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 6660,
-  "areaB": 9230,
-  "file": "stack5_scene0018__cups__tomato_soup_can.png",
-  "crop_wh": [
-   299,
-   270
+  "views": [
+   "view_el60_az255",
+   "view_el75_az225",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0018__cups__tomato_soup_can__v0.png",
+    "crop_wh": [
+     299,
+     270
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0018__cups__tomato_soup_can__v1.png",
+    "crop_wh": [
+     318,
+     180
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0018__cups__tomato_soup_can__v2.png",
+    "crop_wh": [
+     227,
+     284
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el60_az255",
   "objA": "cups",
   "objB": "rubiks_cube",
   "is_on": false,
   "upper": null,
-  "areaA": 6660,
-  "areaB": 7432,
-  "file": "stack5_scene0018__cups__rubiks_cube.png",
-  "crop_wh": [
-   270,
-   351
+  "views": [
+   "view_el60_az255",
+   "view_el75_az225",
+   "view_el30_az240"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0018__cups__rubiks_cube__v0.png",
+    "crop_wh": [
+     270,
+     351
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0018__cups__rubiks_cube__v1.png",
+    "crop_wh": [
+     156,
+     362
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0018__cups__rubiks_cube__v2.png",
+    "crop_wh": [
+     190,
+     287
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0006",
-  "view": "view_el30_az210",
   "objA": "cups",
   "objB": "gelatin_box",
   "is_on": false,
   "upper": null,
-  "areaA": 10962,
-  "areaB": 4719,
-  "file": "stack4_scene0006__cups__gelatin_box.png",
-  "crop_wh": [
-   409,
-   182
+  "views": [
+   "view_el30_az210",
+   "view_el30_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0006__cups__gelatin_box__v0.png",
+    "crop_wh": [
+     409,
+     182
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0006__cups__gelatin_box__v1.png",
+    "crop_wh": [
+     244,
+     255
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0006__cups__gelatin_box__v2.png",
+    "crop_wh": [
+     394,
+     183
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0019",
-  "view": "view_el60_az255",
   "objA": "medium_clamp",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 2943,
-  "areaB": 25894,
-  "file": "stack4_scene0019__medium_clamp__wood_block.png",
-  "crop_wh": [
-   442,
-   333
+  "views": [
+   "view_el60_az255",
+   "view_el75_az105",
+   "view_el90"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0019__medium_clamp__wood_block__v0.png",
+    "crop_wh": [
+     442,
+     333
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0019__medium_clamp__wood_block__v1.png",
+    "crop_wh": [
+     381,
+     330
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack4_scene0019__medium_clamp__wood_block__v2.png",
+    "crop_wh": [
+     299,
+     428
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0004",
-  "view": "view_el30_az135",
   "objA": "rubiks_cube",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 10997,
-  "areaB": 25899,
-  "file": "stack4_scene0004__rubiks_cube__wood_block.png",
-  "crop_wh": [
-   269,
-   547
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0004__rubiks_cube__wood_block__v0.png",
+    "crop_wh": [
+     269,
+     547
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0004__rubiks_cube__wood_block__v1.png",
+    "crop_wh": [
+     278,
+     599
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0004__rubiks_cube__wood_block__v2.png",
+    "crop_wh": [
+     459,
+     526
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el30_az135",
   "objA": "golf_ball",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 2689,
-  "areaB": 10272,
-  "file": "stack5_scene0018__golf_ball__tomato_soup_can.png",
-  "crop_wh": [
-   199,
-   307
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0018__golf_ball__tomato_soup_can__v0.png",
+    "crop_wh": [
+     199,
+     307
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0018__golf_ball__tomato_soup_can__v1.png",
+    "crop_wh": [
+     193,
+     335
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0018__golf_ball__tomato_soup_can__v2.png",
+    "crop_wh": [
+     174,
+     324
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0007",
-  "view": "view_el45_az225",
   "objA": "sponge",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 4412,
-  "areaB": 8833,
-  "file": "stack4_scene0007__sponge__tomato_soup_can.png",
-  "crop_wh": [
-   381,
-   310
+  "views": [
+   "view_el45_az225",
+   "view_el30_az210",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0007__sponge__tomato_soup_can__v0.png",
+    "crop_wh": [
+     381,
+     310
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0007__sponge__tomato_soup_can__v1.png",
+    "crop_wh": [
+     322,
+     280
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0007__sponge__tomato_soup_can__v2.png",
+    "crop_wh": [
+     261,
+     283
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0019",
-  "view": "view_el30_az135",
   "objA": "bowl",
   "objB": "orange",
   "is_on": false,
   "upper": null,
-  "areaA": 11060,
-  "areaB": 8980,
-  "file": "stack5_scene0019__bowl__orange.png",
-  "crop_wh": [
-   211,
-   316
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0019__bowl__orange__v0.png",
+    "crop_wh": [
+     211,
+     316
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0019__bowl__orange__v1.png",
+    "crop_wh": [
+     217,
+     401
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0019__bowl__orange__v2.png",
+    "crop_wh": [
+     411,
+     444
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0012",
-  "view": "view_el75_az105",
   "objA": "gelatin_box",
   "objB": "plum",
   "is_on": false,
   "upper": null,
-  "areaA": 6386,
-  "areaB": 3289,
-  "file": "stack5_scene0012__gelatin_box__plum.png",
-  "crop_wh": [
-   336,
-   234
+  "views": [
+   "view_el75_az105",
+   "view_el90",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0012__gelatin_box__plum__v0.png",
+    "crop_wh": [
+     336,
+     234
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0012__gelatin_box__plum__v1.png",
+    "crop_wh": [
+     308,
+     302
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0012__gelatin_box__plum__v2.png",
+    "crop_wh": [
+     353,
+     155
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0006",
-  "view": "view_el90",
   "objA": "sugar_box",
   "objB": "tennis_ball",
   "is_on": false,
   "upper": null,
-  "areaA": 6058,
-  "areaB": 4693,
-  "file": "stack5_scene0006__sugar_box__tennis_ball.png",
-  "crop_wh": [
-   192,
-   290
+  "views": [
+   "view_el90",
+   "view_el60_az255",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0006__sugar_box__tennis_ball__v0.png",
+    "crop_wh": [
+     192,
+     290
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0006__sugar_box__tennis_ball__v1.png",
+    "crop_wh": [
+     293,
+     277
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0006__sugar_box__tennis_ball__v2.png",
+    "crop_wh": [
+     287,
+     236
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0001",
-  "view": "view_el90",
   "objA": "cracker_box",
   "objB": "flat_screwdriver",
   "is_on": false,
   "upper": null,
-  "areaA": 25396,
-  "areaB": 4914,
-  "file": "stack5_scene0001__cracker_box__flat_screwdriver.png",
-  "crop_wh": [
-   318,
-   482
+  "views": [
+   "view_el90",
+   "view_el60_az255",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0001__cracker_box__flat_screwdriver__v0.png",
+    "crop_wh": [
+     318,
+     482
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0001__cracker_box__flat_screwdriver__v1.png",
+    "crop_wh": [
+     492,
+     387
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0001__cracker_box__flat_screwdriver__v2.png",
+    "crop_wh": [
+     478,
+     329
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0014",
-  "view": "view_el45_az135",
   "objA": "pitcher_base",
   "objB": "sugar_box",
   "is_on": false,
   "upper": null,
-  "areaA": 55157,
-  "areaB": 21205,
-  "file": "stack4_scene0014__pitcher_base__sugar_box.png",
-  "crop_wh": [
-   558,
-   379
+  "views": [
+   "view_el45_az135",
+   "view_el30_az135",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0014__pitcher_base__sugar_box__v0.png",
+    "crop_wh": [
+     558,
+     379
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0014__pitcher_base__sugar_box__v1.png",
+    "crop_wh": [
+     518,
+     367
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0014__pitcher_base__sugar_box__v2.png",
+    "crop_wh": [
+     424,
+     514
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0003",
-  "view": "view_el60_az255",
   "objA": "peach",
   "objB": "sponge",
   "is_on": false,
   "upper": null,
-  "areaA": 4563,
-  "areaB": 6550,
-  "file": "stack5_scene0003__peach__sponge.png",
-  "crop_wh": [
-   224,
-   298
+  "views": [
+   "view_el60_az255",
+   "view_el45_az225",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0003__peach__sponge__v0.png",
+    "crop_wh": [
+     224,
+     298
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0003__peach__sponge__v1.png",
+    "crop_wh": [
+     315,
+     208
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack5_scene0003__peach__sponge__v2.png",
+    "crop_wh": [
+     313,
+     268
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0008",
-  "view": "view_el30_az195",
   "objA": "cups",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 6173,
-  "areaB": 4072,
-  "file": "stack5_scene0008__cups__tuna_fish_can.png",
-  "crop_wh": [
-   316,
-   180
+  "views": [
+   "view_el30_az195",
+   "view_el30_az135",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az195",
+    "file": "stack5_scene0008__cups__tuna_fish_can__v0.png",
+    "crop_wh": [
+     316,
+     180
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0008__cups__tuna_fish_can__v1.png",
+    "crop_wh": [
+     186,
+     236
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack5_scene0008__cups__tuna_fish_can__v2.png",
+    "crop_wh": [
+     327,
+     153
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0017",
-  "view": "view_el30_az240",
   "objA": "master_chef_can",
   "objB": "padlock",
   "is_on": false,
   "upper": null,
-  "areaA": 19514,
-  "areaB": 4677,
-  "file": "stack5_scene0017__master_chef_can__padlock.png",
-  "crop_wh": [
-   304,
-   375
+  "views": [
+   "view_el30_az240",
+   "view_el45_az225",
+   "view_el60_az255"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0017__master_chef_can__padlock__v0.png",
+    "crop_wh": [
+     304,
+     375
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0017__master_chef_can__padlock__v1.png",
+    "crop_wh": [
+     356,
+     394
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0017__master_chef_can__padlock__v2.png",
+    "crop_wh": [
+     234,
+     472
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0007",
-  "view": "view_el60_az255",
   "objA": "apple",
   "objB": "sugar_box",
   "is_on": false,
   "upper": null,
-  "areaA": 7304,
-  "areaB": 17503,
-  "file": "stack5_scene0007__apple__sugar_box.png",
-  "crop_wh": [
-   516,
-   290
+  "views": [
+   "view_el60_az255",
+   "view_el30_az240",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0007__apple__sugar_box__v0.png",
+    "crop_wh": [
+     516,
+     290
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0007__apple__sugar_box__v1.png",
+    "crop_wh": [
+     464,
+     368
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0007__apple__sugar_box__v2.png",
+    "crop_wh": [
+     388,
+     389
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0002",
-  "view": "view_el45_az225",
   "objA": "fork",
   "objB": "master_chef_can",
   "is_on": false,
   "upper": null,
-  "areaA": 5376,
-  "areaB": 19532,
-  "file": "stack5_scene0002__fork__master_chef_can.png",
-  "crop_wh": [
-   299,
-   511
+  "views": [
+   "view_el45_az225",
+   "view_el30_az240",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0002__fork__master_chef_can__v0.png",
+    "crop_wh": [
+     299,
+     511
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0002__fork__master_chef_can__v1.png",
+    "crop_wh": [
+     399,
+     411
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0002__fork__master_chef_can__v2.png",
+    "crop_wh": [
+     223,
+     545
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0016",
-  "view": "view_el60_az180",
   "objA": "fork",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 4977,
-  "areaB": 21502,
-  "file": "stack5_scene0016__fork__wood_block.png",
-  "crop_wh": [
-   200,
-   617
+  "views": [
+   "view_el60_az180",
+   "view_el60_az195",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0016__fork__wood_block__v0.png",
+    "crop_wh": [
+     200,
+     617
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack5_scene0016__fork__wood_block__v1.png",
+    "crop_wh": [
+     275,
+     589
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0016__fork__wood_block__v2.png",
+    "crop_wh": [
+     463,
+     499
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0014",
-  "view": "view_el30_az135",
   "objA": "baseball",
   "objB": "plum",
   "is_on": false,
   "upper": null,
-  "areaA": 4833,
-  "areaB": 4288,
-  "file": "stack5_scene0014__baseball__plum.png",
-  "crop_wh": [
-   293,
-   243
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0014__baseball__plum__v0.png",
+    "crop_wh": [
+     293,
+     243
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0014__baseball__plum__v1.png",
+    "crop_wh": [
+     298,
+     284
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0014__baseball__plum__v2.png",
+    "crop_wh": [
+     393,
+     211
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0018",
-  "view": "view_el30_az135",
   "objA": "cracker_box",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 25504,
-  "areaB": 3829,
-  "file": "stack4_scene0018__cracker_box__tuna_fish_can.png",
-  "crop_wh": [
-   220,
-   372
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0018__cracker_box__tuna_fish_can__v0.png",
+    "crop_wh": [
+     220,
+     372
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0018__cracker_box__tuna_fish_can__v1.png",
+    "crop_wh": [
+     238,
+     428
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0018__cracker_box__tuna_fish_can__v2.png",
+    "crop_wh": [
+     344,
+     344
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0001",
-  "view": "view_el30_az240",
   "objA": "cups",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 10468,
-  "areaB": 29322,
-  "file": "stack4_scene0001__cups__wood_block.png",
-  "crop_wh": [
-   342,
-   411
+  "views": [
+   "view_el30_az240",
+   "view_el45_az225",
+   "view_el60_az255"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0001__cups__wood_block__v0.png",
+    "crop_wh": [
+     342,
+     411
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0001__cups__wood_block__v1.png",
+    "crop_wh": [
+     399,
+     418
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0001__cups__wood_block__v2.png",
+    "crop_wh": [
+     287,
+     481
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0002",
-  "view": "view_el30_az135",
   "objA": "knife",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 5546,
-  "areaB": 3644,
-  "file": "stack4_scene0002__knife__tuna_fish_can.png",
-  "crop_wh": [
-   292,
-   297
+  "views": [
+   "view_el30_az135",
+   "view_el30_az195",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0002__knife__tuna_fish_can__v0.png",
+    "crop_wh": [
+     292,
+     297
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0002__knife__tuna_fish_can__v1.png",
+    "crop_wh": [
+     354,
+     259
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0002__knife__tuna_fish_can__v2.png",
+    "crop_wh": [
+     278,
+     365
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0008",
-  "view": "view_el45_az225",
   "objA": "potted_meat_can",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 10362,
-  "areaB": 10749,
-  "file": "stack5_scene0008__potted_meat_can__tomato_soup_can.png",
-  "crop_wh": [
-   332,
-   225
+  "views": [
+   "view_el45_az225",
+   "view_el30_az240",
+   "view_el60_az255"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0008__potted_meat_can__tomato_soup_can__v0.png",
+    "crop_wh": [
+     332,
+     225
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0008__potted_meat_can__tomato_soup_can__v1.png",
+    "crop_wh": [
+     335,
+     248
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0008__potted_meat_can__tomato_soup_can__v2.png",
+    "crop_wh": [
+     344,
+     273
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0009",
-  "view": "view_el30_az135",
   "objA": "mustard_bottle",
   "objB": "pudding_box",
   "is_on": false,
   "upper": null,
-  "areaA": 22018,
-  "areaB": 6186,
-  "file": "stack4_scene0009__mustard_bottle__pudding_box.png",
-  "crop_wh": [
-   430,
-   316
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az240"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0009__mustard_bottle__pudding_box__v0.png",
+    "crop_wh": [
+     430,
+     316
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0009__mustard_bottle__pudding_box__v1.png",
+    "crop_wh": [
+     437,
+     291
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack4_scene0009__mustard_bottle__pudding_box__v2.png",
+    "crop_wh": [
+     335,
+     335
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el45_az135",
   "objA": "cups",
   "objB": "golf_ball",
   "is_on": false,
   "upper": null,
-  "areaA": 2139,
-  "areaB": 2533,
-  "file": "stack5_scene0018__cups__golf_ball.png",
-  "crop_wh": [
-   194,
-   367
+  "views": [
+   "view_el45_az135",
+   "view_el75_az105",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0018__cups__golf_ball__v0.png",
+    "crop_wh": [
+     194,
+     367
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0018__cups__golf_ball__v1.png",
+    "crop_wh": [
+     248,
+     439
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack5_scene0018__cups__golf_ball__v2.png",
+    "crop_wh": [
+     376,
+     294
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0013",
-  "view": "view_el45_az135",
   "objA": "padlock",
   "objB": "sugar_box",
   "is_on": false,
   "upper": null,
-  "areaA": 3965,
-  "areaB": 19071,
-  "file": "stack5_scene0013__padlock__sugar_box.png",
-  "crop_wh": [
-   465,
-   441
+  "views": [
+   "view_el45_az135",
+   "view_el30_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0013__padlock__sugar_box__v0.png",
+    "crop_wh": [
+     465,
+     441
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0013__padlock__sugar_box__v1.png",
+    "crop_wh": [
+     449,
+     384
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack5_scene0013__padlock__sugar_box__v2.png",
+    "crop_wh": [
+     237,
+     397
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0015",
-  "view": "view_el30_az240",
   "objA": "adjustable_wrench",
   "objB": "gelatin_box",
   "is_on": false,
   "upper": null,
-  "areaA": 6070,
-  "areaB": 4087,
-  "file": "stack3_scene0015__adjustable_wrench__gelatin_box.png",
-  "crop_wh": [
-   448,
-   250
+  "views": [
+   "view_el30_az240",
+   "view_el45_az225",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0015__adjustable_wrench__gelatin_box__v0.png",
+    "crop_wh": [
+     448,
+     250
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0015__adjustable_wrench__gelatin_box__v1.png",
+    "crop_wh": [
+     409,
+     321
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0015__adjustable_wrench__gelatin_box__v2.png",
+    "crop_wh": [
+     360,
+     271
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0018",
-  "view": "view_el45_az135",
   "objA": "gelatin_box",
   "objB": "rubiks_cube",
   "is_on": false,
   "upper": null,
-  "areaA": 4224,
-  "areaB": 4514,
-  "file": "stack5_scene0018__gelatin_box__rubiks_cube.png",
-  "crop_wh": [
-   341,
-   260
+  "views": [
+   "view_el45_az135",
+   "view_el30_az135",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0018__gelatin_box__rubiks_cube__v0.png",
+    "crop_wh": [
+     341,
+     260
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0018__gelatin_box__rubiks_cube__v1.png",
+    "crop_wh": [
+     333,
+     215
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0018__gelatin_box__rubiks_cube__v2.png",
+    "crop_wh": [
+     340,
+     280
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0001",
-  "view": "view_el30_az135",
   "objA": "apple",
   "objB": "cracker_box",
   "is_on": false,
   "upper": null,
-  "areaA": 8234,
-  "areaB": 48721,
-  "file": "stack5_scene0001__apple__cracker_box.png",
-  "crop_wh": [
-   477,
-   370
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el75_az105"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0001__apple__cracker_box__v0.png",
+    "crop_wh": [
+     477,
+     370
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0001__apple__cracker_box__v1.png",
+    "crop_wh": [
+     489,
+     389
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0001__apple__cracker_box__v2.png",
+    "crop_wh": [
+     391,
+     479
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0005",
-  "view": "view_el30_az240",
   "objA": "foam_brick",
   "objB": "racquetball",
   "is_on": false,
   "upper": null,
-  "areaA": 6096,
-  "areaB": 5228,
-  "file": "stack3_scene0005__foam_brick__racquetball.png",
-  "crop_wh": [
-   146,
-   299
+  "views": [
+   "view_el30_az240",
+   "view_el30_az210",
+   "view_el45_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0005__foam_brick__racquetball__v0.png",
+    "crop_wh": [
+     146,
+     299
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0005__foam_brick__racquetball__v1.png",
+    "crop_wh": [
+     295,
+     280
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0005__foam_brick__racquetball__v2.png",
+    "crop_wh": [
+     227,
+     348
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0012",
-  "view": "view_el75_az105",
   "objA": "orange",
   "objB": "plum",
   "is_on": false,
   "upper": null,
-  "areaA": 5871,
-  "areaB": 3289,
-  "file": "stack5_scene0012__orange__plum.png",
-  "crop_wh": [
-   319,
-   191
+  "views": [
+   "view_el75_az105",
+   "view_el90",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0012__orange__plum__v0.png",
+    "crop_wh": [
+     319,
+     191
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0012__orange__plum__v1.png",
+    "crop_wh": [
+     145,
+     323
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0012__orange__plum__v2.png",
+    "crop_wh": [
+     242,
+     224
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0006",
-  "view": "view_el45_az225",
   "objA": "bleach_cleanser",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 31342,
-  "areaB": 10753,
-  "file": "stack3_scene0006__bleach_cleanser__tomato_soup_can.png",
-  "crop_wh": [
-   390,
-   396
+  "views": [
+   "view_el45_az225",
+   "view_el30_az240",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0006__bleach_cleanser__tomato_soup_can__v0.png",
+    "crop_wh": [
+     390,
+     396
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0006__bleach_cleanser__tomato_soup_can__v1.png",
+    "crop_wh": [
+     354,
+     450
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack3_scene0006__bleach_cleanser__tomato_soup_can__v2.png",
+    "crop_wh": [
+     373,
+     412
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0004",
-  "view": "view_el30_az135",
   "objA": "bleach_cleanser",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 25898,
-  "areaB": 25899,
-  "file": "stack4_scene0004__bleach_cleanser__wood_block.png",
-  "crop_wh": [
-   425,
-   421
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el60_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0004__bleach_cleanser__wood_block__v0.png",
+    "crop_wh": [
+     425,
+     421
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0004__bleach_cleanser__wood_block__v1.png",
+    "crop_wh": [
+     462,
+     435
+    ]
+   },
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0004__bleach_cleanser__wood_block__v2.png",
+    "crop_wh": [
+     399,
+     324
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0002",
-  "view": "view_el45_az225",
   "objA": "bleach_cleanser",
   "objB": "master_chef_can",
   "is_on": false,
   "upper": null,
-  "areaA": 20445,
-  "areaB": 19532,
-  "file": "stack5_scene0002__bleach_cleanser__master_chef_can.png",
-  "crop_wh": [
-   287,
-   416
+  "views": [
+   "view_el45_az225",
+   "view_el60_az255",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0002__bleach_cleanser__master_chef_can__v0.png",
+    "crop_wh": [
+     287,
+     416
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0002__bleach_cleanser__master_chef_can__v1.png",
+    "crop_wh": [
+     216,
+     449
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0002__bleach_cleanser__master_chef_can__v2.png",
+    "crop_wh": [
+     406,
+     386
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0009",
-  "view": "view_el90",
   "objA": "knife",
   "objB": "potted_meat_can",
   "is_on": false,
   "upper": null,
-  "areaA": 4145,
-  "areaB": 7165,
-  "file": "stack5_scene0009__knife__potted_meat_can.png",
-  "crop_wh": [
-   210,
-   434
+  "views": [
+   "view_el90",
+   "view_el75_az105",
+   "view_el60_az255"
+  ],
+  "frames": [
+   {
+    "view": "view_el90",
+    "file": "stack5_scene0009__knife__potted_meat_can__v0.png",
+    "crop_wh": [
+     210,
+     434
+    ]
+   },
+   {
+    "view": "view_el75_az105",
+    "file": "stack5_scene0009__knife__potted_meat_can__v1.png",
+    "crop_wh": [
+     378,
+     271
+    ]
+   },
+   {
+    "view": "view_el60_az255",
+    "file": "stack5_scene0009__knife__potted_meat_can__v2.png",
+    "crop_wh": [
+     440,
+     218
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0010",
-  "view": "view_el75_az105",
   "objA": "lemon",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 3674,
-  "areaB": 12382,
-  "file": "stack4_scene0010__lemon__tuna_fish_can.png",
-  "crop_wh": [
-   325,
-   245
+  "views": [
+   "view_el75_az105",
+   "view_el90",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0010__lemon__tuna_fish_can__v0.png",
+    "crop_wh": [
+     325,
+     245
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack4_scene0010__lemon__tuna_fish_can__v1.png",
+    "crop_wh": [
+     246,
+     301
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0010__lemon__tuna_fish_can__v2.png",
+    "crop_wh": [
+     312,
+     234
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0005",
-  "view": "view_el60_az255",
   "objA": "fork",
   "objB": "sponge",
   "is_on": false,
   "upper": null,
-  "areaA": 4599,
-  "areaB": 6570,
-  "file": "stack4_scene0005__fork__sponge.png",
-  "crop_wh": [
-   292,
-   362
+  "views": [
+   "view_el60_az255",
+   "view_el45_az225",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0005__fork__sponge__v0.png",
+    "crop_wh": [
+     292,
+     362
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0005__fork__sponge__v1.png",
+    "crop_wh": [
+     327,
+     342
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack4_scene0005__fork__sponge__v2.png",
+    "crop_wh": [
+     322,
+     402
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0012",
-  "view": "view_el60_az255",
   "objA": "spoon",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 5141,
-  "areaB": 9777,
-  "file": "stack4_scene0012__spoon__tomato_soup_can.png",
-  "crop_wh": [
-   423,
-   275
+  "views": [
+   "view_el60_az255",
+   "view_el90",
+   "view_el75_az225"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack4_scene0012__spoon__tomato_soup_can__v0.png",
+    "crop_wh": [
+     423,
+     275
+    ]
+   },
+   {
+    "view": "view_el90",
+    "file": "stack4_scene0012__spoon__tomato_soup_can__v1.png",
+    "crop_wh": [
+     264,
+     376
+    ]
+   },
+   {
+    "view": "view_el75_az225",
+    "file": "stack4_scene0012__spoon__tomato_soup_can__v2.png",
+    "crop_wh": [
+     402,
+     179
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0008",
-  "view": "view_el30_az135",
   "objA": "cups",
   "objB": "master_chef_can",
   "is_on": false,
   "upper": null,
-  "areaA": 14186,
-  "areaB": 20330,
-  "file": "stack4_scene0008__cups__master_chef_can.png",
-  "crop_wh": [
-   321,
-   335
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0008__cups__master_chef_can__v0.png",
+    "crop_wh": [
+     321,
+     335
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0008__cups__master_chef_can__v1.png",
+    "crop_wh": [
+     325,
+     370
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0008__cups__master_chef_can__v2.png",
+    "crop_wh": [
+     265,
+     334
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0007",
-  "view": "view_el75_az105",
   "objA": "lemon",
   "objB": "sponge",
   "is_on": false,
   "upper": null,
-  "areaA": 3786,
-  "areaB": 3542,
-  "file": "stack4_scene0007__lemon__sponge.png",
-  "crop_wh": [
-   374,
-   254
+  "views": [
+   "view_el75_az105",
+   "view_el45_az135",
+   "view_el30_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el75_az105",
+    "file": "stack4_scene0007__lemon__sponge__v0.png",
+    "crop_wh": [
+     374,
+     254
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0007__lemon__sponge__v1.png",
+    "crop_wh": [
+     405,
+     176
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0007__lemon__sponge__v2.png",
+    "crop_wh": [
+     402,
+     161
+    ]
+   }
   ]
  },
  {
   "scene": "stack3_scene0012",
-  "view": "view_el60_az255",
   "objA": "potted_meat_can",
   "objB": "sponge",
   "is_on": false,
   "upper": null,
-  "areaA": 9531,
-  "areaB": 10726,
-  "file": "stack3_scene0012__potted_meat_can__sponge.png",
-  "crop_wh": [
-   279,
-   338
+  "views": [
+   "view_el60_az255",
+   "view_el45_az225",
+   "view_el30_az240"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az255",
+    "file": "stack3_scene0012__potted_meat_can__sponge__v0.png",
+    "crop_wh": [
+     279,
+     338
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack3_scene0012__potted_meat_can__sponge__v1.png",
+    "crop_wh": [
+     219,
+     347
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack3_scene0012__potted_meat_can__sponge__v2.png",
+    "crop_wh": [
+     244,
+     288
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0016",
-  "view": "view_el30_az240",
   "objA": "fork",
   "objB": "strawberry",
   "is_on": false,
   "upper": null,
-  "areaA": 3845,
-  "areaB": 3335,
-  "file": "stack5_scene0016__fork__strawberry.png",
-  "crop_wh": [
-   453,
-   172
+  "views": [
+   "view_el30_az240",
+   "view_el45_az225",
+   "view_el30_az210"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0016__fork__strawberry__v0.png",
+    "crop_wh": [
+     453,
+     172
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack5_scene0016__fork__strawberry__v1.png",
+    "crop_wh": [
+     443,
+     230
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack5_scene0016__fork__strawberry__v2.png",
+    "crop_wh": [
+     430,
+     237
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0018",
-  "view": "view_el30_az135",
   "objA": "foam_brick",
   "objB": "tuna_fish_can",
   "is_on": false,
   "upper": null,
-  "areaA": 11071,
-  "areaB": 3829,
-  "file": "stack4_scene0018__foam_brick__tuna_fish_can.png",
-  "crop_wh": [
-   240,
-   243
+  "views": [
+   "view_el30_az135",
+   "view_el45_az135",
+   "view_el30_az195"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0018__foam_brick__tuna_fish_can__v0.png",
+    "crop_wh": [
+     240,
+     243
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack4_scene0018__foam_brick__tuna_fish_can__v1.png",
+    "crop_wh": [
+     238,
+     289
+    ]
+   },
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0018__foam_brick__tuna_fish_can__v2.png",
+    "crop_wh": [
+     295,
+     200
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0019",
-  "view": "view_el30_az195",
   "objA": "strawberry",
   "objB": "wood_block",
   "is_on": false,
   "upper": null,
-  "areaA": 3222,
-  "areaB": 37044,
-  "file": "stack4_scene0019__strawberry__wood_block.png",
-  "crop_wh": [
-   216,
-   419
+  "views": [
+   "view_el30_az195",
+   "view_el30_az210",
+   "view_el30_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az195",
+    "file": "stack4_scene0019__strawberry__wood_block__v0.png",
+    "crop_wh": [
+     216,
+     419
+    ]
+   },
+   {
+    "view": "view_el30_az210",
+    "file": "stack4_scene0019__strawberry__wood_block__v1.png",
+    "crop_wh": [
+     216,
+     415
+    ]
+   },
+   {
+    "view": "view_el30_az135",
+    "file": "stack4_scene0019__strawberry__wood_block__v2.png",
+    "crop_wh": [
+     355,
+     359
+    ]
+   }
   ]
  },
  {
   "scene": "stack4_scene0011",
-  "view": "view_el60_az195",
   "objA": "sponge",
   "objB": "tomato_soup_can",
   "is_on": false,
   "upper": null,
-  "areaA": 11934,
-  "areaB": 14165,
-  "file": "stack4_scene0011__sponge__tomato_soup_can.png",
-  "crop_wh": [
-   244,
-   520
+  "views": [
+   "view_el60_az195",
+   "view_el45_az225",
+   "view_el60_az180"
+  ],
+  "frames": [
+   {
+    "view": "view_el60_az195",
+    "file": "stack4_scene0011__sponge__tomato_soup_can__v0.png",
+    "crop_wh": [
+     244,
+     520
+    ]
+   },
+   {
+    "view": "view_el45_az225",
+    "file": "stack4_scene0011__sponge__tomato_soup_can__v1.png",
+    "crop_wh": [
+     243,
+     538
+    ]
+   },
+   {
+    "view": "view_el60_az180",
+    "file": "stack4_scene0011__sponge__tomato_soup_can__v2.png",
+    "crop_wh": [
+     293,
+     487
+    ]
+   }
   ]
  },
  {
   "scene": "stack5_scene0010",
-  "view": "view_el30_az135",
   "objA": "pitcher_base",
   "objB": "potted_meat_can",
   "is_on": false,
   "upper": null,
-  "areaA": 27040,
-  "areaB": 10296,
-  "file": "stack5_scene0010__pitcher_base__potted_meat_can.png",
-  "crop_wh": [
-   349,
-   389
+  "views": [
+   "view_el30_az135",
+   "view_el30_az240",
+   "view_el45_az135"
+  ],
+  "frames": [
+   {
+    "view": "view_el30_az135",
+    "file": "stack5_scene0010__pitcher_base__potted_meat_can__v0.png",
+    "crop_wh": [
+     349,
+     389
+    ]
+   },
+   {
+    "view": "view_el30_az240",
+    "file": "stack5_scene0010__pitcher_base__potted_meat_can__v1.png",
+    "crop_wh": [
+     461,
+     449
+    ]
+   },
+   {
+    "view": "view_el45_az135",
+    "file": "stack5_scene0010__pitcher_base__potted_meat_can__v2.png",
+    "crop_wh": [
+     374,
+     425
+    ]
+   }
   ]
  }
 ]

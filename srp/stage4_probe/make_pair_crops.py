@@ -69,6 +69,8 @@ def main():
     ap.add_argument("--min-area", type=int, default=300, dest="min_area")
     ap.add_argument("--margin", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--topk", type=int, default=1,
+                    help="每對取前 k 個「兩物同時可見」的視角(Open3DSG Sec.3.2 用 top-k frames)")
     a = ap.parse_args()
     random.seed(a.seed)
     OUT.mkdir(parents=True, exist_ok=True)
@@ -84,36 +86,39 @@ def main():
             for j in range(i + 1, len(objs)):
                 A, B = objs[i], objs[j]
                 # ★ 視角選擇:兩物同時可見,取 min(面積) 最大者(論文口徑的無深度版)
-                best = None
+                cands = []
                 for vn, dd in per.items():
                     if A in dd and B in dd and dd[A][1] >= a.min_area and dd[B][1] >= a.min_area:
-                        s = min(dd[A][1], dd[B][1])
-                        if best is None or s > best[0]:
-                            best = (s, vn)
-                if best is None:
+                        cands.append((min(dd[A][1], dd[B][1]), vn))
+                if not cands:
                     continue
-                vn = best[1]
+                cands.sort(reverse=True)                      # ★ top-k:兩物同時可見、min 面積最大者優先
                 is_on = (A, B) in ons or (B, A) in ons
                 upper = A if (A, B) in ons else (B if (B, A) in ons else None)
-                rec = dict(scene=sc, view=vn, objA=A, objB=B, is_on=is_on, upper=upper,
-                           areaA=per[vn][A][1], areaB=per[vn][B][1])
+                views = [vn for _, vn in cands[:a.topk]]
+                rec = dict(scene=sc, objA=A, objB=B, is_on=is_on, upper=upper, views=views)
                 (on_recs if is_on else non_recs).append(rec)
     random.shuffle(non_recs)
     recs = on_recs + non_recs[:a.max_nonon]
     made = []
     for r in recs:
-        p = CAP / f"multi_{r['scene'].split('_')[0]}" / r["scene"] / f"{r['view']}.png"
-        img = cv2.imread(str(p))
-        if img is None:
-            continue
-        H, W = img.shape[:2]
-        per = modal(r["scene"])[r["view"]]
-        xa0, ya0, xa1, ya1 = bbox(per[r["objA"]][0]); xb0, yb0, xb1, yb1 = bbox(per[r["objB"]][0])
-        x0 = max(min(xa0, xb0) - a.margin, 0); y0 = max(min(ya0, yb0) - a.margin, 0)
-        x1 = min(max(xa1, xb1) + a.margin, W); y1 = min(max(ya1, yb1) + a.margin, H)
-        fn = f"{r['scene']}__{r['objA']}__{r['objB']}.png"
-        cv2.imwrite(str(OUT / fn), img[y0:y1, x0:x1])
-        made.append({**r, "file": fn, "crop_wh": [x1 - x0, y1 - y0]})
+        permod = modal(r["scene"])
+        files = []
+        for rank, vn in enumerate(r["views"]):
+            p = CAP / f"multi_{r['scene'].split('_')[0]}" / r["scene"] / f"{vn}.png"
+            img = cv2.imread(str(p))
+            if img is None:
+                continue
+            H, W = img.shape[:2]
+            per = permod[vn]
+            xa0, ya0, xa1, ya1 = bbox(per[r["objA"]][0]); xb0, yb0, xb1, yb1 = bbox(per[r["objB"]][0])
+            x0 = max(min(xa0, xb0) - a.margin, 0); y0 = max(min(ya0, yb0) - a.margin, 0)
+            x1 = min(max(xa1, xb1) + a.margin, W); y1 = min(max(ya1, yb1) + a.margin, H)
+            fn = f"{r['scene']}__{r['objA']}__{r['objB']}__v{rank}.png"
+            cv2.imwrite(str(OUT / fn), img[y0:y1, x0:x1])
+            files.append({"view": vn, "file": fn, "crop_wh": [x1 - x0, y1 - y0]})
+        if files:
+            made.append({**r, "frames": files})
     (OUT / "index.json").write_text(json.dumps(made, ensure_ascii=False, indent=1))
     n_on = sum(1 for r in made if r["is_on"])
     print(f"[輸出] {OUT}  共 {len(made)} 對;on {n_on}、非on {len(made)-n_on}")

@@ -46,6 +46,7 @@ def nice(o):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--max-new", type=int, default=120, dest="max_new")
+    ap.add_argument("--vote", type=int, default=2, help="多視角投票:需幾票才判為 on(Open3DSG 用 top-k frames 聚合)")
     a = ap.parse_args()
     idx = json.loads((IMG / "index.json").read_text())
     q = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
@@ -55,20 +56,27 @@ def main():
     model = LlavaNextForConditionalGeneration.from_pretrained(
         MODEL, quantization_config=q, device_map="cuda:0", dtype=torch.float16).eval()
     rows = []; t00 = time.time()
+    txtq = "Describe the relationship between {} and {}?"      # ★ Open3DSG 補充材料 Sec.A 原句
     for n, r in enumerate(idx, 1):
-        p = IMG / r["file"]
-        if not p.is_file():
+        votes, answers = [], []
+        for fr in r.get("frames", []):
+            p = IMG / fr["file"]
+            if not p.is_file():
+                continue
+            im = Image.open(p).convert("RGB")
+            txt = txtq.format(nice(r["objA"]), nice(r["objB"]))
+            conv = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": txt}]}]
+            pr = proc.apply_chat_template(conv, add_generation_prompt=True)
+            inp = proc(images=im, text=pr, return_tensors="pt").to("cuda:0")
+            with torch.inference_mode():
+                o = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False)
+            ans = proc.decode(o[0][inp["input_ids"].shape[-1]:], skip_special_tokens=True).strip()
+            votes.append(bool(ON.search(ans))); answers.append(f"[{fr['view']}] " + ans.replace("\n", " "))
+        if not votes:
             continue
-        im = Image.open(p).convert("RGB")
-        # ★ Open3DSG 補充材料 Sec.A 原句
-        txt = f"Describe the relationship between {nice(r['objA'])} and {nice(r['objB'])}?"
-        conv = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": txt}]}]
-        pr = proc.apply_chat_template(conv, add_generation_prompt=True)
-        inp = proc(images=im, text=pr, return_tensors="pt").to("cuda:0")
-        with torch.inference_mode():
-            o = model.generate(**inp, max_new_tokens=a.max_new, do_sample=False)
-        ans = proc.decode(o[0][inp["input_ids"].shape[-1]:], skip_special_tokens=True).strip()
-        rows.append({**r, "pred_on": bool(ON.search(ans)), "answer": ans.replace("\n", " ")})
+        rows.append({**r, "n_view": len(votes), "n_on": sum(votes),
+                     "pred_on": sum(votes) >= a.vote,            # ★ 需 >= vote 票才算 on
+                     "answer": " || ".join(answers)})
         if n % 20 == 0:
             print(f"  {n}/{len(idx)}  {time.time()-t00:.0f}s", flush=True)
     TP = sum(1 for r in rows if r["is_on"] and r["pred_on"])
@@ -92,13 +100,24 @@ def main():
           f"| **假陽性率** | **{FP/max(N,1)*100:.1f}%** |",
           f"| 精確率 | {TP/max(TP+FP,1)*100:.1f}% |",
           f"| **平衡準確率** | **{(TP/max(P,1)+TN/max(N,1))/2*100:.1f}%** |", "",
-          "(對照:先前整張場景圖版 = 52.8%,`RESULT_llava_stack_batch.md`)\n",
+          f"(對照:整張場景圖版 52.8%;單視角成對版 68.9%)\n",
+          "## 投票門檻掃描(同一批推論,只改判定門檻)\n",
+          "| 需幾票 | 召回率 | 假陽性率 | 精確率 | 平衡準確率 |", "|---|---|---|---|---|"] + [
+          (lambda t: (lambda tp, fn_, fp, tn: f"| ≥{t}/3 | {tp/max(tp+fn_,1)*100:.1f}% | "
+                      f"{fp/max(fp+tn,1)*100:.1f}% | {tp/max(tp+fp,1)*100:.1f}% | "
+                      f"**{(tp/max(tp+fn_,1)+tn/max(fp+tn,1))/2*100:.1f}%** |")(
+              sum(1 for r in rows if r["is_on"] and r["n_on"] >= t),
+              sum(1 for r in rows if r["is_on"] and r["n_on"] < t),
+              sum(1 for r in rows if not r["is_on"] and r["n_on"] >= t),
+              sum(1 for r in rows if not r["is_on"] and r["n_on"] < t)))(t)
+          for t in (1, 2, 3)] + [
+          "",
           "## 逐對(GT 有 on 的 29 對全列)\n",
-          "| 場景 | A | B | 上物 | 判讀 | 回答(截斷) |", "|---|---|---|---|---|---|"]
+          "| 場景 | A | B | 上物 | 票數 | 判讀 | 回答(截斷) |", "|---|---|---|---|---|---|---|"]
     for r in rows:
         if r["is_on"]:
             md.append(f"| {r['scene']} | {r['objA']} | {r['objB']} | {r['upper']} | "
-                      f"{'✅on' if r['pred_on'] else '❌無'} | {r['answer'][:100]} |")
+                      f"{r['n_on']}/{r['n_view']} | {'✅on' if r['pred_on'] else '❌無'} | {r['answer'][:100]} |")
     md += ["", "## 對照組中被誤判為 on 的(前 15)\n",
            "| 場景 | A | B | 回答(截斷) |", "|---|---|---|---|"]
     for r in [x for x in rows if not x["is_on"] and x["pred_on"]][:15]:
@@ -106,8 +125,8 @@ def main():
     out = HERE / "RESULT_llava_pair_relation.md"
     out.write_text("\n".join(md), encoding="utf-8")
     with open(HERE / "llava_pair_relation.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["scene", "view", "objA", "objB", "is_on", "upper",
-                                          "areaA", "areaB", "file", "crop_wh", "pred_on", "answer"])
+        w = csv.DictWriter(f, fieldnames=["scene", "objA", "objB", "is_on", "upper", "views",
+                                          "n_view", "n_on", "pred_on", "answer"])
         w.writeheader()
         for r in rows:
             w.writerow({k: r.get(k) for k in w.fieldnames})

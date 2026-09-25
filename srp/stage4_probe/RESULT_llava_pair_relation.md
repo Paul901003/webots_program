@@ -11,68 +11,76 @@
 
 | | 模型說有 on | 模型沒說 on | 合計 |
 |---|---|---|---|
-| **GT 有 on** | **TP 24** | FN 5 | 29 |
-| **GT 沒 on** | **FP 27** | TN 33 | 60 |
+| **GT 有 on** | **TP 27** | FN 2 | 29 |
+| **GT 沒 on** | **FP 26** | TN 34 | 60 |
 
 | 指標 | 值 |
 |---|---|
-| 召回率 | 82.8% |
-| **假陽性率** | **45.0%** |
-| 精確率 | 47.1% |
-| **平衡準確率** | **68.9%** |
+| 召回率 | 93.1% |
+| **假陽性率** | **43.3%** |
+| 精確率 | 50.9% |
+| **平衡準確率** | **74.9%** |
 
-(對照:先前整張場景圖版 = 52.8%,`RESULT_llava_stack_batch.md`)
+(對照:整張場景圖版 52.8%;單視角成對版 68.9%)
+
+## 投票門檻掃描(同一批推論,只改判定門檻)
+
+| 需幾票 | 召回率 | 假陽性率 | 精確率 | 平衡準確率 |
+|---|---|---|---|---|
+| ≥1/3 | 100.0% | 73.3% | 39.7% | **63.3%** |
+| ≥2/3 | 93.1% | 43.3% | 50.9% | **74.9%** |
+| ≥3/3 | 75.9% | 18.3% | 66.7% | **78.8%** |
 
 ## 逐對(GT 有 on 的 29 對全列)
 
-| 場景 | A | B | 上物 | 判讀 | 回答(截斷) |
-|---|---|---|---|---|---|
-| stack3_scene0005 | foam_brick | gelatin_box | foam_brick | ✅on | The image shows a foam brick placed on top of a gelatin box. The foam brick appears to be a lightwei |
-| stack3_scene0006 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The can on top appears to be a can of |
-| stack3_scene0011 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The top can is a can of "Campbells To |
-| stack3_scene0013 | foam_brick | sponge | foam_brick | ✅on | The image shows a foam brick placed on top of a sponge. The foam brick appears to be a lightweight,  |
-| stack3_scene0014 | master_chef_can | tomato_soup_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The can on top appears to be a can of |
-| stack3_scene0015 | foam_brick | gelatin_box | foam_brick | ✅on | The image shows a foam brick placed on top of a gelatin box. The foam brick appears to be a lightwei |
-| stack3_scene0016 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ❌無 | The image shows two cans of food. The can on the left appears to be a can of tomato soup, as indicat |
-| stack3_scene0017 | master_chef_can | tomato_soup_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The can on top appears to be a can of |
-| stack3_scene0019 | foam_brick | wood_block | foam_brick | ✅on | The image shows a foam brick placed on top of a wooden block. The foam brick appears to be a lightwe |
-| stack4_scene0002 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ❌無 | The image shows two cans of food. The top can is labeled "Campbell's Tomato Soup," indicating that i |
-| stack4_scene0003 | master_chef_can | pudding_box | master_chef_can | ❌無 | The image shows a can of "Master Chef" coffee and a box of "Master Chef" pudding. The can and the bo |
-| stack4_scene0006 | gelatin_box | tomato_soup_can | tomato_soup_can | ✅on | The image shows a can of tomato soup placed on top of a box of gelatin. The can appears to be a stan |
-| stack4_scene0007 | sponge | sugar_box | sugar_box | ✅on | The image shows a box of Domino Sugar placed on top of a sponge. The sponge is likely being used to  |
-| stack4_scene0009 | master_chef_can | pudding_box | master_chef_can | ✅on | The image shows a can of "Master Chef" coffee and a box of "Master Chef" pudding. The can and the bo |
-| stack4_scene0010 | master_chef_can | tuna_fish_can | tuna_fish_can | ❌無 | The image shows a can of coffee and a can of tuna fish. The coffee can is on the left, and the tuna  |
-| stack4_scene0011 | master_chef_can | tomato_soup_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The top can appears to be a can of co |
-| stack4_scene0012 | gelatin_box | tomato_soup_can | tomato_soup_can | ✅on | The image shows a gelatin box and a can of tomato soup. The gelatin box is placed on top of the toma |
-| stack4_scene0014 | sponge | sugar_box | sugar_box | ✅on | The image shows a box of Domino Sugar with a sponge placed underneath it. The sponge is likely there |
-| stack4_scene0017 | foam_brick | master_chef_can | foam_brick | ✅on | The image shows a foam brick placed on top of a can of coffee. The foam brick appears to be a toy or |
-| stack4_scene0018 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ❌無 | The image shows a can of "Campbell's Tomato Soup" and a can of "StarKist Tuna Fish." These two produ |
-| stack5_scene0005 | pudding_box | tuna_fish_can | tuna_fish_can | ✅on | The image shows a can of "DarkKist" tuna fish placed on top of a box of "Pudding" which appears to b |
-| stack5_scene0008 | tomato_soup_can | tuna_fish_can | tomato_soup_can | ✅on | The image shows two cans of food stacked on top of each other. The can on top appears to be a can of |
-| stack5_scene0011 | foam_brick | sponge | foam_brick | ✅on | The image you've provided appears to show a foam brick with three holes in it, which is likely a typ |
-| stack5_scene0013 | foam_brick | sponge | foam_brick | ✅on | The image you've provided appears to show a foam brick with three holes in it, which is likely a par |
-| stack5_scene0014 | cracker_box | sugar_box | sugar_box | ✅on | The image shows a stack of three boxes. The topmost box is labeled "DOMINO SUGAR," indicating that i |
-| stack5_scene0016 | tomato_soup_can | wood_block | tomato_soup_can | ✅on | The image shows a can of tomato soup placed on top of a wooden block. The can is open, with the lid  |
-| stack5_scene0018 | gelatin_box | tomato_soup_can | tomato_soup_can | ✅on | The image shows a can of "Campbells Tomato Soup" placed on top of a box of gelatin. The gelatin box  |
-| stack5_scene0019 | cracker_box | sugar_box | sugar_box | ✅on | The image shows two boxes stacked on top of each other. The top box is a box of Domino Sugar, which  |
-| stack5_scene0020 | pudding_box | tuna_fish_can | tuna_fish_can | ✅on | The image shows a can of StarKist brand light tuna fish placed on top of a box of pudding. The relat |
+| 場景 | A | B | 上物 | 票數 | 判讀 | 回答(截斷) |
+|---|---|---|---|---|---|---|
+| stack3_scene0005 | foam_brick | gelatin_box | foam_brick | 3/3 | ✅on | [view_el30_az135] The image shows a foam brick placed on top of a gelatin box. The foam brick appear |
+| stack3_scene0006 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az240] The image shows two cans of food stacked on top of each other. The can on top appe |
+| stack3_scene0011 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az135] The image shows two cans of food stacked on top of each other. The top can is a ca |
+| stack3_scene0013 | foam_brick | sponge | foam_brick | 3/3 | ✅on | [view_el60_az180] The image shows a foam brick placed on top of a sponge. The foam brick appears to  |
+| stack3_scene0014 | master_chef_can | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el45_az225] The image shows two cans of food stacked on top of each other. The can on top appe |
+| stack3_scene0015 | foam_brick | gelatin_box | foam_brick | 3/3 | ✅on | [view_el30_az240] The image shows a foam brick placed on top of a gelatin box. The foam brick appear |
+| stack3_scene0016 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 2/3 | ✅on | [view_el30_az240] The image shows two cans of food. The can on the left appears to be a can of tomat |
+| stack3_scene0017 | master_chef_can | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el45_az225] The image shows two cans of food stacked on top of each other. The can on top appe |
+| stack3_scene0019 | foam_brick | wood_block | foam_brick | 3/3 | ✅on | [view_el60_az195] The image shows a foam brick placed on top of a wooden block. The foam brick appea |
+| stack4_scene0002 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 2/3 | ✅on | [view_el30_az135] The image shows two cans of food. The top can is labeled "Campbell's Tomato Soup," |
+| stack4_scene0003 | master_chef_can | pudding_box | master_chef_can | 2/3 | ✅on | [view_el30_az240] The image shows a can of "Master Chef" coffee and a box of "Master Chef" pudding.  |
+| stack4_scene0006 | gelatin_box | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az210] The image shows a can of tomato soup placed on top of a box of gelatin. The can ap |
+| stack4_scene0007 | sponge | sugar_box | sugar_box | 3/3 | ✅on | [view_el45_az225] The image shows a box of Domino Sugar placed on top of a sponge. The sponge is lik |
+| stack4_scene0009 | master_chef_can | pudding_box | master_chef_can | 3/3 | ✅on | [view_el30_az135] The image shows a can of "Master Chef" coffee and a box of "Master Chef" pudding.  |
+| stack4_scene0010 | master_chef_can | tuna_fish_can | tuna_fish_can | 1/3 | ❌無 | [view_el60_az180] The image shows a can of coffee and a can of tuna fish. The coffee can is on the l |
+| stack4_scene0011 | master_chef_can | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el60_az180] The image shows two cans of food stacked on top of each other. The top can appears |
+| stack4_scene0012 | gelatin_box | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az240] The image shows a gelatin box and a can of tomato soup. The gelatin box is placed  |
+| stack4_scene0014 | sponge | sugar_box | sugar_box | 3/3 | ✅on | [view_el45_az135] The image shows a box of Domino Sugar with a sponge placed underneath it. The spon |
+| stack4_scene0017 | foam_brick | master_chef_can | foam_brick | 3/3 | ✅on | [view_el60_az195] The image shows a foam brick placed on top of a can of coffee. The foam brick appe |
+| stack4_scene0018 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 1/3 | ❌無 | [view_el30_az135] The image shows a can of "Campbell's Tomato Soup" and a can of "StarKist Tuna Fish |
+| stack5_scene0005 | pudding_box | tuna_fish_can | tuna_fish_can | 3/3 | ✅on | [view_el45_az135] The image shows a can of "DarkKist" tuna fish placed on top of a box of "Pudding"  |
+| stack5_scene0008 | tomato_soup_can | tuna_fish_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az195] The image shows two cans of food stacked on top of each other. The can on top appe |
+| stack5_scene0011 | foam_brick | sponge | foam_brick | 3/3 | ✅on | [view_el90] The image you've provided appears to show a foam brick with three holes in it, which is  |
+| stack5_scene0013 | foam_brick | sponge | foam_brick | 3/3 | ✅on | [view_el90] The image you've provided appears to show a foam brick with three holes in it, which is  |
+| stack5_scene0014 | cracker_box | sugar_box | sugar_box | 2/3 | ✅on | [view_el60_az255] The image shows a stack of three boxes. The topmost box is labeled "DOMINO SUGAR," |
+| stack5_scene0016 | tomato_soup_can | wood_block | tomato_soup_can | 3/3 | ✅on | [view_el60_az255] The image shows a can of tomato soup placed on top of a wooden block. The can is o |
+| stack5_scene0018 | gelatin_box | tomato_soup_can | tomato_soup_can | 3/3 | ✅on | [view_el30_az135] The image shows a can of "Campbells Tomato Soup" placed on top of a box of gelatin |
+| stack5_scene0019 | cracker_box | sugar_box | sugar_box | 2/3 | ✅on | [view_el60_az180] The image shows two boxes stacked on top of each other. The top box is a box of Do |
+| stack5_scene0020 | pudding_box | tuna_fish_can | tuna_fish_can | 3/3 | ✅on | [view_el30_az135] The image shows a can of StarKist brand light tuna fish placed on top of a box of  |
 
 ## 對照組中被誤判為 on 的(前 15)
 
 | 場景 | A | B | 回答(截斷) |
 |---|---|---|---|
-| stack5_scene0019 | orange | sugar_box | The image shows a box of Cheez-It crackers and an orange. The box of Cheez-It crackers is placed on  |
-| stack5_scene0004 | apple | large_clamp | The image shows a large clamp with a red apple placed on it. The clamp appears to be holding the app |
-| stack3_scene0019 | mug | wood_block | The image shows a red mug and a wooden block with holes in it. The mug appears to be placed on the g |
-| stack4_scene0010 | lemon | master_chef_can | The image shows a lemon and a coffee can. The lemon is positioned to the left of the coffee can, and |
-| stack5_scene0013 | sponge | sugar_box | The image shows a sponge and a sugar box. The sponge is placed on the right side of the image, and i |
-| stack5_scene0019 | bowl | cracker_box | The image shows a red bowl with a box of Domino Sugar on top of it. The box of Domino Sugar is leani |
-| stack4_scene0013 | cracker_box | cups | The image shows a box of Cheez-It crackers with a blue lid on top, and two green cups. The box is po |
-| stack5_scene0018 | cups | tomato_soup_can | The image shows a can of tomato soup placed on top of a red box, which appears to be a cardboard box |
-| stack4_scene0006 | cups | gelatin_box | The image shows a 3D rendering of a cup and a gelatin box. The cup appears to be a simple, cylindric |
-| stack4_scene0019 | medium_clamp | wood_block | The image shows a medium clamp, which appears to be a type of clamp used in woodworking or other cra |
-| stack4_scene0004 | rubiks_cube | wood_block | In the image, there is a Rubik's Cube placed on top of a wooden block. The wooden block appears to b |
-| stack5_scene0018 | golf_ball | tomato_soup_can | The image shows a can of "Campbells Tomato Soup" placed on top of a box of the same product. In the  |
-| stack4_scene0007 | sponge | tomato_soup_can | The image shows a box of Domino Sugar and a can of tomato soup. The box of Domino Sugar is standing  |
-| stack5_scene0019 | bowl | orange | The image shows a red bowl and an orange. The bowl is positioned above the orange, suggesting that t |
-| stack5_scene0017 | master_chef_can | padlock | In the image, there is a can of "Master Chef" coffee and a padlock. The can is placed on the left si |
+| stack5_scene0019 | orange | sugar_box | [view_el30_az135] The image shows a box of Cheez-It crackers and an orange. The box of Cheez-It crac |
+| stack5_scene0004 | large_clamp | strawberry | [view_el30_az135] The image shows a large clamp, which appears to be a mechanical device, positioned |
+| stack3_scene0019 | mug | wood_block | [view_el60_az255] The image shows a red mug and a wooden block with holes in it. The mug appears to  |
+| stack5_scene0011 | sponge | wood_block | [view_el90] The image shows a sponge and a wooden block. The sponge appears to be in the foreground, |
+| stack4_scene0010 | lemon | master_chef_can | [view_el75_az105] The image shows a lemon and a coffee can. The lemon is positioned to the left of t |
+| stack5_scene0013 | sponge | sugar_box | [view_el90] The image shows a sponge and a sugar box. The sponge is placed on the right side of the  |
+| stack5_scene0019 | bowl | cracker_box | [view_el75_az105] The image shows a red bowl with a box of Domino Sugar on top of it. The box of Dom |
+| stack5_scene0018 | cups | tomato_soup_can | [view_el60_az255] The image shows a can of tomato soup placed on top of a red box, which appears to  |
+| stack4_scene0006 | cups | gelatin_box | [view_el30_az210] The image shows a 3D rendering of a cup and a gelatin box. The cup appears to be a |
+| stack4_scene0019 | medium_clamp | wood_block | [view_el60_az255] The image shows a medium clamp, which appears to be a type of clamp used in woodwo |
+| stack4_scene0004 | rubiks_cube | wood_block | [view_el30_az135] In the image, there is a Rubik's Cube placed on top of a wooden block. The wooden  |
+| stack5_scene0018 | golf_ball | tomato_soup_can | [view_el30_az135] The image shows a can of "Campbells Tomato Soup" placed on top of a box of the sam |
+| stack4_scene0007 | sponge | tomato_soup_can | [view_el45_az225] The image shows a box of Domino Sugar and a can of tomato soup. The box of Domino  |
+| stack4_scene0014 | pitcher_base | sugar_box | [view_el45_az135] The image shows a blue pitcher base and a box of Domino Sugar. The pitcher base is |
+| stack5_scene0016 | fork | wood_block | [view_el60_az180] The image shows a fork and a wooden block. The fork is positioned in front of the  |
