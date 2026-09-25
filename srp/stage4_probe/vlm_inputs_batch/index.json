@@ -1,0 +1,1137 @@
+[
+ {
+  "scene": "stack3_scene0001",
+  "view": "view_el30_az135",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   346,
+   192
+  ]
+ },
+ {
+  "scene": "stack3_scene0002",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1275,
+   329
+  ]
+ },
+ {
+  "scene": "stack3_scene0003",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   319
+  ]
+ },
+ {
+  "scene": "stack3_scene0004",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   430
+  ]
+ },
+ {
+  "scene": "stack3_scene0005",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "gelatin_box"
+   ]
+  ],
+  "crop_wh": [
+   324,
+   301
+  ]
+ },
+ {
+  "scene": "stack3_scene0006",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   383,
+   474
+  ]
+ },
+ {
+  "scene": "stack3_scene0007",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   364,
+   402
+  ]
+ },
+ {
+  "scene": "stack3_scene0008",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   374
+  ]
+ },
+ {
+  "scene": "stack3_scene0009",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   369
+  ]
+ },
+ {
+  "scene": "stack3_scene0010",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   465,
+   389
+  ]
+ },
+ {
+  "scene": "stack3_scene0011",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   427
+  ]
+ },
+ {
+  "scene": "stack3_scene0012",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   439
+  ]
+ },
+ {
+  "scene": "stack3_scene0013",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "sponge"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   367
+  ]
+ },
+ {
+  "scene": "stack3_scene0014",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "master_chef_can"
+   ]
+  ],
+  "crop_wh": [
+   397,
+   470
+  ]
+ },
+ {
+  "scene": "stack3_scene0015",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "gelatin_box"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   467
+  ]
+ },
+ {
+  "scene": "stack3_scene0016",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   328
+  ]
+ },
+ {
+  "scene": "stack3_scene0017",
+  "view": "view_el30_az240",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "master_chef_can"
+   ]
+  ],
+  "crop_wh": [
+   343,
+   487
+  ]
+ },
+ {
+  "scene": "stack3_scene0018",
+  "view": "view_el30_az135",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   270,
+   448
+  ]
+ },
+ {
+  "scene": "stack3_scene0019",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "wood_block"
+   ]
+  ],
+  "crop_wh": [
+   374,
+   434
+  ]
+ },
+ {
+  "scene": "stack3_scene0020",
+  "view": "view_el30_az210",
+  "group": "stack3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   304
+  ]
+ },
+ {
+  "scene": "stack4_scene0001",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   351,
+   396
+  ]
+ },
+ {
+  "scene": "stack4_scene0002",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   406
+  ]
+ },
+ {
+  "scene": "stack4_scene0003",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "master_chef_can",
+    "pudding_box"
+   ]
+  ],
+  "crop_wh": [
+   393,
+   531
+  ]
+ },
+ {
+  "scene": "stack4_scene0004",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   469,
+   558
+  ]
+ },
+ {
+  "scene": "stack4_scene0005",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   446
+  ]
+ },
+ {
+  "scene": "stack4_scene0006",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "gelatin_box"
+   ]
+  ],
+  "crop_wh": [
+   519,
+   351
+  ]
+ },
+ {
+  "scene": "stack4_scene0007",
+  "view": "view_el30_az195",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "sugar_box",
+    "sponge"
+   ]
+  ],
+  "crop_wh": [
+   329,
+   345
+  ]
+ },
+ {
+  "scene": "stack4_scene0008",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   382
+  ]
+ },
+ {
+  "scene": "stack4_scene0009",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "master_chef_can",
+    "pudding_box"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   479
+  ]
+ },
+ {
+  "scene": "stack4_scene0010",
+  "view": "view_el30_az240",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tuna_fish_can",
+    "master_chef_can"
+   ]
+  ],
+  "crop_wh": [
+   491,
+   464
+  ]
+ },
+ {
+  "scene": "stack4_scene0011",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "master_chef_can"
+   ]
+  ],
+  "crop_wh": [
+   538,
+   424
+  ]
+ },
+ {
+  "scene": "stack4_scene0012",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "gelatin_box"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   331
+  ]
+ },
+ {
+  "scene": "stack4_scene0013",
+  "view": "view_el30_az195",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   465,
+   396
+  ]
+ },
+ {
+  "scene": "stack4_scene0014",
+  "view": "view_el30_az240",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "sugar_box",
+    "sponge"
+   ]
+  ],
+  "crop_wh": [
+   535,
+   488
+  ]
+ },
+ {
+  "scene": "stack4_scene0015",
+  "view": "view_el30_az210",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   521,
+   459
+  ]
+ },
+ {
+  "scene": "stack4_scene0016",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   452,
+   334
+  ]
+ },
+ {
+  "scene": "stack4_scene0017",
+  "view": "view_el30_az240",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "master_chef_can"
+   ]
+  ],
+  "crop_wh": [
+   443,
+   390
+  ]
+ },
+ {
+  "scene": "stack4_scene0018",
+  "view": "view_el30_az240",
+  "group": "stack4",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   638,
+   372
+  ]
+ },
+ {
+  "scene": "stack4_scene0019",
+  "view": "view_el30_az135",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   398,
+   406
+  ]
+ },
+ {
+  "scene": "stack4_scene0020",
+  "view": "view_el30_az240",
+  "group": "stack4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   425
+  ]
+ },
+ {
+  "scene": "stack5_scene0001",
+  "view": "view_el30_az195",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   569,
+   400
+  ]
+ },
+ {
+  "scene": "stack5_scene0002",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   683,
+   523
+  ]
+ },
+ {
+  "scene": "stack5_scene0003",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   595,
+   689
+  ]
+ },
+ {
+  "scene": "stack5_scene0004",
+  "view": "view_el30_az195",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   396,
+   475
+  ]
+ },
+ {
+  "scene": "stack5_scene0005",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tuna_fish_can",
+    "pudding_box"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   454
+  ]
+ },
+ {
+  "scene": "stack5_scene0006",
+  "view": "view_el30_az210",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   696,
+   442
+  ]
+ },
+ {
+  "scene": "stack5_scene0007",
+  "view": "view_el30_az210",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   474
+  ]
+ },
+ {
+  "scene": "stack5_scene0008",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "tuna_fish_can"
+   ]
+  ],
+  "crop_wh": [
+   538,
+   325
+  ]
+ },
+ {
+  "scene": "stack5_scene0009",
+  "view": "view_el30_az195",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   619,
+   542
+  ]
+ },
+ {
+  "scene": "stack5_scene0010",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   723,
+   472
+  ]
+ },
+ {
+  "scene": "stack5_scene0011",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "sponge"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   410
+  ]
+ },
+ {
+  "scene": "stack5_scene0012",
+  "view": "view_el30_az210",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   532
+  ]
+ },
+ {
+  "scene": "stack5_scene0013",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "foam_brick",
+    "sponge"
+   ]
+  ],
+  "crop_wh": [
+   541,
+   496
+  ]
+ },
+ {
+  "scene": "stack5_scene0014",
+  "view": "view_el30_az195",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "sugar_box",
+    "cracker_box"
+   ]
+  ],
+  "crop_wh": [
+   523,
+   476
+  ]
+ },
+ {
+  "scene": "stack5_scene0015",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   545,
+   720
+  ]
+ },
+ {
+  "scene": "stack5_scene0016",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "wood_block"
+   ]
+  ],
+  "crop_wh": [
+   532,
+   536
+  ]
+ },
+ {
+  "scene": "stack5_scene0017",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   639,
+   320
+  ]
+ },
+ {
+  "scene": "stack5_scene0018",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tomato_soup_can",
+    "gelatin_box"
+   ]
+  ],
+  "crop_wh": [
+   1280,
+   460
+  ]
+ },
+ {
+  "scene": "stack5_scene0019",
+  "view": "view_el30_az135",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "sugar_box",
+    "cracker_box"
+   ]
+  ],
+  "crop_wh": [
+   509,
+   533
+  ]
+ },
+ {
+  "scene": "stack5_scene0020",
+  "view": "view_el30_az240",
+  "group": "stack5",
+  "has_on": true,
+  "on_pairs": [
+   [
+    "tuna_fish_can",
+    "pudding_box"
+   ]
+  ],
+  "crop_wh": [
+   1276,
+   476
+  ]
+ },
+ {
+  "scene": "occ3_scene0001",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   351,
+   431
+  ]
+ },
+ {
+  "scene": "occ3_scene0002",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   335
+  ]
+ },
+ {
+  "scene": "occ3_scene0003",
+  "view": "view_el30_az240",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   234,
+   386
+  ]
+ },
+ {
+  "scene": "occ3_scene0004",
+  "view": "view_el30_az240",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   581,
+   662
+  ]
+ },
+ {
+  "scene": "occ3_scene0005",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   358
+  ]
+ },
+ {
+  "scene": "occ3_scene0006",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   338
+  ]
+ },
+ {
+  "scene": "occ3_scene0007",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   369
+  ]
+ },
+ {
+  "scene": "occ3_scene0008",
+  "view": "view_el30_az240",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   380,
+   473
+  ]
+ },
+ {
+  "scene": "occ3_scene0009",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   359,
+   233
+  ]
+ },
+ {
+  "scene": "occ3_scene0010",
+  "view": "view_el30_az240",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   333,
+   339
+  ]
+ },
+ {
+  "scene": "occ3_scene0011",
+  "view": "view_el30_az195",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   339
+  ]
+ },
+ {
+  "scene": "occ3_scene0012",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   369
+  ]
+ },
+ {
+  "scene": "occ3_scene0013",
+  "view": "view_el30_az240",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   338,
+   228
+  ]
+ },
+ {
+  "scene": "occ3_scene0014",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   421,
+   394
+  ]
+ },
+ {
+  "scene": "occ3_scene0015",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   386
+  ]
+ },
+ {
+  "scene": "occ3_scene0016",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   427,
+   437
+  ]
+ },
+ {
+  "scene": "occ3_scene0017",
+  "view": "view_el30_az195",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   351,
+   384
+  ]
+ },
+ {
+  "scene": "occ3_scene0018",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   377
+  ]
+ },
+ {
+  "scene": "occ3_scene0019",
+  "view": "view_el30_az210",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   366
+  ]
+ },
+ {
+  "scene": "occ3_scene0020",
+  "view": "view_el30_az135",
+  "group": "occ3",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   410,
+   380
+  ]
+ },
+ {
+  "scene": "occ4_scene0001",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   430,
+   366
+  ]
+ },
+ {
+  "scene": "occ4_scene0002",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   517,
+   408
+  ]
+ },
+ {
+  "scene": "occ4_scene0003",
+  "view": "view_el30_az135",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   379,
+   453
+  ]
+ },
+ {
+  "scene": "occ4_scene0004",
+  "view": "view_el30_az210",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   462,
+   228
+  ]
+ },
+ {
+  "scene": "occ4_scene0005",
+  "view": "view_el30_az210",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   395
+  ]
+ },
+ {
+  "scene": "occ4_scene0006",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   382
+  ]
+ },
+ {
+  "scene": "occ4_scene0007",
+  "view": "view_el30_az210",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   1280,
+   372
+  ]
+ },
+ {
+  "scene": "occ4_scene0008",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   478,
+   394
+  ]
+ },
+ {
+  "scene": "occ4_scene0009",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   405,
+   314
+  ]
+ },
+ {
+  "scene": "occ4_scene0010",
+  "view": "view_el30_az240",
+  "group": "occ4",
+  "has_on": false,
+  "on_pairs": [],
+  "crop_wh": [
+   491,
+   434
+  ]
+ }
+]
