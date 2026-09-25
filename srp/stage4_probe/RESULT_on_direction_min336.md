@@ -4,9 +4,9 @@
 
 | 需幾票 | 召回率 | 假陽性率 | 精確率 | 平衡準確率 |
 |---|---|---|---|---|
-| ≥1/3 | 96.6% | 80.0% | 36.8% | **58.3%** |
-| ≥2/3 | 96.6% | 40.0% | 53.8% | **78.3%** |
-| ≥3/3 | 79.3% | 20.0% | 65.7% | **79.7%** |
+| ≥1票 | 96.6% | 80.0% | 36.8% | **58.3%** |
+| ≥2票 | 96.6% | 40.0% | 53.8% | **78.3%** |
+| ≥3票 | 79.3% | 20.0% | 65.7% | **79.7%** |
 
 # on 關係的【方向】驗證:誰在上?
 
@@ -37,34 +37,34 @@
 
 ## 逐對明細(29 對全列)
 
-| 場景 | A | B | GT上物 | 視角1 | 視角2 | 視角3 | 多數決 | 對? |
-|---|---|---|---|---|---|---|---|---|
-| stack3_scene0005 | foam_brick | gelatin_box | **foam_brick** | foam_brick | foam_brick | foam_brick | foam_brick | ✅ |
-| stack3_scene0006 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | — | — | — | — | — |
-| stack3_scene0011 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | — | — | tomato_soup_can | tomato_soup_can | ✅ |
-| stack3_scene0013 | foam_brick | sponge | **foam_brick** | foam_brick | sponge | foam_brick | foam_brick | ✅ |
-| stack3_scene0014 | master_chef_can | tomato_soup_can | **tomato_soup_can** | master_chef_can | — | master_chef_can | master_chef_can | ❌ |
-| stack3_scene0015 | foam_brick | gelatin_box | **foam_brick** | foam_brick | foam_brick | foam_brick | foam_brick | ✅ |
-| stack3_scene0016 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | — | tuna_fish_can | tuna_fish_can | tuna_fish_can | ❌ |
-| stack3_scene0017 | master_chef_can | tomato_soup_can | **tomato_soup_can** | master_chef_can | master_chef_can | tomato_soup_can | master_chef_can | ❌ |
-| stack3_scene0019 | foam_brick | wood_block | **foam_brick** | wood_block | foam_brick | foam_brick | foam_brick | ✅ |
-| stack4_scene0002 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | — | — | — | — | — |
-| stack4_scene0003 | master_chef_can | pudding_box | **master_chef_can** | master_chef_can | master_chef_can | master_chef_can | master_chef_can | ✅ |
-| stack4_scene0006 | gelatin_box | tomato_soup_can | **tomato_soup_can** | tomato_soup_can | tomato_soup_can | gelatin_box | tomato_soup_can | ✅ |
-| stack4_scene0007 | sponge | sugar_box | **sugar_box** | sugar_box | sponge | sponge | sponge | ❌ |
-| stack4_scene0009 | master_chef_can | pudding_box | **master_chef_can** | master_chef_can | — | master_chef_can | master_chef_can | ✅ |
-| stack4_scene0010 | master_chef_can | tuna_fish_can | **tuna_fish_can** | — | master_chef_can | — | master_chef_can | ❌ |
-| stack4_scene0011 | master_chef_can | tomato_soup_can | **tomato_soup_can** | tomato_soup_can | master_chef_can | — | tomato_soup_can | ✅ |
-| stack4_scene0012 | gelatin_box | tomato_soup_can | **tomato_soup_can** | gelatin_box | gelatin_box | gelatin_box | gelatin_box | ❌ |
-| stack4_scene0014 | sponge | sugar_box | **sugar_box** | sugar_box | sugar_box | sponge | sugar_box | ✅ |
-| stack4_scene0017 | foam_brick | master_chef_can | **foam_brick** | foam_brick | foam_brick | foam_brick | foam_brick | ✅ |
-| stack4_scene0018 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | — | — | tuna_fish_can | tuna_fish_can | ❌ |
-| stack5_scene0005 | pudding_box | tuna_fish_can | **tuna_fish_can** | pudding_box | tuna_fish_can | pudding_box | pudding_box | ❌ |
-| stack5_scene0008 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | tuna_fish_can | tomato_soup_can | tuna_fish_can | tuna_fish_can | ❌ |
-| stack5_scene0011 | foam_brick | sponge | **foam_brick** | — | — | — | — | — |
-| stack5_scene0013 | foam_brick | sponge | **foam_brick** | foam_brick | foam_brick | foam_brick | foam_brick | ✅ |
-| stack5_scene0014 | cracker_box | sugar_box | **sugar_box** | sugar_box | sugar_box | — | sugar_box | ✅ |
-| stack5_scene0016 | tomato_soup_can | wood_block | **tomato_soup_can** | tomato_soup_can | tomato_soup_can | tomato_soup_can | tomato_soup_can | ✅ |
-| stack5_scene0018 | gelatin_box | tomato_soup_can | **tomato_soup_can** | gelatin_box | tomato_soup_can | gelatin_box | gelatin_box | ❌ |
-| stack5_scene0019 | cracker_box | sugar_box | **sugar_box** | — | — | — | — | — |
-| stack5_scene0020 | pudding_box | tuna_fish_can | **tuna_fish_can** | tuna_fish_can | tuna_fish_can | pudding_box | tuna_fish_can | ✅ |
+| 場景 | A | B | GT上物 | 逐視角判讀 | 對/錯票 | 多數決 | 對? |
+|---|---|---|---|---|---|---|---|
+| stack3_scene0005 | foam_brick | gelatin_box | **foam_brick** | foam_brick|foam_brick|foam_brick | 3/0 | foam_brick | ✅ |
+| stack3_scene0006 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | None|None|None | 0/0 | — | — |
+| stack3_scene0011 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | None|None|tomato_soup_can | 1/0 | tomato_soup_can | ✅ |
+| stack3_scene0013 | foam_brick | sponge | **foam_brick** | foam_brick|sponge|foam_brick | 2/1 | foam_brick | ✅ |
+| stack3_scene0014 | master_chef_can | tomato_soup_can | **tomato_soup_can** | master_chef_can|None|master_chef_can | 0/2 | master_chef_can | ❌ |
+| stack3_scene0015 | foam_brick | gelatin_box | **foam_brick** | foam_brick|foam_brick|foam_brick | 3/0 | foam_brick | ✅ |
+| stack3_scene0016 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | None|tuna_fish_can|tuna_fish_can | 0/2 | tuna_fish_can | ❌ |
+| stack3_scene0017 | master_chef_can | tomato_soup_can | **tomato_soup_can** | master_chef_can|master_chef_can|tomato_soup_can | 1/2 | master_chef_can | ❌ |
+| stack3_scene0019 | foam_brick | wood_block | **foam_brick** | wood_block|foam_brick|foam_brick | 2/1 | foam_brick | ✅ |
+| stack4_scene0002 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | None|None|None | 0/0 | — | — |
+| stack4_scene0003 | master_chef_can | pudding_box | **master_chef_can** | master_chef_can|master_chef_can|master_chef_can | 3/0 | master_chef_can | ✅ |
+| stack4_scene0006 | gelatin_box | tomato_soup_can | **tomato_soup_can** | tomato_soup_can|tomato_soup_can|gelatin_box | 2/1 | tomato_soup_can | ✅ |
+| stack4_scene0007 | sponge | sugar_box | **sugar_box** | sugar_box|sponge|sponge | 1/2 | sponge | ❌ |
+| stack4_scene0009 | master_chef_can | pudding_box | **master_chef_can** | master_chef_can|None|master_chef_can | 2/0 | master_chef_can | ✅ |
+| stack4_scene0010 | master_chef_can | tuna_fish_can | **tuna_fish_can** | None|master_chef_can|None | 0/1 | master_chef_can | ❌ |
+| stack4_scene0011 | master_chef_can | tomato_soup_can | **tomato_soup_can** | tomato_soup_can|master_chef_can|None | 1/1 | tomato_soup_can | ✅ |
+| stack4_scene0012 | gelatin_box | tomato_soup_can | **tomato_soup_can** | gelatin_box|gelatin_box|gelatin_box | 0/3 | gelatin_box | ❌ |
+| stack4_scene0014 | sponge | sugar_box | **sugar_box** | sugar_box|sugar_box|sponge | 2/1 | sugar_box | ✅ |
+| stack4_scene0017 | foam_brick | master_chef_can | **foam_brick** | foam_brick|foam_brick|foam_brick | 3/0 | foam_brick | ✅ |
+| stack4_scene0018 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | None|None|tuna_fish_can | 0/1 | tuna_fish_can | ❌ |
+| stack5_scene0005 | pudding_box | tuna_fish_can | **tuna_fish_can** | pudding_box|tuna_fish_can|pudding_box | 1/2 | pudding_box | ❌ |
+| stack5_scene0008 | tomato_soup_can | tuna_fish_can | **tomato_soup_can** | tuna_fish_can|tomato_soup_can|tuna_fish_can | 1/2 | tuna_fish_can | ❌ |
+| stack5_scene0011 | foam_brick | sponge | **foam_brick** | None|None|None | 0/0 | — | — |
+| stack5_scene0013 | foam_brick | sponge | **foam_brick** | foam_brick|foam_brick|foam_brick | 3/0 | foam_brick | ✅ |
+| stack5_scene0014 | cracker_box | sugar_box | **sugar_box** | sugar_box|sugar_box|None | 2/0 | sugar_box | ✅ |
+| stack5_scene0016 | tomato_soup_can | wood_block | **tomato_soup_can** | tomato_soup_can|tomato_soup_can|tomato_soup_can | 3/0 | tomato_soup_can | ✅ |
+| stack5_scene0018 | gelatin_box | tomato_soup_can | **tomato_soup_can** | gelatin_box|tomato_soup_can|gelatin_box | 1/2 | gelatin_box | ❌ |
+| stack5_scene0019 | cracker_box | sugar_box | **sugar_box** | None|None|None | 0/0 | — | — |
+| stack5_scene0020 | pudding_box | tuna_fish_can | **tuna_fish_can** | tuna_fish_can|tuna_fish_can|pudding_box | 2/1 | tuna_fish_can | ✅ |

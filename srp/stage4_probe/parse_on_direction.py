@@ -114,16 +114,16 @@ def main():
         votes = [p for p in per if p]
         maj = Counter(votes).most_common(1)[0][0] if votes else None
         out.append(dict(scene=r["scene"], objA=A, objB=B, gt_upper=up,
-                        v1=per[0] if len(per) > 0 else None,
-                        v2=per[1] if len(per) > 1 else None,
-                        v3=per[2] if len(per) > 2 else None,
-                        n_parsed=len(votes), pred_upper=maj,
-                        correct=(maj == up) if maj else None))
+                        n_view=len(per), per_view="|".join(str(x) for x in per),   # ★ 全部視角,不再只存前3
+                        n_parsed=len(votes),
+                        n_right=sum(1 for v in votes if v == up),
+                        n_wrong=sum(1 for v in votes if v != up),
+                        pred_upper=maj, correct=(maj == up) if maj else None))
     n = len(out)
     parsed = [r for r in out if r["pred_upper"]]
     ok = [r for r in parsed if r["correct"]]
     # 逐視角層級
-    vs = [(r[f"v{i}"], r["gt_upper"]) for r in out for i in (1, 2, 3) if r[f"v{i}"]]
+    vs = [(v, r["gt_upper"]) for r in out for v in r["per_view"].split("|") if v != "None"]
     vok = sum(1 for p, g in vs if p == g)
     md = [f"# 關係評分({a.csv}):偵測 + 方向\n",
           "## 偵測(有沒有 on;逐視角關鍵詞 + 投票)\n",
@@ -150,12 +150,11 @@ def main():
           f"| **方向正確** | **{vok}**({vok/max(len(vs),1)*100:.1f}%) |",
           f"| 方向錯誤 | {len(vs)-vok}({(len(vs)-vok)/max(len(vs),1)*100:.1f}%) |", "",
           "## 逐對明細(29 對全列)\n",
-          "| 場景 | A | B | GT上物 | 視角1 | 視角2 | 視角3 | 多數決 | 對? |",
-          "|---|---|---|---|---|---|---|---|---|"]
+          "| 場景 | A | B | GT上物 | 逐視角判讀 | 對/錯票 | 多數決 | 對? |",
+          "|---|---|---|---|---|---|---|---|"]
     for r in out:
-        f = lambda x: x or "—"
         md.append(f"| {r['scene']} | {r['objA']} | {r['objB']} | **{r['gt_upper']}** | "
-                  f"{f(r['v1'])} | {f(r['v2'])} | {f(r['v3'])} | {f(r['pred_upper'])} | "
+                  f"{r['per_view']} | {r['n_right']}/{r['n_wrong']} | {r['pred_upper'] or '—'} | "
                   f"{'✅' if r['correct'] else ('❌' if r['pred_upper'] else '—')} |")
     (HERE / f"RESULT_on_direction{a.tag}.md").write_text("\n".join(md), encoding="utf-8")
     with open(HERE / f"on_direction{a.tag}.csv", "w", newline="") as fh:
