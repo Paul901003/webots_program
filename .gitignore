@@ -37,5 +37,8 @@ urdfs/
 
 data/
 
-# stage4_probe VLM 成對裁切圖(313MB/2932張,可由 make_pair_crops.py 重生;index.json 有進 git)
+# stage4_probe VLM 輸入圖(共 357MB/3022 張,皆可重生;各目錄的 index.json 有進 git)
+#   pair_crops*      成對 bbox 聯集裁切圖,由 make_pair_crops.py 依 index.json 重生
+#   vlm_inputs_batch 整張場景圖(早期 llava_stack_batch 實驗輸入)
 srp/stage4_probe/pair_crops*/*.png
+srp/stage4_probe/vlm_inputs_batch/*.png
