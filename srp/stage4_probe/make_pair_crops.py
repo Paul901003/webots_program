@@ -69,6 +69,8 @@ def main():
     ap.add_argument("--min-area", type=int, default=300, dest="min_area")
     ap.add_argument("--margin", type=int, default=30)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--groups", default="stack",
+                    help="場景組正則前綴,如 'stack' 或 'stack3|stack4|stack5|occ3|occ4|occ5';★務必排除 b 組")
     ap.add_argument("--el", default="", help="只用指定仰角的視角(如 30);空=全部 12 視角")
     ap.add_argument("--min-side", type=int, default=0, dest="min_side",
                     help="裁切後短邊至少多少 px;不足則【向外擴取更多脈絡】(非放大)。0=不保護")
@@ -80,7 +82,9 @@ def main():
     global OUT
     OUT = HERE / a.out_dir
     OUT.mkdir(parents=True, exist_ok=True)
-    scenes = sorted(Path(p).parent.name for p in glob.glob(str(HULL / "stack*_scene*/hull.npz")))
+    import re as _re
+    scenes = sorted({Path(p).parent.name for p in glob.glob(str(HULL / "*_scene*/hull.npz"))})
+    scenes = [s for s in scenes if _re.match(rf"^({a.groups})_scene", s)]   # ★明確前綴,避免誤抓 b 組
     on_recs, non_recs = [], []
     for sc in scenes:
         per = modal(sc)
@@ -107,7 +111,7 @@ def main():
                 rec = dict(scene=sc, objA=A, objB=B, is_on=is_on, upper=upper, views=views)
                 (on_recs if is_on else non_recs).append(rec)
     random.shuffle(non_recs)
-    recs = on_recs + non_recs[:a.max_nonon]
+    recs = on_recs + (non_recs if a.max_nonon < 0 else non_recs[:a.max_nonon])
     made = []
     for r in recs:
         permod = modal(r["scene"])
