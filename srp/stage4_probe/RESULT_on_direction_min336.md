@@ -10,12 +10,15 @@
 
 # on 關係的【方向】驗證:誰在上?
 
-- 建檔 2026-09-25;程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。
-- 資料:`llava_pair_relation.csv`(89 對 × 3 視角完整回答,Open3DSG 成對裁切 + 原句 prompt)。
+- 產出 2026-09-26;程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。
+- 資料:`llava_pair_relation_min336.csv`(89 對、GT on 29 對、平均 3.00 視角/對)。
+- 模型:llava-hf/llama3-llava-next-8b-hf (4bit NF4)
+- prompt:Open3DSG 原句 "Describe the relationship between A and B?"
+- 影像處理:成對裁切+最小邊336放大,面積前3視角
 - ⚠ 先前 `RESULT_llava_pair_relation.md` 只判「有沒有 on 字眼」,**未驗證方向**;本檔補上。
 - 解析不出者標【無法判定】,**不猜**。
 
-## 對層級(29 個 GT on 對;3 視角多數決)
+## 對層級(29 個 GT on 對;每對 3.00 視角多數決)
 
 | 項目 | 數量 | 佔 29 對 |
 |---|---|---|

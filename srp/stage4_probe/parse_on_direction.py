@@ -1,7 +1,10 @@
 #!/home/cho/.pyenv/versions/webots_visual_hull/bin/python3
 """parse_on_direction.py — 從已存的 VLM 回答解析「誰在上」,驗證 on 關係的【方向】是否正確。
 
-★ 新檔,不跑任何模型,純文字分析 llava_pair_relation.csv(已存 89 對 × 3 視角完整回答)。
+★ 不跑任何模型,純文字分析 --csv 指定的回答檔(逐視角完整回答已存在 CSV 的 answer 欄)。
+  ⚠ 2026-09-26 修正:先前報告標頭把資料來源寫死成「llava_pair_relation.csv(89 對 × 3 視角)」,
+     導致 7 份 RESULT 有 6 份 provenance 錯誤(見 RESULT_vlm_on_llava_vs_instructblip.md)。
+     現在來源字串一律從實際讀入的 CSV 算出。
 
 動機:先前 RESULT_llava_pair_relation.md 的判讀只檢查「回答裡有沒有 on 類字眼」,
       【沒有驗證方向】。實際抽查 stack4_scene0007(sugar_box 在上、sponge 在下)發現:
@@ -25,6 +28,20 @@ from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+_TODAY = __import__("datetime").date.today().isoformat()
+# CSV → 產生它的 (模型, prompt, 影像處理);provenance 一律從這裡取,不寫死在報告字串裡。
+# 新增 runner 請一併加一行,未登錄會 fail loud。
+_LLAVA = "llava-hf/llama3-llava-next-8b-hf (4bit NF4)"
+_P_ORIG = 'Open3DSG 原句 "Describe the relationship between A and B?"'
+_SRC = {
+    "llava_pair_relation.csv":        (_LLAVA, _P_ORIG, "成對 bbox 聯集裁切,面積前3視角"),
+    "llava_pair_relation_el30.csv":   (_LLAVA, _P_ORIG, "成對 bbox 聯集裁切,el30 側視全取"),
+    "llava_pair_relation_min336.csv": (_LLAVA, _P_ORIG, "成對裁切+最小邊336放大,面積前3視角"),
+    "llava_pair_relation_big.csv":    (_LLAVA, _P_ORIG, "成對 bbox 聯集裁切+margin30,el30 側視全取"),
+    "llava_pair_neutral.csv":         (_LLAVA, "自訂中性句型(非論文原句)", "成對裁切,面積前3視角"),
+    "instructblip_pair_relation.csv": ("Salesforce/instructblip-vicuna-7b (4bit NF4)", _P_ORIG,
+                                       "成對 bbox 聯集裁切+margin30,el30 側視全取"),
+}
 
 
 # 物體 → 在回答文字中可能的關鍵詞(小寫)
@@ -90,6 +107,10 @@ def main():
     ap.add_argument("--vote", type=int, default=2, help="偵測:3視角需幾票")
     a = ap.parse_args()
     rows = list(csv.DictReader(open(HERE / a.csv)))
+    if a.csv not in _SRC:                        # provenance 必須明確,不猜
+        raise SystemExit(f"[錯誤] {a.csv} 未登錄在 _SRC,請先在本檔 _SRC 補上模型/prompt/影像處理")
+    _mdl, _pmt, _img = _SRC[a.csv]
+    _avgv = sum(len(r["answer"].split(" || ")) for r in rows) / max(len(rows), 1)
     # --- 偵測(有沒有 on):逐視角關鍵詞 + 投票;與各 runner 同一套規則,確保三版可比
     det = []
     for r in rows:
@@ -132,12 +153,15 @@ def main():
            f"{TP/max(TP+FP,1)*100:.1f}% | **{(TP/max(TP+FN,1)+TN/max(FP+TN,1))/2*100:.1f}%** |")(*cm(t))
           for t in range(1, max(d["n"] for d in det) + 1)] + ["",
           "# on 關係的【方向】驗證:誰在上?\n",
-          "- 建檔 2026-09-25;程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。",
-          "- 資料:`llava_pair_relation.csv`(89 對 × 3 視角完整回答,Open3DSG 成對裁切 + 原句 prompt)。",
+          f"- 產出 {_TODAY};程式 `srp/stage4_probe/parse_on_direction.py`;**純文字分析,不跑模型**。",
+          f"- 資料:`{a.csv}`({len(rows)} 對、GT on {n} 對、平均 {_avgv:.2f} 視角/對)。",
+          f"- 模型:{_mdl}",
+          f"- prompt:{_pmt}",
+          f"- 影像處理:{_img}",
           "- ⚠ 先前 `RESULT_llava_pair_relation.md` 只判「有沒有 on 字眼」,**未驗證方向**;本檔補上。",
           "- 解析不出者標【無法判定】,**不猜**。\n",
-          "## 對層級(29 個 GT on 對;3 視角多數決)\n",
-          "| 項目 | 數量 | 佔 29 對 |", "|---|---|---|",
+          f"## 對層級({n} 個 GT on 對;每對 {_avgv:.2f} 視角多數決)\n",
+          f"| 項目 | 數量 | 佔 {n} 對 |", "|---|---|---|",
           f"| 能解析出方向 | {len(parsed)} | {len(parsed)/max(n,1)*100:.1f}% |",
           f"| **方向正確** | **{len(ok)}** | **{len(ok)/max(n,1)*100:.1f}%** |",
           f"| 方向錯誤 | {len(parsed)-len(ok)} | {(len(parsed)-len(ok))/max(n,1)*100:.1f}% |",
@@ -149,7 +173,7 @@ def main():
           f"| 可解析的視角數 | {len(vs)} |",
           f"| **方向正確** | **{vok}**({vok/max(len(vs),1)*100:.1f}%) |",
           f"| 方向錯誤 | {len(vs)-vok}({(len(vs)-vok)/max(len(vs),1)*100:.1f}%) |", "",
-          "## 逐對明細(29 對全列)\n",
+          f"## 逐對明細({n} 對全列)\n",
           "| 場景 | A | B | GT上物 | 逐視角判讀 | 對/錯票 | 多數決 | 對? |",
           "|---|---|---|---|---|---|---|---|"]
     for r in out:
