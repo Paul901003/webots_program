@@ -36,3 +36,6 @@ Thumbs.db
 urdfs/
 
 data/
+
+# stage4_probe VLM 成對裁切圖(313MB/2932張,可由 make_pair_crops.py 重生;index.json 有進 git)
+srp/stage4_probe/pair_crops*/*.png
